@@ -1,0 +1,152 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Chamber from '../components/Chamber.astro';
+import DetailDialog from '../components/DetailDialog.astro';
+import PayPanel from '../components/PayPanel.astro';
+import { loadDeputies, loadPay, loadSenators } from '../lib/sources.ts';
+import { toDeputyItem, toSenatorItem } from '../lib/view.ts';
+
+const [deputies, pay, { senators, snapshotDate }] = await Promise.all([loadDeputies(), loadPay(), loadSenators()]);
+const deputyItems = deputies.map(deputy => toDeputyItem(deputy, pay.summary));
+const senatorItems = senators.map(toSenatorItem);
+const builtAt = new Date().toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
+---
+
+<Layout title="Gastos de Diputados y Senadores - Argentina">
+  <header>
+    <h1>Gastos de Diputados y Senadores</h1>
+    <p>Argentina - Datos Abiertos</p>
+  </header>
+
+  <main class="container">
+    <div class="tabs" role="tablist">
+      <button class="tab active" role="tab" aria-selected="true" aria-controls="diputados" data-tab="diputados">Diputados</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="senadores" data-tab="senadores">Senadores</button>
+    </div>
+
+    <section class="content" id="diputados" role="tabpanel">
+      <PayPanel pay={pay} />
+      <Chamber id="diputados" items={deputyItems} noun="diputados" searchPlaceholder="Buscar por nombre o distrito..." />
+    </section>
+
+    <section class="content" id="senadores" role="tabpanel" hidden>
+      <p class="note source-note">
+        {
+          snapshotDate
+            ? `La API del Senado no respondió al generar el sitio; se muestra la copia del listado oficial al ${snapshotDate}.`
+            : 'Listado oficial del Senado de la Nación.'
+        }
+      </p>
+      <Chamber id="senadores" items={senatorItems} noun="senadores" searchPlaceholder="Buscar por nombre o provincia..." />
+    </section>
+  </main>
+
+  <footer>
+    Datos actualizados al {builtAt}. Fuentes:
+    <a href="https://datos.hcdn.gob.ar/dataset/legisladores" target="_blank" rel="noopener">HCDN - Legisladores</a>,
+    <a href="https://datos.hcdn.gob.ar/dataset/dietas-y-gastos-de-representacion-legisladores-as" target="_blank" rel="noopener">
+      HCDN - Dietas y Gastos de Representación
+    </a>,
+    <a href="https://www.senado.gob.ar/micrositios/DatosAbiertos/" target="_blank" rel="noopener">Senado - Datos Abiertos</a>.
+  </footer>
+
+  <DetailDialog />
+</Layout>
+
+<script>
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('.tab')];
+
+  function show(name: string) {
+    if (!tabs.some(tab => tab.dataset.tab === name)) name = 'diputados';
+    for (const tab of tabs) {
+      const active = tab.dataset.tab === name;
+      tab.classList.toggle('active', active);
+      tab.setAttribute('aria-selected', String(active));
+      document.getElementById(tab.dataset.tab!)!.hidden = !active;
+    }
+  }
+
+  tabs.forEach(tab => tab.addEventListener('click', () => {
+    history.replaceState(null, '', `#${tab.dataset.tab}`);
+    show(tab.dataset.tab!);
+  }));
+  show(location.hash.slice(1));
+</script>
+
+<style>
+  header {
+    background: #1a73e8;
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 24px;
+  }
+
+  header p {
+    margin: 5px 0 0;
+    opacity: 0.9;
+  }
+
+  .container {
+    display: block;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+  }
+
+  .tabs {
+    display: flex;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .tab {
+    flex: 1;
+    padding: 12px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .tab.active {
+    color: #1a73e8;
+    border-bottom-color: #1a73e8;
+  }
+
+  .tab:hover:not(.active) {
+    color: #1a73e8;
+  }
+
+  .content {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .source-note {
+    margin: 0 0 12px;
+  }
+
+  footer {
+    max-width: 1200px;
+    margin: 0 auto 30px;
+    padding: 0 20px;
+    font-size: 12px;
+    color: #777;
+  }
+
+  footer a {
+    color: #1a73e8;
+  }
+</style>

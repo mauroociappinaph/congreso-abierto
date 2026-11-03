@@ -1,0 +1,73 @@
+---
+// Filled by src/lib/detail-dialog.ts. Native <dialog> closes on Escape; clicking the backdrop closes it too.
+---
+
+<dialog id="detail" aria-labelledby="detail-title">
+  <form method="dialog">
+    <button class="detail-close" aria-label="Cerrar">&times;</button>
+  </form>
+  <img class="detail-photo" alt="" hidden />
+  <h2 class="detail-title" id="detail-title"></h2>
+  <dl class="detail-fields"></dl>
+  <p class="note detail-note"></p>
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('#detail')!;
+  dialog.addEventListener('click', event => {
+    if (event.target === dialog) dialog.close();
+  });
+</script>
+
+<style>
+  dialog {
+    border: none;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 520px;
+    width: 90%;
+  }
+
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .detail-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 22px;
+    cursor: pointer;
+  }
+
+  .detail-photo {
+    float: right;
+    width: 80px;
+    border-radius: 6px;
+    margin-left: 10px;
+  }
+
+  .detail-title {
+    margin-top: 0;
+    padding-right: 30px;
+  }
+
+  .detail-fields {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 6px 12px;
+    margin: 0;
+  }
+
+  .detail-fields :global(dt) {
+    font-weight: bold;
+  }
+
+  .detail-fields :global(dd) {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+</style>

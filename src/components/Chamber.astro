@@ -1,0 +1,218 @@
+---
+// One chamber's list: search box, bloque chips and cards. The cards are rendered at build time;
+// the script below only hides and shows them and opens the detail dialog.
+import { bloqueColor, countByBloque } from '../lib/legislators.ts';
+import type { ChamberItem } from '../lib/view.ts';
+
+interface Props {
+  id: string;
+  items: ChamberItem[];
+  noun: string;
+  searchPlaceholder: string;
+}
+
+const { id, items, noun, searchPlaceholder } = Astro.props;
+const bloques = countByBloque(items);
+// Only what the browser needs to filter and show details.
+const clientData = items.map(({ id, nombre, lugar, bloque, detail, foto, detailNote }) => ({
+  id, nombre, lugar, bloque, detail, foto, detailNote,
+}));
+---
+
+<div class="chamber" data-chamber={id} data-noun={noun}>
+  <input type="search" class="search-box" placeholder={searchPlaceholder} aria-label={searchPlaceholder} />
+  <div class="party-filter">
+    <button type="button" class="party-chip active" data-bloque="all">Todos ({items.length})</button>
+    {
+      bloques.map(({ bloque, count }) => (
+        <button type="button" class="party-chip" data-bloque={bloque}>
+          {bloque} ({count})
+        </button>
+      ))
+    }
+  </div>
+  <div class="result-count" aria-live="polite">{items.length} de {items.length} {noun}</div>
+  <div class="list-view">
+    {
+      items.map(item => (
+        <button type="button" class="card" data-id={item.id}>
+          <div class="card-header">
+            <span class="card-name">{item.nombre}</span>
+            <span class="card-bloque" style={{ background: bloqueColor(item.bloque) }}>
+              {item.bloque}
+            </span>
+          </div>
+          <div class="card-gastos">
+            {item.card.map(([label, value]) => (
+              <div class="gasto-item">
+                <span class="gasto-label">{label}</span>
+                <span class="gasto-value">{value}</span>
+              </div>
+            ))}
+          </div>
+        </button>
+      ))
+    }
+    <div class="no-data" hidden>No hay datos coincidentes</div>
+  </div>
+  <script type="application/json" data-legislators set:html={JSON.stringify(clientData).replace(/</g, '\\u003c')} />
+</div>
+
+<script>
+  import { filterLegislators } from '../lib/legislators.ts';
+  import { openDetail } from '../lib/detail-dialog.ts';
+  import type { ClientItem } from '../lib/view.ts';
+
+  for (const root of document.querySelectorAll<HTMLElement>('[data-chamber]')) {
+    const items: ClientItem[] = JSON.parse(root.querySelector('[data-legislators]')!.textContent!);
+    const byId = new Map(items.map(item => [item.id, item]));
+    const search = root.querySelector<HTMLInputElement>('.search-box')!;
+    const count = root.querySelector('.result-count')!;
+    const empty = root.querySelector<HTMLElement>('.no-data')!;
+    const cards = [...root.querySelectorAll<HTMLElement>('.card')];
+    let bloque = 'all';
+
+    const update = () => {
+      const visible = new Set(filterLegislators(items, { query: search.value, bloque }).map(item => item.id));
+      cards.forEach(card => { card.hidden = !visible.has(card.dataset.id!); });
+      empty.hidden = visible.size > 0;
+      count.textContent = `${visible.size} de ${items.length} ${root.dataset.noun}`;
+    };
+
+    search.addEventListener('input', update);
+    root.querySelector('.party-filter')!.addEventListener('click', event => {
+      const chip = (event.target as HTMLElement).closest<HTMLElement>('.party-chip');
+      if (!chip) return;
+      bloque = chip.dataset.bloque!;
+      root.querySelectorAll('.party-chip').forEach(c => c.classList.toggle('active', c === chip));
+      update();
+    });
+    root.querySelector('.list-view')!.addEventListener('click', event => {
+      const card = (event.target as HTMLElement).closest<HTMLElement>('.card');
+      const item = card && byId.get(card.dataset.id!);
+      if (item) openDetail(item);
+    });
+  }
+</script>
+
+<style>
+  .search-box {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .party-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .party-chip {
+    background: #e8e8e8;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .party-chip.active {
+    background: #1a73e8;
+    color: white;
+  }
+
+  .party-chip:hover:not(.active) {
+    background: #d0d0d0;
+  }
+
+  .result-count {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+  }
+
+  .list-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 15px;
+  }
+
+  .card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px;
+    cursor: pointer;
+    background: white;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+  }
+
+  .card[hidden] {
+    display: none;
+  }
+
+  .card:hover,
+  .card:focus-visible {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .card-name {
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  .card-bloque {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    color: white;
+    text-align: right;
+  }
+
+  .card-gastos {
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+  }
+
+  .gasto-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 6px 0;
+    font-size: 14px;
+  }
+
+  .gasto-label {
+    color: #666;
+  }
+
+  .gasto-value {
+    color: #1a73e8;
+    font-weight: bold;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .no-data {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #888;
+    padding: 40px;
+  }
+</style>

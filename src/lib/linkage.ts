@@ -124,7 +124,7 @@ interface Score {
 // JW >= EXACT_JW, since trip files rarely put given names first ("MARIA
 // MARCELA" is not "Marclay"). Returns the claimed positions with their JW, or
 // null when a token finds none.
-function claimSurname(surname: string[], trip: string[], order: 'first' | 'last'): { index: number; jw: number }[] | null {
+function claimSurname(surname: string[], trip: string[], order: 'first' | 'last', surnameEnd = trip.length): { index: number; jw: number }[] | null {
   const claims: { index: number; jw: number }[] = [];
   if (order === 'last') {
     const start = trip.length - surname.length;
@@ -136,7 +136,7 @@ function claimSurname(surname: string[], trip: string[], order: 'first' | 'last'
     }
     return claims;
   }
-  const limit = Math.min(trip.length, surname.length + 1);
+  const limit = Math.min(trip.length, surname.length + 1, surnameEnd);
   let next = 0;
   for (const token of surname) {
     let best = -1;
@@ -159,13 +159,13 @@ function claimSurname(surname: string[], trip: string[], order: 'first' | 'last'
 // With a compound surname, matching only its first token is allowed when
 // every given name matches and no trip token is left over; that confidence
 // is capped below an exact match.
-function score(deputy: { surname: string[]; given: string[] }, trip: string[], order: 'first' | 'last'): Score | null {
+function score(deputy: { surname: string[]; given: string[] }, trip: string[], order: 'first' | 'last', surnameEnd?: number): Score | null {
   let surname = deputy.surname;
-  let claims = claimSurname(surname, trip, order);
+  let claims = claimSurname(surname, trip, order, surnameEnd);
   const partial = !claims && surname.length >= 2;
   if (partial) {
     surname = surname.slice(0, 1);
-    claims = claimSurname(surname, trip, order);
+    claims = claimSurname(surname, trip, order, surnameEnd);
   }
   if (!claims) return null;
   const free = trip.map(() => true);
@@ -222,9 +222,9 @@ export function createLinker(deputies: LinkableDeputy[]): { link: (rawName: stri
     .filter(d => d.tokens.surname.length);
   const cache = new Map<string, LinkResult>();
 
-  const scoreAll = (trip: string[], order: 'first' | 'last'): Scored[] =>
+  const scoreAll = (trip: string[], order: 'first' | 'last', surnameEnd?: number): Scored[] =>
     indexed.flatMap(d => {
-      const s = score(d.tokens, trip, order);
+      const s = score(d.tokens, trip, order, surnameEnd);
       return s && s.confidence > 0 ? [{ ...s, deputy: d }] : [];
     });
 
@@ -240,7 +240,12 @@ export function createLinker(deputies: LinkableDeputy[]): { link: (rawName: stri
 
   const compute = (rawName: string, provincia?: string): LinkResult => {
     const trip = words(rawName);
-    let scored = scoreAll(trip, 'first');
+    // "PAGANO, MARCELA MARINA": the comma marks where the surname ends, so "Marclay" cannot claim "MARCELA".
+    // Reversed names ("MARGARITA, STOLBIZER") find nothing that way and fall back to the plain window.
+    const [beforeComma, afterComma] = rawName.split(',');
+    const surnameEnd = afterComma?.trim() ? words(beforeComma).length : undefined;
+    let scored = surnameEnd ? scoreAll(trip, 'first', surnameEnd) : [];
+    if (!scored.some(c => c.confidence >= DOUBTFUL_MIN)) scored = scoreAll(trip, 'first');
     scored = scored.map(c => subsetBoost(c, scored));
     // Given-name-first names ("VERONICA KARINA BANFI") get a second pass only when the first finds nothing.
     if (!scored.some(c => c.confidence >= DOUBTFUL_MIN)) {

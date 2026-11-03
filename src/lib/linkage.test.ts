@@ -301,3 +301,16 @@ test('PROVINCIA breaks a tie between same-surname deputies from different distri
   assert.equal(linker.link('GUTIERREZ CARLOS RAMIRO').status, 'doubtful');
   assert.equal(linker.link('GUTIERREZ CARLOS RAMIRO', 'Mendoza').status, 'doubtful');
 });
+
+test('a comma in the raw name marks where the surname ends', () => {
+  const linker = createLinker([
+    { id: 'pagano', nombre: 'Pagano, Marcela Marina', lugar: 'CIUDAD DE BUENOS AIRES' },
+    { id: 'marclay', nombre: 'Marclay, Marianela', lugar: 'ENTRE RIOS' },
+  ]);
+  const result = linker.link('PAGANO, MARCELA MARINA');
+  assert.equal(result.status, 'matched');
+  assert.equal(result.deputyId, 'pagano');
+  // A reversed comma name finds no surname before the comma and falls back to the plain window.
+  const reversed = createLinker([{ id: 'stolbizer', nombre: 'Stolbizer, Margarita Rosa', lugar: 'BUENOS AIRES' }]);
+  assert.equal(reversed.link('MARGARITA, STOLBIZER').deputyId, 'stolbizer');
+});

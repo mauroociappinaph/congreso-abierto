@@ -64,8 +64,10 @@ test('given-name order, accents and case do not change the match', () => {
   assert.equal(link('MÓNICA BECERRA').deputyId, 'becerra');
 });
 
-test('a surname outside the leading positions of the trip name does not match', () => {
-  assert.equal(link('ABEL RICARDO CHICONI').status, 'unmatched');
+test('a surname at the end of the trip name matches through the given-name-first pass', () => {
+  const result = link('ABEL RICARDO CHICONI');
+  assert.equal(result.status, 'matched');
+  assert.equal(result.deputyId, 'chiconi');
 });
 
 for (const raw of [
@@ -113,11 +115,10 @@ test('a single-letter typo in a surname still matches', () => {
   assert.equal(result.deputyId, 'borgatta');
 });
 
-test('a partial given-name match below the threshold makes the row doubtful', () => {
+test('a given-name subset with the only same-surname deputy matches', () => {
   const result = link('MOYANO HUGO');
-  assert.equal(result.status, 'doubtful');
-  assert.equal(result.deputyId, null);
-  assert.equal(result.candidates[0].id, 'moyano');
+  assert.equal(result.status, 'matched');
+  assert.equal(result.deputyId, 'moyano');
 });
 
 test('a PROVINCIA that differs from the district makes the row doubtful', () => {
@@ -157,6 +158,137 @@ test('nameTokens splits deputy names into surname and given names', () => {
   assert.deepEqual(nameTokens('BRÃœGGE JUAN FERNANDO'), { surname: [], given: ['brugge', 'juan', 'fernando'] });
   assert.deepEqual(nameTokens('AVICO MARIA BELÃ‰N'), { surname: [], given: ['avico', 'maria', 'belen'] });
   assert.deepEqual(nameTokens('AVICO MARIA BELA?N'), { surname: [], given: ['avico', 'maria', 'belan'] });
+});
+
+const f6Deputies = [
+  ...deputies,
+  { id: 'banfi', nombre: 'Banfi, Karina', lugar: 'BUENOS AIRES' },
+  { id: 'valdes', nombre: 'Valdés, Eduardo Félix', lugar: 'CIUDAD DE BUENOS AIRES' },
+  { id: 'santillan', nombre: 'Santillán Juárez Brahim, Juliana', lugar: 'BUENOS AIRES' },
+  { id: 'yedlin', nombre: 'Yedlin, Pablo Raúl', lugar: 'TUCUMAN' },
+  { id: 'gonzalez-diogenes', nombre: 'González, Diógenes Ignacio', lugar: 'CORRIENTES' },
+  { id: 'gonzalez-gerardo', nombre: 'González, Gerardo Gustavo', lugar: 'FORMOSA' },
+  { id: 'gonzalez-alvaro', nombre: 'González, Álvaro', lugar: 'CIUDAD DE BUENOS AIRES' },
+  { id: 'stolbizer', nombre: 'Stolbizer, Margarita Rosa', lugar: 'BUENOS AIRES' },
+  { id: 'fernandez-elia', nombre: 'Fernández, Elia Marina', lugar: 'TUCUMAN' },
+];
+const f6 = createLinker(f6Deputies).link;
+
+for (const provincia of ['CABA', 'C.A.B.A.', 'Capital Federal', 'CAPITAL FEDERAL', 'Ciudad Autónoma de Buenos Aires', ' caba ']) {
+  test(`district alias ${provincia} equals CIUDAD DE BUENOS AIRES`, () => {
+    const result = f6('VALDES EDUARDO FELIX', provincia);
+    assert.equal(result.status, 'matched');
+    assert.equal(result.deputyId, 'valdes');
+  });
+}
+
+test('a district alias of a deputy listed with the alias also matches', () => {
+  const linker = createLinker([{ id: 'caba', nombre: 'Valdés, Eduardo Félix', lugar: 'CABA' }]);
+  assert.equal(linker.link('VALDES EDUARDO FELIX', 'Ciudad de Buenos Aires').status, 'matched');
+});
+
+test('a district alias does not hide a different district', () => {
+  assert.equal(f6('VALDES EDUARDO FELIX', 'BUENOS AIRES').status, 'doubtful');
+});
+
+for (const [raw, id] of [
+  ['VERONICA KARINA BANFI', 'banfi'],
+  ['EDUARDO FELIX VALDES', 'valdes'],
+] as const) {
+  test(`given-name-first order matches with a small penalty: ${raw}`, () => {
+    const result = f6(raw);
+    assert.equal(result.status, 'matched');
+    assert.equal(result.deputyId, id);
+    assert.equal(result.confidence, 0.97);
+  });
+}
+
+test('given-name-first order still needs the margin over the runner-up', () => {
+  const result = f6('JUAN CARLOS GOMEZ');
+  assert.equal(result.status, 'doubtful');
+  assert.equal(result.deputyId, null);
+  assert.deepEqual(result.candidates.map(c => c.id).sort(), ['gomez-cba', 'gomez-sal']);
+});
+
+for (const raw of [
+  'BARLETTA MARIO DOMINGO',
+  'ARJOL MARTIN ALFREDO',
+  'COBOS JULIO CESAR CLETO',
+  'AGUIRRE MANUEL IGNACIO',
+  'MOYANO NILDA',
+  'CAMPAGNOLI MARIA MARCELA',
+  'ARAUJO MARIA FERNANDA',
+]) {
+  test(`the given-name-first pass keeps a former deputy unmatched: ${raw}`, () => {
+    const result = f6(raw);
+    assert.equal(result.status, 'unmatched');
+    assert.equal(result.deputyId, null);
+    assert.deepEqual(result.candidates, []);
+  });
+}
+
+test('the first token of a compound surname matches when every given name matches', () => {
+  const result = f6('JULIANA SANTILLAN');
+  assert.equal(result.status, 'matched');
+  assert.equal(result.deputyId, 'santillan');
+  assert.ok(result.confidence >= 0.9 && result.confidence < 1, String(result.confidence));
+  assert.equal(f6('SANTILLAN JULIANA').deputyId, 'santillan');
+});
+
+test('the first token of a compound surname without the given name stays unmatched', () => {
+  const result = f6('SANTILLAN WALTER');
+  assert.equal(result.status, 'unmatched');
+  assert.equal(result.deputyId, null);
+});
+
+test('the first token of a compound surname with another trip token left over stays unmatched', () => {
+  const result = f6('SANTILLAN GOMEZ JULIANA');
+  assert.equal(result.status, 'unmatched');
+  assert.equal(result.deputyId, null);
+});
+
+test('a partial compound surname shared by two deputies is doubtful', () => {
+  const linker = createLinker([
+    { id: 'a', nombre: 'Santillán Juárez Brahim, Juliana', lugar: 'BUENOS AIRES' },
+    { id: 'b', nombre: 'Santillán Pérez, Juliana', lugar: 'SALTA' },
+  ]);
+  const result = linker.link('JULIANA SANTILLAN');
+  assert.equal(result.status, 'doubtful');
+  assert.deepEqual(result.candidates.map(c => c.id).sort(), ['a', 'b']);
+});
+
+for (const [raw, provincia, id] of [
+  ['YEDLIN,PABLO', undefined, 'yedlin'],
+  ['GÓNZALEZ, Diógenes', 'CORRIENTES', 'gonzalez-diogenes'],
+] as const) {
+  test(`a given-name subset with an exact, unique surname matches: ${raw}`, () => {
+    const result = f6(raw, provincia);
+    assert.equal(result.status, 'matched');
+    assert.equal(result.deputyId, id);
+    assert.ok(result.confidence >= 0.9);
+  });
+}
+
+test('a given-name subset shared by two same-surname deputies stays doubtful', () => {
+  const linker = createLinker([
+    { id: 'a', nombre: 'González, Diógenes Ignacio', lugar: 'CORRIENTES' },
+    { id: 'b', nombre: 'González, Diógenes Martín', lugar: 'CORRIENTES' },
+  ]);
+  const result = linker.link('GONZALEZ, Diógenes', 'CORRIENTES');
+  assert.equal(result.status, 'doubtful');
+  assert.deepEqual(result.candidates.map(c => c.id).sort(), ['a', 'b']);
+});
+
+test('a given-name subset with other unclaimed given names in the trip stays doubtful', () => {
+  const result = f6('GONZALEZ GUSTAVO CARLOS MIGUEL');
+  assert.equal(result.status, 'doubtful');
+  assert.equal(result.candidates[0].id, 'gonzalez-gerardo');
+});
+
+test('a reversed comma order matches', () => {
+  const result = f6('MARGARITA, STOLBIZER');
+  assert.equal(result.status, 'matched');
+  assert.equal(result.deputyId, 'stolbizer');
 });
 
 test('PROVINCIA breaks a tie between same-surname deputies from different districts', () => {

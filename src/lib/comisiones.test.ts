@@ -135,10 +135,10 @@ test('committeesByDeputy gives the authority role to the member it links to, wha
     { comisionId: 'HCDN00045', comision: 'ASUNTOS CONSTITUCIONALES', cargo: 'presidente' },
     { comisionId: 'HCDN00048', comision: 'PRESUPUESTO Y HACIENDA', cargo: 'integrante' },
   ]);
-  // "GÓNZALEZ, Diógenes" drops a given name the composition has, so the linker leaves it doubtful
-  // and the role is not attached: the member row still counts.
+  // "GÓNZALEZ, Diógenes" drops a given name the composition has; the surname is exact and unique,
+  // so the linker accepts the subset and the role reaches the member.
   assert.deepEqual(result.byDeputy.get('dip-gonzalez'), [
-    { comisionId: 'HCDN00045', comision: 'ASUNTOS CONSTITUCIONALES', cargo: 'integrante' },
+    { comisionId: 'HCDN00045', comision: 'ASUNTOS CONSTITUCIONALES', cargo: 'vicepresidente 2' },
   ]);
   assert.deepEqual(result.byDeputy.get('dip-arabia'), [{ comisionId: 'HCDN00064', comision: 'HCDN00064', cargo: 'presidente' }]);
 });
@@ -222,7 +222,7 @@ test('committeesByDeputy summarizes each committee: member count and authorities
     miembros: 3,
     autoridades: [
       { cargo: 'presidente', nombre: 'MAYORAZ Nicolás', distrito: 'SANTA FE', deputyId: 'dip-mayoraz' },
-      { cargo: 'vicepresidente 2', nombre: 'GÓNZALEZ, Diógenes', distrito: 'CORRIENTES', deputyId: null },
+      { cargo: 'vicepresidente 2', nombre: 'GÓNZALEZ, Diógenes', distrito: 'CORRIENTES', deputyId: 'dip-gonzalez' },
       { cargo: 'secretario', nombre: 'CASTELNUOVO, Giselle', distrito: 'BUENOS AIRES', deputyId: 'dip-castelnuovo' },
     ],
   });
@@ -275,7 +275,7 @@ test('committeesByDeputy reports committee ids with members but no name in the c
     realLink(),
   );
   assert.deepEqual(result.quality.unknownCommittees, ['HCDN00064']);
-  assert.deepEqual(result.quality.doubtful.map(d => d.nombre), ['GÓNZALEZ, Diógenes']);
+  assert.deepEqual(result.quality.doubtful.map(d => d.nombre), []);
   // FÉRNANDEZ. ELIA MARINA is not in the trimmed composition.
   assert.deepEqual(result.quality.unmatched, [{ nombre: 'FÉRNANDEZ. ELIA MARINA', distrito: 'TUCUMÁN' }]);
 });

@@ -28,6 +28,9 @@ const MATCH_MIN = 0.9;
 const MATCH_MARGIN = 0.05;
 const DOUBTFUL_MIN = 0.75;
 const SURNAME_WEIGHT = 2;
+const EXACT_JW = 0.97;
+const GIVEN_FIRST_PENALTY = 0.03;
+const PARTIAL_SURNAME_FACTOR = 0.95;
 const GIVEN_WEIGHT = 1;
 
 export function jaroWinkler(a: string, b: string): number {
@@ -107,27 +110,68 @@ const givenSimilarity = (token: string, tripToken: string) =>
     ? INITIAL_JW
     : jaroWinkler(token, tripToken);
 
-// Trip names put surnames first: surname tokens must match, in order, within
-// the first (surname count + 1) trip tokens. Given-name tokens then claim the
-// best distinct remaining trip token. Returns 0 when a surname token finds no
-// trip token or when the deputy has given names and none of them matches.
-function score(deputy: { surname: string[]; given: string[] }, trip: string[]): number {
-  const free = trip.map(() => true);
-  const jws: number[] = [];
-  const limit = Math.min(trip.length, deputy.surname.length + 1);
+interface Score {
+  confidence: number;
+  // every surname token matched with JW >= EXACT_JW
+  exactSurname: boolean;
+  givenMatched: number;
+  // every trip token was claimed by a surname or given-name token
+  allClaimed: boolean;
+}
+
+// Surname tokens claim trip tokens in order: `first` within the first
+// (surname count + 1) positions, `last` exactly the last positions and with
+// JW >= EXACT_JW, since trip files rarely put given names first ("MARIA
+// MARCELA" is not "Marclay"). Returns the claimed positions with their JW, or
+// null when a token finds none.
+function claimSurname(surname: string[], trip: string[], order: 'first' | 'last'): { index: number; jw: number }[] | null {
+  const claims: { index: number; jw: number }[] = [];
+  if (order === 'last') {
+    const start = trip.length - surname.length;
+    if (start < 1) return null;
+    for (let k = 0; k < surname.length; k++) {
+      const jw = jaroWinkler(surname[k], trip[start + k]);
+      if (jw < EXACT_JW) return null;
+      claims.push({ index: start + k, jw });
+    }
+    return claims;
+  }
+  const limit = Math.min(trip.length, surname.length + 1);
   let next = 0;
-  for (const token of deputy.surname) {
+  for (const token of surname) {
     let best = -1;
     let bestJw = 0;
     for (let i = next; i < limit; i++) {
       const jw = jaroWinkler(token, trip[i]);
       if (jw >= SURNAME_JW && jw > bestJw) [best, bestJw] = [i, jw];
     }
-    if (best < 0) return 0;
-    free[best] = false;
+    if (best < 0) return null;
+    claims.push({ index: best, jw: bestJw });
     next = best + 1;
-    jws.push(bestJw);
   }
+  return claims;
+}
+
+// Surname tokens must match (see claimSurname); given-name tokens then claim
+// the best distinct remaining trip token. Returns null when a surname token
+// finds no trip token or when the deputy has given names and none matches.
+// The `last` order also needs given names with JW >= EXACT_JW (no initials).
+// With a compound surname, matching only its first token is allowed when
+// every given name matches and no trip token is left over; that confidence
+// is capped below an exact match.
+function score(deputy: { surname: string[]; given: string[] }, trip: string[], order: 'first' | 'last'): Score | null {
+  let surname = deputy.surname;
+  let claims = claimSurname(surname, trip, order);
+  const partial = !claims && surname.length >= 2;
+  if (partial) {
+    surname = surname.slice(0, 1);
+    claims = claimSurname(surname, trip, order);
+  }
+  if (!claims) return null;
+  const free = trip.map(() => true);
+  for (const { index } of claims) free[index] = false;
+  const jws = claims.map(c => c.jw);
+  const givenMin = order === 'last' ? EXACT_JW : GIVEN_JW;
   let givenMatched = 0;
   for (const token of deputy.given) {
     let best = -1;
@@ -135,35 +179,78 @@ function score(deputy: { surname: string[]; given: string[] }, trip: string[]): 
     trip.forEach((tripToken, i) => {
       if (!free[i]) return;
       const jw = givenSimilarity(token, tripToken);
-      if (jw >= GIVEN_JW && jw > bestJw) [best, bestJw] = [i, jw];
+      if (jw >= givenMin && jw > bestJw) [best, bestJw] = [i, jw];
     });
     if (best < 0) continue;
     free[best] = false;
     givenMatched++;
     jws.push(bestJw);
   }
-  if (deputy.given.length && !givenMatched) return 0;
-  const matchedWeight = deputy.surname.length * SURNAME_WEIGHT + givenMatched * GIVEN_WEIGHT;
-  const totalWeight = deputy.surname.length * SURNAME_WEIGHT + deputy.given.length * GIVEN_WEIGHT;
+  if (deputy.given.length && !givenMatched) return null;
+  // A leftover trip token could be a different second surname ("SANTILLAN GOMEZ JULIANA").
+  if (partial && (givenMatched < deputy.given.length || free.some(Boolean))) return null;
   const avgJw = jws.reduce((sum, jw) => sum + jw, 0) / jws.length;
-  return (matchedWeight / totalWeight + avgJw) / 2;
+  const matchedWeight = surname.length * SURNAME_WEIGHT + givenMatched * GIVEN_WEIGHT;
+  const totalWeight = surname.length * SURNAME_WEIGHT + deputy.given.length * GIVEN_WEIGHT;
+  const confidence = partial ? avgJw * PARTIAL_SURNAME_FACTOR : (matchedWeight / totalWeight + avgJw) / 2;
+  return {
+    confidence: order === 'last' ? confidence - GIVEN_FIRST_PENALTY : confidence,
+    exactSurname: !partial && claims.every(c => c.jw >= EXACT_JW),
+    givenMatched,
+    allClaimed: free.every(f => !f),
+  };
 }
 
 const round3 = (n: number) => Math.round(n * 1000) / 1000;
-const district = (value: string) => normalizeText(value).replace(/\s+/g, ' ').trim();
+
+const DISTRICT_ALIASES: Record<string, string> = {
+  caba: 'ciudad de buenos aires',
+  'capital federal': 'ciudad de buenos aires',
+  'ciudad autonoma de buenos aires': 'ciudad de buenos aires',
+};
+const district = (value: string) => {
+  const key = normalizeText(value).replace(/\./g, '').replace(/\s+/g, ' ').trim();
+  return DISTRICT_ALIASES[key] ?? key;
+};
+
+type Indexed = LinkableDeputy & { tokens: { surname: string[]; given: string[] }; district: string };
+type Scored = Score & { deputy: Indexed };
 
 export function createLinker(deputies: LinkableDeputy[]): { link: (rawName: string, provincia?: string) => LinkResult } {
-  const indexed = deputies
+  const indexed: Indexed[] = deputies
     .map(d => ({ ...d, tokens: nameTokens(d.nombre), district: district(d.lugar) }))
     .filter(d => d.tokens.surname.length);
   const cache = new Map<string, LinkResult>();
 
+  const scoreAll = (trip: string[], order: 'first' | 'last'): Scored[] =>
+    indexed.flatMap(d => {
+      const s = score(d.tokens, trip, order);
+      return s && s.confidence > 0 ? [{ ...s, deputy: d }] : [];
+    });
+
+  // A short source name ("YEDLIN,PABLO") may list fewer given names: with an
+  // exact surname, no trip token left over and no other candidate with that
+  // surname, it is raised to the match threshold.
+  const subsetBoost = (c: Scored, all: Scored[]): Scored => {
+    const surname = c.deputy.tokens.surname.join(' ');
+    const unique = all.every(o => o === c || o.deputy.tokens.surname.join(' ') !== surname);
+    const eligible = c.exactSurname && c.givenMatched > 0 && c.allClaimed && unique && c.confidence < MATCH_MIN;
+    return eligible ? { ...c, confidence: MATCH_MIN } : c;
+  };
+
   const compute = (rawName: string, provincia?: string): LinkResult => {
     const trip = words(rawName);
-    const scored = indexed
-      .map(d => ({ deputy: d, confidence: score(d.tokens, trip) }))
-      .filter(c => c.confidence > 0)
-      .sort((a, b) => b.confidence - a.confidence);
+    let scored = scoreAll(trip, 'first');
+    scored = scored.map(c => subsetBoost(c, scored));
+    // Given-name-first names ("VERONICA KARINA BANFI") get a second pass only when the first finds nothing.
+    if (!scored.some(c => c.confidence >= DOUBTFUL_MIN)) {
+      const byId = new Map(scored.map(c => [c.deputy.id, c]));
+      for (const c of scoreAll(trip, 'last')) {
+        if (c.confidence > (byId.get(c.deputy.id)?.confidence ?? 0)) byId.set(c.deputy.id, c);
+      }
+      scored = [...byId.values()];
+    }
+    scored.sort((a, b) => b.confidence - a.confidence);
     // A row's PROVINCIA narrows the candidates to that district, which breaks same-name ties.
     const inDistrict = provincia?.trim() ? scored.filter(c => c.deputy.district === district(provincia)) : [];
     const ranked = inDistrict.length > 0 ? inDistrict : scored;

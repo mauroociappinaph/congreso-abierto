@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { cargoLabel, formatDate, formatMoney, formatShare, mergeBills, toDeputyItem, toSenatorItem } from './view.ts';
+import { cargoLabel, formatDate, formatMoney, formatShare, mergeBills, toDeputyItem, toSenatorItem, travelComparison, travelStatus } from './view.ts';
 
 const deputy = {
   id: 'dip-a', nombre: 'Aguirre, Hilda', lugar: 'LA RIOJA', bloque: 'UXP',
@@ -50,6 +50,24 @@ test('toDeputyItem adds the travel comparison to the detail when given', () => {
   ]);
   const newcomer = { ...travel, months: 2, eligible: false, z: null, flagged: false };
   assert.equal(toDeputyItem(deputy, pay, newcomer).detail.at(-1)![1], 'No comparado (menos de 3 meses en el cargo)');
+});
+
+test('travelComparison says a deputy with no legs in the window has none, never that they are in line', () => {
+  const travel = {
+    deputyId: 'dip-c', region: 'NOA' as const, band: '800–1200 km', homeKm: 1085, homeSource: 'capital' as const,
+    legs: 0, months: 24, legsPerMonth: 0, bandMedian: 5.93, z: -4.13, flagged: false, eligible: true, topRoute: null, bySemester: {},
+  };
+  assert.equal(travelComparison(travel), 'Sin tramos registrados en el período');
+  assert.equal(travelStatus(travel), 'sin-tramos');
+  assert.equal(toDeputyItem(deputy, pay, travel).detail.at(-1)![1], 'Sin tramos registrados en el período');
+  // without an estimated home the zero still reads as no legs
+  assert.equal(travelComparison({ ...travel, band: null, homeKm: null, homeSource: null, bandMedian: null, z: null }), 'Sin tramos registrados en el período');
+  // a newcomer is still "not compared" first
+  assert.equal(travelComparison({ ...travel, months: 2, eligible: false }), 'No comparado (menos de 3 meses en el cargo)');
+  assert.equal(travelStatus({ ...travel, months: 2, eligible: false }), 'no-comparado');
+  assert.equal(travelStatus({ ...travel, legs: 40, legsPerMonth: 1.67, z: -2 }), 'en-linea');
+  assert.equal(travelStatus({ ...travel, legs: 300, legsPerMonth: 12.5, z: 5, flagged: true }), 'viaja-mas');
+  assert.equal(travelStatus({ ...travel, legs: 3, band: null, bandMedian: null, z: null }), 'sin-distancia');
 });
 
 test('toSenatorItem shows no pay and fills empty fields with N/A', () => {

@@ -23,6 +23,7 @@ import { createDeputyPolicy, createSenatePolicy, senateIdentities, type LinkQual
 import { normalizeMissionRows, summarizeMissions, type DeputyMissions, type Mission } from './misiones.ts';
 import { billsByAuthor, furthestStages, parseBills, type AuthorBills } from './proyectos.ts';
 import { mapCurrentToHistoric, parseRoster, type RosterPerson } from './roster.ts';
+import { buildEntities, type Entities } from './entities.ts';
 import {
   actaDetailUrl,
   actaIndexRequest,
@@ -445,4 +446,19 @@ export function loadSenateVotes(senators: Senator[]): Promise<SenateVotesData> {
 
 function byName(a: { nombre: string }, b: { nombre: string }) {
   return a.nombre.localeCompare(b.nombre, 'es');
+}
+
+// Every entity page (blocs, provinces, committees, legislators, home) shares one build of the indexes.
+export function loadEntities(): Promise<Entities> {
+  return once('entities', async () => {
+    const [deputies, { senators }, pay] = await Promise.all([loadDeputies(), loadSenators(), loadPay()]);
+    const [travel, committees, bills, missions, senateVotes] = await Promise.all([
+      loadTravel(deputies),
+      loadCommittees(deputies),
+      loadBills(deputies, senators),
+      loadMissions(deputies),
+      loadSenateVotes(senators),
+    ]);
+    return buildEntities({ asOf: today(), deputies, senators, pay: pay.summary, travel, committees, bills, missions, senateVotes });
+  });
 }

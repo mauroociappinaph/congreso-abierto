@@ -81,14 +81,25 @@ export function mergeBills(list: AuthorBills[]): AuthorBills {
   return merged;
 }
 
+export type TravelStatus = 'no-comparado' | 'sin-tramos' | 'sin-distancia' | 'viaja-mas' | 'en-linea';
+
+// A deputy with no legs in the window is never "en línea", even when the band median is low.
+export function travelStatus(travel: DeputyTravel): TravelStatus {
+  if (!travel.eligible) return 'no-comparado';
+  if (travel.legs === 0) return 'sin-tramos';
+  if (!travel.band || travel.bandMedian === null) return 'sin-distancia';
+  return travel.flagged ? 'viaja-mas' : 'en-linea';
+}
+
 // S4: only "viaja (bastante) más que sus pares", never a judgment about the trips.
 export function travelComparison(travel: DeputyTravel): string {
-  if (!travel.eligible) return `No comparado (menos de ${MIN_MONTHS} meses en el cargo)`;
-  if (!travel.band || travel.bandMedian === null) return 'No comparado (sin distancia estimada)';
-  if (travel.flagged) {
-    return `Viaja bastante más que sus pares a distancia similar (mediana ${formatNumber(travel.bandMedian)} por mes)`;
+  switch (travelStatus(travel)) {
+    case 'no-comparado': return `No comparado (menos de ${MIN_MONTHS} meses en el cargo)`;
+    case 'sin-tramos': return 'Sin tramos registrados en el período';
+    case 'sin-distancia': return 'No comparado (sin distancia estimada)';
+    case 'viaja-mas': return `Viaja bastante más que sus pares a distancia similar (mediana ${formatNumber(travel.bandMedian!)} por mes)`;
+    case 'en-linea': return 'En línea con sus pares a distancia similar';
   }
-  return 'En línea con sus pares a distancia similar';
 }
 
 const HOME_SOURCE = { ruta: 'ruta más frecuente', capital: 'capital de la provincia' } as const;

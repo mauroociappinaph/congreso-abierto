@@ -1,5 +1,6 @@
 // Maps legislators to what the card and the detail dialog display.
 import { formatArs, type Deputy, type PaySummary, type Senator } from './legislators.ts';
+import { MIN_MONTHS, type DeputyTravel } from './viajes.ts';
 
 export type Field = [label: string, value: string];
 
@@ -19,7 +20,25 @@ export interface ChamberItem extends ClientItem {
 
 const orNa = (value: string) => value || 'N/A';
 
-export function toDeputyItem(deputy: Deputy, pay: PaySummary): ChamberItem {
+export const formatNumber = (value: number) => value.toLocaleString('es-AR', { maximumFractionDigits: 2 });
+
+// S4: only "viaja (bastante) más que sus pares", never a judgment about the trips.
+export function travelComparison(travel: DeputyTravel): string {
+  if (!travel.eligible) return `No comparado (menos de ${MIN_MONTHS} meses en el cargo)`;
+  if (!travel.region || travel.regionMedian === null) return 'No comparado (distrito sin región)';
+  if (travel.flagged) {
+    return `Viaja bastante más que sus pares de ${travel.region} (mediana ${formatNumber(travel.regionMedian)} por mes)`;
+  }
+  return `En línea con su región (${travel.region})`;
+}
+
+const travelFields = (travel: DeputyTravel): Field[] => [
+  ['Tramos (últimos 4 semestres)', formatNumber(travel.legs)],
+  ['Tramos por mes', formatNumber(travel.legsPerMonth)],
+  ['Comparación regional', travelComparison(travel)],
+];
+
+export function toDeputyItem(deputy: Deputy, pay: PaySummary, travel?: DeputyTravel): ChamberItem {
   return {
     id: deputy.id,
     nombre: deputy.nombre,
@@ -42,6 +61,7 @@ export function toDeputyItem(deputy: Deputy, pay: PaySummary): ChamberItem {
       ['Gastos de representación', formatArs(pay.gastosRepresentacion)],
       ['Total bruto', formatArs(pay.bruto)],
       ['Neto estimado', formatArs(pay.neto)],
+      ...(travel ? travelFields(travel) : []),
     ],
     detailNote: 'Montos generales publicados por la Cámara; no son gastos individuales.',
   };

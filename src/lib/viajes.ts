@@ -1,6 +1,6 @@
 import { normalizeText, type Row } from './legislators.ts';
 
-export type Region = 'AMBA' | 'Centro' | 'Cuyo' | 'NOA' | 'NEA' | 'Patagonia';
+export type Region = 'CABA' | 'Buenos Aires' | 'Centro' | 'Cuyo' | 'NOA' | 'NEA' | 'Patagonia';
 
 export interface TripRow {
   period: string;
@@ -114,8 +114,10 @@ export function normalizeTripRows(rows: Row[]): TripRow[] {
   return result;
 }
 
+// CABA and Buenos Aires province are separate peers: a deputy from Mar del Plata travels far more than one from CABA.
 const REGIONS: Record<Region, string[]> = {
-  AMBA: ['ciudad de buenos aires', 'buenos aires'],
+  CABA: ['ciudad de buenos aires'],
+  'Buenos Aires': ['buenos aires'],
   Centro: ['cordoba', 'santa fe', 'entre rios', 'la pampa'],
   Cuyo: ['mendoza', 'san juan', 'san luis'],
   NOA: ['jujuy', 'salta', 'tucuman', 'catamarca', 'santiago del estero', 'la rioja'],

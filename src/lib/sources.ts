@@ -12,6 +12,8 @@ import {
   type Row,
   type Senator,
 } from './legislators.ts';
+import { buildTravelReport, type TravelReport } from './travel-report.ts';
+import { normalizeTripRows } from './viajes.ts';
 
 const HCDN_API = 'https://datos.hcdn.gob.ar/api/3/action/package_show?id=';
 export const SENATE_API = 'https://www.senado.gob.ar/micrositios/DatosAbiertos/ExportarListadoSenadores/json';
@@ -22,14 +24,16 @@ async function fetchText(url: string): Promise<string> {
   return response.text();
 }
 
+async function csvResourceList(packageId: string): Promise<{ name: string; url: string }[]> {
+  const data = JSON.parse(await fetchText(HCDN_API + packageId));
+  return (data.result.resources as { name: string; format?: string; url: string }[])
+    .filter(r => (r.format ?? '').toUpperCase() === 'CSV')
+    .map(({ name, url }) => ({ name, url }));
+}
+
 // Resource URLs change with every dataset version, so resolve them by name.
 async function csvResources(packageId: string): Promise<Record<string, string>> {
-  const data = JSON.parse(await fetchText(HCDN_API + packageId));
-  const urls: Record<string, string> = {};
-  for (const r of data.result.resources as { name: string; format?: string; url: string }[]) {
-    if ((r.format ?? '').toUpperCase() === 'CSV') urls[r.name] = r.url;
-  }
-  return urls;
+  return Object.fromEntries((await csvResourceList(packageId)).map(r => [r.name, r.url]));
 }
 
 export async function loadDeputies(): Promise<Deputy[]> {
@@ -68,6 +72,24 @@ export async function loadSenators(): Promise<SenatorsData> {
     console.warn(`[senado] live API failed (${(error as Error).message}); using snapshot from ${snapshot.fecha}`);
     return { senators: (snapshot.rows as Row[]).map(normalizeSenator).sort(byName), snapshotDate: snapshot.fecha };
   }
+}
+
+// Downloads every CSV of the dataset: the window is chosen by the periods inside the files, not by their names.
+// Any failure stops the build, so the Viajes tab is never published empty.
+export async function loadTravel(deputies: Deputy[]): Promise<TravelReport> {
+  const resources = await csvResourceList('viajes-nacionales');
+  if (resources.length === 0) throw new Error('HCDN: dataset "viajes-nacionales" has no CSV resources');
+  const files = [];
+  for (let i = 0; i < resources.length; i += 4) {
+    files.push(...(await Promise.all(resources.slice(i, i + 4).map(async ({ name, url }) => {
+      try {
+        return normalizeTripRows(parseCsv(await fetchText(url)));
+      } catch (error) {
+        throw new Error(`HCDN: could not load viajes resource "${name}": ${(error as Error).message}`);
+      }
+    }))));
+  }
+  return buildTravelReport(deputies, files);
 }
 
 function byName(a: { nombre: string }, b: { nombre: string }) {

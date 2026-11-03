@@ -9,6 +9,7 @@ import {
   regionOf,
   type Leg,
 } from './viajes.ts';
+import type { Row } from './legislators.ts';
 
 test('parsePeriod reads month abbreviations with a two-digit year', () => {
   assert.equal(parsePeriod('jun-26'), '2026-06');
@@ -51,7 +52,7 @@ test('normalizeTripRows resolves PERIODO, DIPUTADOS, TIPO_SOLICITUD and PROVINCI
 });
 
 test('normalizeTripRows resolves lowercase and dotted header variants', () => {
-  const rows = [
+  const rows: Row[] = [
     { mes: '2025-06-01', diputado: 'BECERRA MONICA MARIELA', 'TIPO.SOLICITUD': 'aereo', origen: 'CABA', destino: 'SAN JUAN' },
     { periodo: '2022 - ENERO', diputado: 'BORGATTA ALEJANDRINA BELÉN', tipo_solicitud: 'AEREO', origen: 'CABA', destino: 'RESISTENCIA' },
   ];
@@ -70,9 +71,9 @@ test('normalizeTripRows drops rows without a parsable period or a name', () => {
   assert.deepEqual(normalizeTripRows(rows).map(r => r.nombre), ['Y']);
 });
 
-test('regionOf maps every district of the six regions accent-insensitively', () => {
+test('regionOf maps every district of the seven regions accent-insensitively', () => {
   const expected: Record<string, string> = {
-    'CIUDAD DE BUENOS AIRES': 'AMBA', 'Buenos Aires': 'AMBA',
+    'CIUDAD DE BUENOS AIRES': 'CABA', 'Buenos Aires': 'Buenos Aires',
     'CÓRDOBA': 'Centro', 'SANTA FE': 'Centro', 'Entre Ríos': 'Centro', 'LA PAMPA': 'Centro',
     'MENDOZA': 'Cuyo', 'SAN JUAN': 'Cuyo', 'SAN LUIS': 'Cuyo',
     'JUJUY': 'NOA', 'SALTA': 'NOA', 'TUCUMAN': 'NOA', 'Tucumán': 'NOA', 'CATAMARCA': 'NOA', 'SANTIAGO DEL ESTERO': 'NOA', 'LA RIOJA': 'NOA',
@@ -131,7 +132,7 @@ test('analyzeTravel flags an outlier only against its own region (regional fairn
   assert.equal(byId.amba5.regionMedian, 0.33);
   assert.equal(byId.amba5.flagged, true);
   assert.ok((byId.amba5.z ?? 0) > 3.5);
-  // Every Patagonia deputy travels more than the AMBA outlier, yet none is flagged.
+  // Every Patagonia deputy travels more than the CABA outlier, yet none is flagged.
   for (let i = 0; i < patagonia.length; i++) {
     assert.ok(byId[`pat${i}`].legsPerMonth > byId.amba5.legsPerMonth);
     assert.equal(byId[`pat${i}`].flagged, false);
@@ -141,9 +142,25 @@ test('analyzeTravel flags an outlier only against its own region (regional fairn
   assert.equal(byId.amba0.legsPerMonth, 0);
   assert.equal(byId.amba0.flagged, false);
   assert.deepEqual(regions, [
-    { region: 'AMBA', deputies: 6, medianLegsPerMonth: 0.33 },
+    { region: 'CABA', deputies: 6, medianLegsPerMonth: 0.33 },
     { region: 'Patagonia', deputies: 5, medianLegsPerMonth: 7 },
   ]);
+});
+
+test('analyzeTravel does not compare Buenos Aires province deputies with CABA deputies', () => {
+  const caba = [0, 1, 1, 2, 2];          // per month: 0, .17, .17, .33, .33
+  const provincia = [20, 24, 30, 36, 40]; // per month: 3.33, 4, 5, 6, 6.67
+  const deputies = [
+    ...caba.map((_, i) => ({ id: `caba${i}`, lugar: 'CIUDAD DE BUENOS AIRES', fechaInicio: '10/12/2023' })),
+    ...provincia.map((_, i) => ({ id: `ba${i}`, lugar: 'BUENOS AIRES', fechaInicio: '10/12/2023' })),
+  ];
+  const legs = [...caba.flatMap((n, i) => legsFor(`caba${i}`, n)), ...provincia.flatMap((n, i) => legsFor(`ba${i}`, n))];
+  const { deputies: stats } = analyzeTravel(deputies, legs, window6);
+  for (const s of stats.filter(s => s.deputyId.startsWith('ba'))) {
+    assert.equal(s.region, 'Buenos Aires');
+    assert.equal(s.regionMedian, 5);
+    assert.equal(s.flagged, false);
+  }
 });
 
 test('analyzeTravel rounds legsPerMonth, regionMedian and z to 2 decimals', () => {

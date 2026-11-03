@@ -1,0 +1,282 @@
+---
+// Viajes tab: methodology, regional medians, the per-deputy table and the linkage quality (S5).
+// The table is rendered at build time; the script only filters rows.
+import { normalizeText, type Deputy } from '../lib/legislators.ts';
+import { semesterLabel, type TravelReport } from '../lib/travel-report.ts';
+import { MIN_MONTHS, Z_THRESHOLD } from '../lib/viajes.ts';
+import { formatNumber } from '../lib/view.ts';
+
+interface Props {
+  report: TravelReport;
+  deputies: Deputy[];
+}
+
+const { report, deputies } = Astro.props;
+const { quality } = report;
+const byId = new Map(deputies.map(d => [d.id, d]));
+const rows = report.analysis.deputies
+  .map(travel => ({ travel, deputy: byId.get(travel.deputyId)! }))
+  .sort((a, b) => b.travel.legsPerMonth - a.travel.legsPerMonth || a.deputy.nombre.localeCompare(b.deputy.nombre, 'es'));
+const flaggedCount = rows.filter(r => r.travel.flagged).length;
+const pct = (value: number) => `${formatNumber(value)} %`;
+const orDash = (value: number | null) => (value === null ? '—' : formatNumber(value));
+---
+
+<div class="travel" data-travel>
+  <div class="box method">
+    <h2>Viajes nacionales: cómo se compara</h2>
+    <p>
+      Contamos los tramos de viaje (cada vuelo o pasaje terrestre) que la Cámara publica para cada diputado/a entre el
+      {semesterLabel(report.semesters[0])} y el {report.latestLabel}, y los dividimos por los meses en el cargo dentro de ese período: así, quien asumió hace poco no
+      queda en desventaja.
+    </p>
+    <p>
+      No es lo mismo viajar desde Jujuy que desde la Ciudad de Buenos Aires, por eso cada diputado/a se compara solo con
+      los de su región. Medimos cuánto se aparta de la mediana de su región usando el desvío absoluto mediano, una medida
+      robusta: un par de casos extremos no mueven la comparación. Cuando ese puntaje (z robusto) supera {formatNumber(Z_THRESHOLD)}
+      decimos que <strong>viaja bastante más que sus pares</strong>. Quienes tienen menos de {MIN_MONTHS} meses en el cargo
+      dentro del período se muestran, pero no se comparan.
+    </p>
+    <p class="note">
+      Más tramos no implica irregularidad: depende de la distancia, la agenda y los traslados a la provincia.
+    </p>
+  </div>
+
+  <h3>Mediana por región</h3>
+  <table class="regions">
+    <thead><tr><th>Región</th><th>Diputados comparados</th><th>Mediana de tramos por mes</th></tr></thead>
+    <tbody>
+      {
+        report.analysis.regions.map(r => (
+          <tr><td>{r.region}</td><td>{r.deputies}</td><td>{formatNumber(r.medianLegsPerMonth)}</td></tr>
+        ))
+      }
+    </tbody>
+  </table>
+
+  <h3>Tramos por diputado/a</h3>
+  <div class="controls">
+    <input type="search" class="search-box" placeholder="Buscar por nombre o distrito..." aria-label="Buscar por nombre o distrito" />
+    <label><input type="checkbox" class="only-flagged" /> Solo destacados ({flaggedCount})</label>
+  </div>
+  <div class="result-count" aria-live="polite">{rows.length} de {rows.length} diputados</div>
+  <div class="table-wrap">
+    <table class="deputies">
+      <thead>
+        <tr>
+          <th>Nombre</th><th>Distrito</th><th>Región</th><th>Tramos</th><th>Meses</th><th>Tramos por mes</th>
+          <th>Mediana regional</th><th>z robusto</th><th>Comparación</th><th>Ruta más frecuente</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map(({ travel, deputy }) => (
+            <tr data-search={normalizeText(`${deputy.nombre} ${deputy.lugar}`)} data-flagged={String(travel.flagged)}>
+              <td>{deputy.nombre}</td>
+              <td>{deputy.lugar}</td>
+              <td>{travel.region ?? '—'}</td>
+              <td class="num">{travel.legs}</td>
+              <td class="num">{travel.months}</td>
+              <td class="num">{formatNumber(travel.legsPerMonth)}</td>
+              <td class="num">{orDash(travel.regionMedian)}</td>
+              <td class="num">{orDash(travel.z)}</td>
+              <td>
+                {travel.flagged ? (
+                  <span class="badge">Viaja bastante más que sus pares</span>
+                ) : travel.eligible ? (
+                  ''
+                ) : (
+                  <span class="muted">No comparado</span>
+                )}
+              </td>
+              <td class="route">
+                {travel.topRoute ? `${travel.topRoute.origen} ↔ ${travel.topRoute.destino} (${travel.topRoute.count})` : '—'}
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box quality">
+    <h3>Calidad del emparejamiento ({report.windowLabel})</h3>
+    <p>
+      Los viajes vienen con el nombre completo (por ejemplo "CHICONI RICARDO ABEL") y la composición de la Cámara con el
+      nombre corto ("Chiconi, Abel"). Los emparejamos comparando palabra por palabra con una medida de parecido
+      (Jaro-Winkler) y un puntaje de confianza; los casos dudosos se informan y no se asignan.
+    </p>
+    <ul>
+      <li>
+        <strong>{pct(quality.latest.percent)}</strong> de los nombres emparejados automáticamente en el {report.latestLabel}
+        ({quality.latest.matched} emparejados, {quality.latest.doubtful} dudosos, {quality.latest.unmatched} sin emparejar de
+        {quality.latest.total}).
+      </li>
+      <li>
+        <strong>{pct(quality.overall.percent)}</strong> en todo el período ({quality.overall.matched} emparejados,
+        {quality.overall.doubtful} dudosos, {quality.overall.unmatched} sin emparejar de {quality.overall.total}).
+      </li>
+      <li>
+        {pct(quality.legs.percent)} de los tramos quedaron asignados a un diputado/a ({formatNumber(quality.legs.linked)} de
+        {formatNumber(quality.legs.total)}).
+      </li>
+    </ul>
+    <p class="note">
+      Los nombres sin emparejar son en su mayoría exdiputados: se compara contra la composición actual de la Cámara.
+    </p>
+    {
+      quality.doubtful.length > 0 && (
+        <details>
+          <summary>Ver los casos dudosos ({quality.doubtful.length}, por nombre y provincia)</summary>
+          <ul>
+            {quality.doubtful.map(d => (
+              <li>
+                {d.nombre}
+                {d.provincia && ` (${d.provincia})`}: posibles{' '}
+                {d.candidates.map(c => `${c.nombre} (${c.lugar}, ${formatNumber(c.confidence)})`).join('; ')}
+              </li>
+            ))}
+          </ul>
+        </details>
+      )
+    }
+  </div>
+</div>
+
+<script>
+  import { normalizeText } from '../lib/legislators.ts';
+
+  for (const root of document.querySelectorAll<HTMLElement>('[data-travel]')) {
+    const search = root.querySelector<HTMLInputElement>('.search-box')!;
+    const onlyFlagged = root.querySelector<HTMLInputElement>('.only-flagged')!;
+    const count = root.querySelector('.result-count')!;
+    const rows = [...root.querySelectorAll<HTMLElement>('tbody tr[data-search]')];
+
+    const update = () => {
+      const q = normalizeText(search.value).trim();
+      let visible = 0;
+      for (const row of rows) {
+        row.hidden = (onlyFlagged.checked && row.dataset.flagged !== 'true') || (!!q && !row.dataset.search!.includes(q));
+        if (!row.hidden) visible++;
+      }
+      count.textContent = `${visible} de ${rows.length} diputados`;
+    };
+
+    search.addEventListener('input', update);
+    onlyFlagged.addEventListener('change', update);
+  }
+</script>
+
+<style>
+  .box {
+    border: 1px solid #d6e4fb;
+    background: #f3f8ff;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+
+  .box p {
+    margin: 0 0 8px;
+  }
+
+  h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+  }
+
+  h3 {
+    font-size: 16px;
+    margin: 0 0 8px;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+
+  .regions {
+    max-width: 520px;
+  }
+
+  th,
+  td {
+    border-bottom: 1px solid #eee;
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    background: #f7f7f7;
+  }
+
+  .num {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .route {
+    font-size: 12px;
+    color: #555;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  tr[hidden] {
+    display: none;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 14px;
+  }
+
+  .search-box {
+    flex: 1;
+    min-width: 220px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .result-count {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+  }
+
+  .badge {
+    background: #fff3e0;
+    color: #a65b00;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .muted {
+    color: #888;
+    font-size: 12px;
+  }
+
+  .quality ul {
+    margin: 0 0 8px;
+    padding-left: 20px;
+  }
+
+  details ul {
+    margin-top: 6px;
+    font-size: 13px;
+  }
+</style>

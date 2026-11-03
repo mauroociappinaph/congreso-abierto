@@ -28,8 +28,8 @@ Read until `## Log`. Technical artifacts in English; UI copy in Spanish (Argenti
 | ID | Specs | Route | Status | Commit |
 | --- | --- | --- | --- | --- |
 | T0 | — | inline | done | baseline |
-| T1 | S1, S2, S6 | worker | pending | |
-| T2 | S3 | worker | pending | |
+| T1 | S1, S2, S6 | worker + parent | done | `feat(viajes): link trip names` |
+| T2 | S3 | worker | done | see git log `feat(viajes): normalize trip files` |
 | T3 | S3, S4, S5, S6 | worker | pending | |
 
 - T0: commit the existing Astro site as the baseline on branch `feat/viajes`.
@@ -41,3 +41,6 @@ Read until `## Log`. Technical artifacts in English; UI copy in Spanish (Argenti
 
 - L1 (user, verbatim): "Hace la 1 y 2"
 - L2 (parent evidence): latest semester has 217 distinct trip names; only 85 match the composition by exact token set, because the composition uses short names (`Chiconi, Abel`) and the trips full names (`CHICONI RICARDO ABEL`). Votaciones nominales stop in January 2020, so they are out of scope.
+- L3 (parent evidence, T1 first pass on real data): 1S2026 213 matched / 1 doubtful / 3 unmatched. Older semesters showed defects: surname matched against a trip given name (`BARLETTA MARIO DOMINGO` → `Marino, Juan`), former deputies sharing a surname reported doubtful instead of unmatched (`AGUIRRE MANUEL IGNACIO` → `Aguirre, Hilda`), quoted nicknames (`Alí, Ernesto "Pipi"`), mojibake in source (`BELÃ‰N`, `BRÃœGGE`, `BELA?N`). Fixes: surname tokens must sit in the first positions of the trip name; no given-name match → unmatched; drop nicknames; repair mojibake.
+- L4 (user, verbatim): "Hay que buscar mas apis oficiales o con datos reales para nutrir nuestra app." → read-only source survey delegated; new sources need the user's pick before implementation.
+- L5 (parent decision): S1 "aunque cambien el orden" means the composition's "Apellido, Nombres" versus the trips' "APELLIDO NOMBRES", and given names in any order; surnames come first in every real trip file, so surname-last names stay unmatched. PROVINCIA (2024 files) narrows candidates to its district, breaking same-name ties. Real result after T1: 1S2026 214 matched / 0 doubtful / 3 unmatched; remaining doubtful rows elsewhere are unrecoverable source mojibake (`JOSA?`, `INA?S`, `RAAsL`) and one same-name case, reported per S1.

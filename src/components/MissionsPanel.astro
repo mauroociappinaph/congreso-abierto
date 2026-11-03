@@ -1,0 +1,85 @@
+---
+// Viajes tab: official missions abroad per deputy in office, with viáticos per currency and the linkage quality.
+import QualityBox from './QualityBox.astro';
+import SourceLine from './SourceLine.astro';
+import type { Deputy } from '../lib/legislators.ts';
+import type { MissionsData } from '../lib/sources.ts';
+import { DATASETS, formatDate, formatMoney, formatNumber } from '../lib/view.ts';
+
+interface Props {
+  missions: MissionsData;
+  deputies: Deputy[];
+}
+
+const { missions, deputies } = Astro.props;
+const byId = new Map(deputies.map(d => [d.id, d]));
+const rows = missions.deputies
+  .flatMap(own => {
+    const deputy = byId.get(own.deputyId);
+    return deputy ? [{ deputy, own }] : [];
+  })
+  .sort((a, b) => b.own.count - a.own.count || a.deputy.nombre.localeCompare(b.deputy.nombre, 'es'));
+const { names } = missions.quality;
+---
+
+<div class="missions">
+  <h2>Misiones oficiales al exterior</h2>
+  <p>
+    La Cámara publica las misiones oficiales con su motivo, la institución que invita y los viáticos. Entre el
+    {formatDate(missions.period.desde)} y el {formatDate(missions.period.hasta)} hay {formatNumber(missions.missions)} registros
+    de participación; {rows.length} diputados/as en funciones hoy tienen al menos una misión.
+  </p>
+
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr><th>Nombre</th><th>Distrito</th><th class="num">Misiones</th><th>Lugares</th><th>Viáticos otorgados</th><th>Viáticos consumidos</th></tr>
+      </thead>
+      <tbody>
+        {
+          rows.map(({ deputy, own }) => (
+            <tr>
+              <td><a href={`/diputados/${deputy.id}/`}>{deputy.nombre}</a></td>
+              <td>{deputy.lugar}</td>
+              <td class="num">{own.count}</td>
+              <td>{own.lugares.join(', ') || '—'}</td>
+              <td>{formatMoney(own.viaticosOtorgados)}</td>
+              <td>{formatMoney(own.viaticosConsumidos)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="note">
+    Los viáticos se suman por moneda, tal como los publica la Cámara; «Sin datos» indica que no se publicó el monto. Una
+    misión oficial es una actividad institucional; el número de misiones no implica irregularidad.
+  </p>
+  <SourceLine links={[DATASETS.misiones]} period={missions.period} />
+
+  <QualityBox
+    title="Calidad del emparejamiento de las misiones"
+    quality={missions.quality}
+    period={missions.period}
+    rowsLabel="registros de participación"
+    against="diputados/as en funciones durante el período (actuales y anteriores)"
+  >
+    <p class="note">
+      {formatNumber(names.matchedFormer)} nombres corresponden a exdiputados/as: cuentan como emparejados, pero no aparecen en la
+      tabla, que muestra solo a quienes están en funciones hoy.
+    </p>
+  </QualityBox>
+</div>
+
+<style>
+  .missions {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+  }
+
+  h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+  }
+</style>

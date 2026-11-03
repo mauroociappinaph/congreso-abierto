@@ -1,0 +1,148 @@
+---
+// One page per senator in office: votes in the official actas and Senate-origin bills.
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import LegislatorLayout from '../../layouts/LegislatorLayout.astro';
+import BillsSummary from '../../components/BillsSummary.astro';
+import SourceLine from '../../components/SourceLine.astro';
+import { buildSenatorProfiles } from '../../lib/legislator-profile.ts';
+import { loadBills, loadDeputies, loadSenateVotes, loadSenators } from '../../lib/sources.ts';
+import { DATASETS, formatDate, formatNumber, formatShare, STAGE_LABELS } from '../../lib/view.ts';
+
+export const getStaticPaths = (async () => {
+  const [deputies, { senators }] = await Promise.all([loadDeputies(), loadSenators()]);
+  const [votes, bills] = await Promise.all([loadSenateVotes(senators), loadBills(deputies, senators)]);
+  const profiles = buildSenatorProfiles(senators, { votes: votes.summary.senators, bills: bills.byLegislator });
+  return senators.map(senator => ({ params: { id: senator.id }, props: { senator, profile: profiles.get(senator.id)! } }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { senator, profile } = Astro.props as Props;
+const deputies = await loadDeputies();
+const { senators, snapshotDate } = await loadSenators();
+const [votesData, billsData] = await Promise.all([loadSenateVotes(senators), loadBills(deputies, senators)]);
+const { votes, bills } = profile;
+const blocs = votes ? votesData.summary.blocs.filter(b => votes.bloques.includes(b.bloque)) : [];
+---
+
+<LegislatorLayout
+  title={`${senator.nombre} - Senado`}
+  chamber="senadores"
+  nombre={senator.nombre}
+  subtitle={`Senador/a nacional por ${senator.lugar || 'N/A'} · ${senator.bloque}`}
+  foto={senator.foto}
+>
+  <section>
+    <h2>Datos del cargo</h2>
+    <dl class="facts">
+      <div><dt>Provincia</dt><dd>{senator.lugar || 'N/A'}</dd></div>
+      <div><dt>Bloque</dt><dd>{senator.bloque}</dd></div>
+      <div><dt>Partido o alianza</dt><dd>{senator.partido || 'N/A'}</dd></div>
+      <div><dt>Mandato</dt><dd>{senator.mandato || 'N/A'}</dd></div>
+      <div><dt>Email</dt><dd>{senator.email || 'N/A'}</dd></div>
+      <div><dt>Teléfono</dt><dd>{senator.telefono || 'N/A'}</dd></div>
+    </dl>
+    <p class="note">El Senado no publica dietas ni gastos en sus datos abiertos.</p>
+    <SourceLine
+      links={[DATASETS.senadores]}
+      periodLabel={snapshotDate ? `copia del listado oficial al ${snapshotDate}` : 'listado vigente al generar el sitio'}
+    />
+  </section>
+
+  <section>
+    <h2>Votaciones</h2>
+    {votesData.stale && (
+      <p class="note">
+        El sitio del Senado no respondió al generar esta página; se usan las actas guardadas al {formatDate(votesData.cacheDate)}.
+      </p>
+    )}
+    {
+      votes ? (
+        <>
+          <dl class="facts">
+            <div><dt>Actas en el cargo</dt><dd>{formatNumber(votes.actas)}</dd></div>
+            <div><dt>Afirmativo</dt><dd>{formatNumber(votes.afirmativo)}</dd></div>
+            <div><dt>Negativo</dt><dd>{formatNumber(votes.negativo)}</dd></div>
+            <div><dt>Abstención</dt><dd>{formatNumber(votes.abstencion)}</dd></div>
+            <div><dt>Ausente</dt><dd>{formatNumber(votes.ausente)}</dd></div>
+            {votes.otros > 0 && <div><dt>Otros registros</dt><dd>{formatNumber(votes.otros)}</dd></div>}
+            <div><dt>Asistencia</dt><dd>{formatShare(votes.asistencia)}</dd></div>
+            <div>
+              <dt>Lealtad al bloque</dt>
+              <dd>{formatShare(votes.lealtadBloque)}</dd>
+            </div>
+          </dl>
+          <p>
+            <strong>Asistencia</strong> = actas en que no figura ausente, sobre {formatNumber(votes.actas)} actas en el cargo.
+            <strong>Lealtad al bloque</strong> = votos iguales a la mayoría de su bloque en esa acta, sobre
+            {formatNumber(votes.lealtadActas)} actas en las que votó y su bloque tuvo una mayoría clara.
+          </p>
+          <p class="note">
+            El acta registra «ausente» sin indicar el motivo (licencia, misión oficial u otro). Son estadísticas descriptivas:
+            no evalúan el desempeño.
+          </p>
+          {blocs.length > 0 && (
+            <>
+              <h3>Cohesión de su bloque</h3>
+              <table class="data-table">
+                <thead><tr><th>Bloque</th><th class="num">Senadores</th><th class="num">Actas</th><th class="num">Índice de Rice medio</th></tr></thead>
+                <tbody>
+                  {blocs.map(b => (
+                    <tr>
+                      <td>{b.bloque}</td>
+                      <td class="num">{b.senators}</td>
+                      <td class="num">{b.actas}</td>
+                      <td class="num">{b.riceMedio === null ? '—' : formatNumber(b.riceMedio)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p class="note">
+                Índice de Rice = |afirmativos − negativos| / (afirmativos + negativos) del bloque en cada acta, promediado: 1 es
+                un bloque que vota todo junto, 0 uno dividido a la mitad. Con uno o dos senadores el índice dice poco.
+              </p>
+            </>
+          )}
+        </>
+      ) : (
+        <p>Sin votos registrados a su nombre en las actas del período.</p>
+      )
+    }
+    <SourceLine links={[DATASETS.actas]} period={votesData.period} />
+  </section>
+
+  {
+    bills && (
+      <section>
+        <h2>Proyectos iniciados en el Senado</h2>
+        <p>{formatNumber(bills.total)} proyectos como primer firmante, según el registro de la Cámara de Diputados.</p>
+        <BillsSummary bills={bills} />
+        <h3>Últimos proyectos</h3>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Fecha</th><th>Expediente</th><th>Tipo</th><th>Título</th><th>Etapa registrada</th></tr></thead>
+            <tbody>
+              {bills.recent.map(b => (
+                <tr>
+                  <td>{formatDate(b.fecha)}</td>
+                  <td>{b.expediente || '—'}</td>
+                  <td>{b.tipo}</td>
+                  <td>{b.titulo}</td>
+                  <td>{STAGE_LABELS[b.stage]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <SourceLine links={[DATASETS.proyectos, DATASETS.movimientos]} period={billsData.period} />
+      </section>
+    )
+  }
+</LegislatorLayout>
+
+<style>
+  h3 {
+    font-size: 15px;
+    margin: 12px 0 8px;
+  }
+</style>

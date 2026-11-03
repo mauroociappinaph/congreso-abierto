@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { toDeputyItem, toSenatorItem } from './view.ts';
+import { cargoLabel, formatDate, formatMoney, formatShare, mergeBills, toDeputyItem, toSenatorItem } from './view.ts';
 
 const deputy = {
   id: 'dip-a', nombre: 'Aguirre, Hilda', lugar: 'LA RIOJA', bloque: 'UXP',
@@ -23,6 +23,7 @@ test('toDeputyItem shows the chamber-wide pay on the card and in the detail', ()
   ]);
   assert.equal(item.detailNote, 'Montos generales publicados por la Cámara; no son gastos individuales.');
   assert.equal(item.foto, '');
+  assert.equal(item.url, '/diputados/dip-a/');
 });
 
 test('toDeputyItem adds the travel comparison to the detail when given', () => {
@@ -63,4 +64,41 @@ test('toSenatorItem shows no pay and fills empty fields with N/A', () => {
   ]);
   assert.equal(item.detailNote, 'El Senado no publica dietas ni gastos en sus datos abiertos.');
   assert.equal(item.foto, 'https://x/1.gif');
+  assert.equal(item.url, '/senadores/sen-1/');
+});
+
+test('formatDate shows ISO days as dd/mm/aaaa and N/A when missing', () => {
+  assert.equal(formatDate('2024-02-23'), '23/02/2024');
+  assert.equal(formatDate(null), 'N/A');
+  assert.equal(formatDate(''), 'N/A');
+});
+
+test('formatShare shows a 0-1 share as a percent with one decimal', () => {
+  assert.equal(formatShare(0.9356), '93,6 %');
+  assert.equal(formatShare(1), '100 %');
+  assert.equal(formatShare(null), 'N/A');
+});
+
+test('formatMoney lists each currency with its total, by currency code', () => {
+  assert.equal(formatMoney({ USD: 1200.5, ARS: 50000 }), 'ARS 50.000; USD 1.200,5');
+  assert.equal(formatMoney({}), 'Sin datos');
+});
+
+test('cargoLabel capitalizes the committee role', () => {
+  assert.equal(cargoLabel('vicepresidente 1'), 'Vicepresidente 1');
+  assert.equal(cargoLabel('integrante'), 'Integrante');
+});
+
+test('mergeBills adds totals, types and stages of several authors', () => {
+  const stages = (p: number, s: number) => ({ presentado: p, 'en comisión': 0, 'con dictamen': 0, 'media sanción': 0, sancionado: s });
+  const merged = mergeBills([
+    { total: 3, byTipo: { PROYECTO: 2, RESOLUCION: 1 }, stages: stages(2, 1), recent: [] },
+    { total: 2, byTipo: { PROYECTO: 1, DECLARACION: 1 }, stages: stages(1, 1), recent: [] },
+  ]);
+  assert.deepEqual(merged, {
+    total: 5,
+    byTipo: { PROYECTO: 3, RESOLUCION: 1, DECLARACION: 1 },
+    stages: stages(3, 2),
+    recent: [],
+  });
 });

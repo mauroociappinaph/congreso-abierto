@@ -10,6 +10,7 @@
   <h2 class="detail-title" id="detail-title"></h2>
   <dl class="detail-fields"></dl>
   <p class="note detail-note"></p>
+  <a class="detail-link" href="/">Ver ficha completa</a>
 </dialog>
 
 <script>
@@ -63,6 +64,13 @@
   }
 
   .detail-fields :global(dt) {
+    font-weight: bold;
+  }
+
+  .detail-link {
+    display: inline-block;
+    margin-top: 12px;
+    color: #1a73e8;
     font-weight: bold;
   }
 

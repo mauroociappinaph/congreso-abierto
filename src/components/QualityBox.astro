@@ -1,0 +1,80 @@
+---
+// Linkage quality of one source, like the Viajes box: names matched to legislators in office today, to former
+// ones, doubtful (never assigned) and unmatched, and the share of rows assigned.
+import type { LinkQuality } from '../lib/link-policy.ts';
+import type { SourcePeriod } from '../lib/sources.ts';
+import { formatDate, formatNumber } from '../lib/view.ts';
+
+interface Props {
+  title: string;
+  quality: LinkQuality;
+  period: SourcePeriod;
+  // what one row is, plural: "proyectos", "votos", "misiones"
+  rowsLabel: string;
+  // the people linked against, e.g. "diputados/as en funciones durante el período"
+  against: string;
+}
+
+const LIST_LIMIT = 40;
+const { title, quality, period, rowsLabel, against } = Astro.props;
+const { names, rows } = quality;
+const unmatched = quality.unmatched.slice(0, LIST_LIMIT);
+---
+
+<div class="box quality">
+  <h3>{title} ({formatDate(period.desde)} – {formatDate(period.hasta)})</h3>
+  <p>
+    Cada nombre de la fuente se compara con los {against} con la misma medida de parecido que usamos en Viajes
+    (Jaro-Winkler y un puntaje de confianza). Los casos dudosos se informan y no se asignan.
+  </p>
+  <ul>
+    <li>
+      <strong>{formatNumber(rows.linkedPercent)} %</strong> de los {rowsLabel} quedaron asignados a una persona
+      ({formatNumber(rows.matchedCurrent + rows.matchedFormer)} de {formatNumber(rows.total)}).
+    </li>
+    <li>
+      Nombres distintos: {formatNumber(names.matchedCurrent)} en funciones hoy, {formatNumber(names.matchedFormer)} que ya
+      no están en el cargo, {formatNumber(names.doubtful)} dudosos y {formatNumber(names.unmatched)} sin emparejar, de
+      {formatNumber(names.total)}.
+    </li>
+  </ul>
+  <slot />
+  {
+    quality.doubtful.length > 0 && (
+      <details>
+        <summary>Ver los casos dudosos ({quality.doubtful.length})</summary>
+        <ul>
+          {quality.doubtful.map(d => (
+            <li>
+              {d.nombre}
+              {d.lugar && ` (${d.lugar})`}: posibles {d.candidates.map(c => `${c.nombre} (${formatNumber(c.confidence)})`).join('; ')}
+            </li>
+          ))}
+        </ul>
+      </details>
+    )
+  }
+  {
+    unmatched.length > 0 && (
+      <details>
+        <summary>Ver los nombres sin emparejar ({quality.unmatched.length})</summary>
+        <ul>
+          {unmatched.map(u => <li>{u.nombre}{u.lugar && ` (${u.lugar})`}</li>)}
+          {quality.unmatched.length > LIST_LIMIT && <li>y {quality.unmatched.length - LIST_LIMIT} más</li>}
+        </ul>
+      </details>
+    )
+  }
+</div>
+
+<style>
+  h3 {
+    font-size: 16px;
+    margin: 0 0 8px;
+  }
+
+  details ul {
+    margin-top: 6px;
+    font-size: 13px;
+  }
+</style>

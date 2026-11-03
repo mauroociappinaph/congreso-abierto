@@ -1,0 +1,191 @@
+---
+// One page per deputy in office: pay, national trips, official missions, committees and bills.
+// Every loader is memoized, so the sources are fetched once for all the pages.
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import LegislatorLayout from '../../layouts/LegislatorLayout.astro';
+import BillsSummary from '../../components/BillsSummary.astro';
+import SourceLine from '../../components/SourceLine.astro';
+import { cargoRank } from '../../lib/comisiones.ts';
+import { buildDeputyProfiles } from '../../lib/legislator-profile.ts';
+import { formatArs } from '../../lib/legislators.ts';
+import { loadBills, loadCommittees, loadDeputies, loadMissions, loadPay, loadSenators, loadTravel } from '../../lib/sources.ts';
+import { cargoLabel, DATASETS, formatDate, formatMoney, formatNumber, STAGE_LABELS, travelComparison } from '../../lib/view.ts';
+
+export const getStaticPaths = (async () => {
+  const [deputies, { senators }] = await Promise.all([loadDeputies(), loadSenators()]);
+  const [travel, committees, bills, missions] = await Promise.all([
+    loadTravel(deputies), loadCommittees(deputies), loadBills(deputies, senators), loadMissions(deputies),
+  ]);
+  const profiles = buildDeputyProfiles(deputies, { committees: committees.byDeputy, bills: bills.byLegislator, missions: missions.deputies });
+  const travelById = new Map(travel.analysis.deputies.map(t => [t.deputyId, t]));
+  return deputies.map(deputy => ({
+    params: { id: deputy.id },
+    props: { deputy, profile: profiles.get(deputy.id)!, travel: travelById.get(deputy.id) ?? null },
+  }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { deputy, profile, travel } = Astro.props as Props;
+const deputies = await loadDeputies();
+const { senators } = await loadSenators();
+const [pay, report, committeesData, billsData, missionsData] = await Promise.all([
+  loadPay(), loadTravel(deputies), loadCommittees(deputies), loadBills(deputies, senators), loadMissions(deputies),
+]);
+const committees = [...profile.committees].sort(
+  (a, b) => cargoRank(a.cargo) - cargoRank(b.cargo) || a.comision.localeCompare(b.comision, 'es'),
+);
+const { bills, missions } = profile;
+const committeesQuality = committeesData.quality;
+const names = (count: number, singular: string, plural: string) => `${count} ${count === 1 ? singular : plural}`;
+const money = (value: { amount: number; currency: string } | null) => (value ? `${value.currency} ${formatNumber(value.amount)}` : '—');
+const dateRange = (desde: string | null, hasta: string | null) =>
+  desde && hasta && desde !== hasta ? `${formatDate(desde)} al ${formatDate(hasta)}` : formatDate(desde ?? hasta);
+---
+
+<LegislatorLayout
+  title={`${deputy.nombre} - Diputados`}
+  chamber="diputados"
+  nombre={deputy.nombre}
+  subtitle={`Diputado/a nacional por ${deputy.lugar || 'N/A'} · ${deputy.bloque}`}
+>
+  <section>
+    <h2>Datos del cargo</h2>
+    <dl class="facts">
+      <div><dt>Distrito</dt><dd>{deputy.lugar || 'N/A'}</dd></div>
+      <div><dt>Bloque</dt><dd>{deputy.bloque}</dd></div>
+      <div><dt>Mandato</dt><dd>{deputy.mandato || 'N/A'}</dd></div>
+      <div><dt>Fecha de inicio</dt><dd>{deputy.fechaInicio || 'N/A'}</dd></div>
+      <div><dt>Dieta</dt><dd>{formatArs(pay.summary.dieta)}</dd></div>
+      <div><dt>Gastos de representación</dt><dd>{formatArs(pay.summary.gastosRepresentacion)}</dd></div>
+      <div><dt>Total bruto</dt><dd>{formatArs(pay.summary.bruto)}</dd></div>
+      <div><dt>Neto estimado</dt><dd>{formatArs(pay.summary.neto)}</dd></div>
+    </dl>
+    <p class="note">Montos generales publicados por la Cámara, iguales para todos los diputados; no son gastos individuales.</p>
+    <SourceLine links={[DATASETS.legisladores, DATASETS.dietas]} periodLabel="composición y montos vigentes al generar el sitio" />
+  </section>
+
+  <section>
+    <h2>Viajes nacionales</h2>
+    {
+      travel ? (
+        <>
+          <dl class="facts">
+            <div><dt>Tramos</dt><dd>{formatNumber(travel.legs)}</dd></div>
+            <div><dt>Meses en el cargo en el período</dt><dd>{travel.months}</dd></div>
+            <div><dt>Tramos por mes</dt><dd>{formatNumber(travel.legsPerMonth)}</dd></div>
+            <div><dt>Grupo por distancia</dt><dd>{travel.band ?? 'Sin distancia estimada'}</dd></div>
+          </dl>
+          <p>
+            <strong>Comparación con sus pares:</strong> {travelComparison(travel)}.
+            {travel.topRoute && ` Ruta más frecuente: ${travel.topRoute.origen} ↔ ${travel.topRoute.destino} (${travel.topRoute.count} tramos).`}
+          </p>
+          <p class="note">Más tramos no implica irregularidad: depende de la distancia, la agenda y los traslados a la provincia.</p>
+        </>
+      ) : (
+        <p>Sin tramos registrados a su nombre en el período.</p>
+      )
+    }
+    <SourceLine links={[DATASETS.viajes]} periodLabel={report.windowLabel} />
+  </section>
+
+  <section>
+    <h2>Misiones oficiales al exterior</h2>
+    {
+      missions ? (
+        <>
+          <p>
+            {missions.count} {missions.count === 1 ? 'misión' : 'misiones'}. Viáticos otorgados: {formatMoney(missions.viaticosOtorgados)}.
+            Viáticos consumidos: {formatMoney(missions.viaticosConsumidos)}.
+          </p>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr><th>Fechas</th><th>Lugar</th><th>Motivo</th><th>Institución que invita</th><th class="num">Viáticos otorgados</th><th class="num">Viáticos consumidos</th></tr>
+              </thead>
+              <tbody>
+                {missions.missions.map(m => (
+                  <tr>
+                    <td>{dateRange(m.fechaInicio, m.fechaFin)}</td>
+                    <td>{m.lugar || '—'}</td>
+                    <td>{m.motivo || '—'}</td>
+                    <td>{m.institucion || '—'}</td>
+                    <td class="num">{money(m.viaticosOtorgados)}</td>
+                    <td class="num">{money(m.viaticosConsumidos)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="note">«—» indica que la Cámara no publicó el dato.</p>
+        </>
+      ) : (
+        <p>Sin misiones oficiales registradas a su nombre en el período.</p>
+      )
+    }
+    <SourceLine links={[DATASETS.misiones]} period={missionsData.period} />
+  </section>
+
+  <section>
+    <h2>Comisiones</h2>
+    {
+      committees.length > 0 ? (
+        <table class="data-table">
+          <thead><tr><th>Comisión</th><th>Cargo</th></tr></thead>
+          <tbody>
+            {committees.map(c => <tr><td>{c.comision}</td><td>{cargoLabel(c.cargo)}</td></tr>)}
+          </tbody>
+        </table>
+      ) : (
+        <p>Sin comisiones registradas a su nombre.</p>
+      )
+    }
+    <p class="note">
+      Calidad del emparejamiento: {formatNumber(committeesQuality.rows.linkedPercent)} % de las filas de integrantes y
+      autoridades quedaron asignadas a un diputado/a ({formatNumber(committeesQuality.rows.matchedCurrent + committeesQuality.rows.matchedFormer)}
+      de {formatNumber(committeesQuality.rows.total)}); {names(committeesQuality.names.doubtful, 'nombre dudoso', 'nombres dudosos')} y
+      {names(committeesQuality.names.unmatched, 'nombre sin emparejar', 'nombres sin emparejar')} no se asignan.
+    </p>
+    <SourceLine links={[DATASETS.comisiones]} periodLabel={`composición vigente al ${formatDate(committeesData.period.hasta)}`} />
+  </section>
+
+  <section>
+    <h2>Proyectos presentados</h2>
+    {
+      bills ? (
+        <>
+          <p>{formatNumber(bills.total)} proyectos como primer firmante.</p>
+          <BillsSummary bills={bills} />
+          <h3>Últimos proyectos</h3>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Fecha</th><th>Expediente</th><th>Tipo</th><th>Título</th><th>Etapa registrada</th></tr></thead>
+              <tbody>
+                {bills.recent.map(b => (
+                  <tr>
+                    <td>{formatDate(b.fecha)}</td>
+                    <td>{b.expediente || '—'}</td>
+                    <td>{b.tipo}</td>
+                    <td>{b.titulo}</td>
+                    <td>{STAGE_LABELS[b.stage]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      ) : (
+        <p>Sin proyectos registrados como primer firmante en el período.</p>
+      )
+    }
+    <p class="note">La fuente indica un solo autor por proyecto (el primer firmante); no incluye a los cofirmantes.</p>
+    <SourceLine links={[DATASETS.proyectos, DATASETS.movimientos]} period={billsData.period} />
+  </section>
+</LegislatorLayout>
+
+<style>
+  h3 {
+    font-size: 15px;
+    margin: 0 0 8px;
+  }
+</style>

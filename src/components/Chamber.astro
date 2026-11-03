@@ -14,8 +14,8 @@ interface Props {
 const { id, items, noun, searchPlaceholder } = Astro.props;
 const bloques = countByBloque(items);
 // Only what the browser needs to filter and show details.
-const clientData = items.map(({ id, nombre, lugar, bloque, detail, foto, detailNote }) => ({
-  id, nombre, lugar, bloque, detail, foto, detailNote,
+const clientData = items.map(({ id, nombre, lugar, bloque, detail, foto, detailNote, url }) => ({
+  id, nombre, lugar, bloque, detail, foto, detailNote, url,
 }));
 ---
 

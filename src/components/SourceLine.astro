@@ -1,0 +1,19 @@
+---
+// "Fuente: ... Período: ..." line shown under every metric (S6).
+import type { SourcePeriod } from '../lib/sources.ts';
+import { formatDate, type SourceLink } from '../lib/view.ts';
+
+interface Props {
+  links: SourceLink[];
+  period?: SourcePeriod;
+  // replaces the period text, e.g. "composición vigente al 03/11/2026"
+  periodLabel?: string;
+}
+
+const { links, period, periodLabel } = Astro.props;
+const periodText = periodLabel ?? (period ? `del ${formatDate(period.desde)} al ${formatDate(period.hasta)}` : '');
+---
+
+<p class="source">
+  Fuente: {links.map((link, i) => <>{i > 0 && ', '}<a href={link.href} target="_blank" rel="noopener">{link.label}</a></>)}.{periodText && ` Período: ${periodText}.`}
+</p>

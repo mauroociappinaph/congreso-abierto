@@ -4,11 +4,17 @@ import Chamber from '../components/Chamber.astro';
 import DetailDialog from '../components/DetailDialog.astro';
 import PayPanel from '../components/PayPanel.astro';
 import TravelPanel from '../components/TravelPanel.astro';
-import { loadDeputies, loadPay, loadSenators, loadTravel } from '../lib/sources.ts';
-import { toDeputyItem, toSenatorItem } from '../lib/view.ts';
+import MissionsPanel from '../components/MissionsPanel.astro';
+import ProjectsPanel from '../components/ProjectsPanel.astro';
+import SenateVotesPanel from '../components/SenateVotesPanel.astro';
+import { loadBills, loadDeputies, loadMissions, loadPay, loadSenateVotes, loadSenators, loadTravel } from '../lib/sources.ts';
+import { DATASETS, toDeputyItem, toSenatorItem } from '../lib/view.ts';
 
 const [deputies, pay, { senators, snapshotDate }] = await Promise.all([loadDeputies(), loadPay(), loadSenators()]);
-const travel = await loadTravel(deputies);
+const [travel, missions, bills, senateVotes] = await Promise.all([
+  loadTravel(deputies), loadMissions(deputies), loadBills(deputies, senators), loadSenateVotes(senators),
+]);
+const footerSources = Object.values(DATASETS);
 const travelById = new Map(travel.analysis.deputies.map(t => [t.deputyId, t]));
 const deputyItems = deputies.map(deputy => toDeputyItem(deputy, pay.summary, travelById.get(deputy.id)));
 const senatorItems = senators.map(toSenatorItem);
@@ -26,6 +32,7 @@ const builtAt = new Date().toLocaleDateString('es-AR', { timeZone: 'America/Arge
       <button class="tab active" role="tab" aria-selected="true" aria-controls="diputados" data-tab="diputados">Diputados</button>
       <button class="tab" role="tab" aria-selected="false" aria-controls="senadores" data-tab="senadores">Senadores</button>
       <button class="tab" role="tab" aria-selected="false" aria-controls="viajes" data-tab="viajes">Viajes</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="proyectos" data-tab="proyectos">Proyectos</button>
     </div>
 
     <section class="content" id="diputados" role="tabpanel">
@@ -42,21 +49,22 @@ const builtAt = new Date().toLocaleDateString('es-AR', { timeZone: 'America/Arge
         }
       </p>
       <Chamber id="senadores" items={senatorItems} noun="senadores" searchPlaceholder="Buscar por nombre o provincia..." />
+      <SenateVotesPanel votes={senateVotes} senators={senators} />
     </section>
 
     <section class="content" id="viajes" role="tabpanel" hidden>
       <TravelPanel report={travel} deputies={deputies} />
+      <MissionsPanel missions={missions} deputies={deputies} />
+    </section>
+
+    <section class="content" id="proyectos" role="tabpanel" hidden>
+      <ProjectsPanel bills={bills} deputies={deputies} />
     </section>
   </main>
 
   <footer>
     Datos actualizados al {builtAt}. Fuentes:
-    <a href="https://datos.hcdn.gob.ar/dataset/legisladores" target="_blank" rel="noopener">HCDN - Legisladores</a>,
-    <a href="https://datos.hcdn.gob.ar/dataset/dietas-y-gastos-de-representacion-legisladores-as" target="_blank" rel="noopener">
-      HCDN - Dietas y Gastos de Representación
-    </a>,
-    <a href="https://datos.hcdn.gob.ar/dataset/viajes-nacionales" target="_blank" rel="noopener">HCDN - Viajes Nacionales</a>,
-    <a href="https://www.senado.gob.ar/micrositios/DatosAbiertos/" target="_blank" rel="noopener">Senado - Datos Abiertos</a>.
+    {footerSources.map((source, i) => <>{i > 0 && ', '}<a href={source.href} target="_blank" rel="noopener">{source.label}</a></>)}.
   </footer>
 
   <DetailDialog />

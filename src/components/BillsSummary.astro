@@ -1,0 +1,58 @@
+---
+// Bills by type and the stage funnel, with the caveat about what the movements file records (L8).
+import type { BillsProfile } from '../lib/legislator-profile.ts';
+import { formatNumber, formatShare, STAGE_LABELS } from '../lib/view.ts';
+
+interface Props {
+  bills: BillsProfile;
+}
+
+const { bills } = Astro.props;
+---
+
+<div class="bills">
+  <div class="bills-grid">
+    <table class="data-table">
+      <thead><tr><th>Tipo</th><th class="num">Proyectos</th></tr></thead>
+      <tbody>
+        {bills.porTipo.map(t => <tr><td>{t.tipo}</td><td class="num">{formatNumber(t.count)}</td></tr>)}
+      </tbody>
+      <tfoot><tr><th>Total</th><th class="num">{formatNumber(bills.total)}</th></tr></tfoot>
+    </table>
+    <table class="data-table">
+      <thead>
+        <tr><th>Etapa más avanzada registrada</th><th class="num">Proyectos</th><th class="num">Llegaron al menos a esta etapa</th></tr>
+      </thead>
+      <tbody>
+        {
+          bills.funnel.map(f => (
+            <tr>
+              <td>{STAGE_LABELS[f.stage]}</td>
+              <td class="num">{formatNumber(f.count)}</td>
+              <td class="num">
+                {formatNumber(f.alcanzado)} <span class="muted">({formatShare(bills.total ? f.alcanzado / bills.total : null)})</span>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="note">
+    <strong>Presentado</strong> = sin movimientos registrados que muestren avance; el archivo de movimientos no registra giros
+    de rutina ni dictámenes, por eso «Con dictamen» casi no aparece. «Sancionado» no significa «es ley»:
+    las resoluciones y declaraciones se aprueban en una sola Cámara, y una ley sancionada todavía debe promulgarse.
+  </p>
+</div>
+
+<style>
+  .bills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0 20px;
+  }
+
+  .bills .note {
+    margin-bottom: 16px;
+  }
+</style>

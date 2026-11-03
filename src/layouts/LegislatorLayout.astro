@@ -1,0 +1,142 @@
+---
+// Shared frame of the per-legislator pages: breadcrumb back to the chamber tab, header and footer.
+import Layout from './Layout.astro';
+
+interface Props {
+  title: string;
+  // index tab to return to
+  chamber: 'diputados' | 'senadores';
+  nombre: string;
+  subtitle: string;
+  foto?: string;
+}
+
+const { title, chamber, nombre, subtitle, foto } = Astro.props;
+const chamberLabel = chamber === 'diputados' ? 'Diputados' : 'Senadores';
+const builtAt = new Date().toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
+---
+
+<Layout title={title}>
+  <header class="site">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="/">Inicio</a> / <a href={`/#${chamber}`}>{chamberLabel}</a> / <span aria-current="page">{nombre}</span>
+    </nav>
+    <div class="who">
+      {foto && <img class="photo" src={foto} alt="" />}
+      <div>
+        <h1>{nombre}</h1>
+        <p>{subtitle}</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <slot />
+  </main>
+
+  <footer>
+    Datos actualizados al {builtAt}. Cada sección indica su fuente oficial y su período. <a href={`/#${chamber}`}>Volver a {chamberLabel}</a>.
+  </footer>
+</Layout>
+
+<style>
+  .site {
+    background: #1a73e8;
+    color: white;
+    padding: 16px 20px 20px;
+  }
+
+  .breadcrumb {
+    max-width: 1000px;
+    margin: 0 auto 10px;
+    font-size: 13px;
+    opacity: 0.95;
+  }
+
+  .breadcrumb a {
+    color: white;
+  }
+
+  .who {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .photo {
+    width: 72px;
+    border-radius: 6px;
+    background: white;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+  }
+
+  .who p {
+    margin: 4px 0 0;
+    opacity: 0.9;
+  }
+
+  .page {
+    display: block;
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 0 20px;
+  }
+
+  .page :global(section) {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .page :global(h2) {
+    margin: 0 0 8px;
+    font-size: 18px;
+  }
+
+  .page :global(.facts) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin: 12px 0;
+    padding: 0;
+  }
+
+  .page :global(.facts div) {
+    background: #f3f8ff;
+    border-radius: 6px;
+    padding: 10px;
+  }
+
+  .page :global(.facts dt) {
+    font-size: 12px;
+    color: #666;
+  }
+
+  .page :global(.facts dd) {
+    margin: 2px 0 0;
+    font-size: 17px;
+    font-weight: bold;
+    color: #1a73e8;
+    overflow-wrap: anywhere;
+  }
+
+  footer {
+    max-width: 1000px;
+    margin: 0 auto 30px;
+    padding: 0 20px;
+    font-size: 12px;
+    color: #777;
+  }
+
+  footer a {
+    color: #1a73e8;
+  }
+</style>

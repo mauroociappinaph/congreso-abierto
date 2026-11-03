@@ -21,5 +21,6 @@ export function openDetail(item: ClientItem): void {
     }),
   );
   dialog.querySelector('.detail-note')!.textContent = item.detailNote;
+  dialog.querySelector<HTMLAnchorElement>('.detail-link')!.href = item.url;
   dialog.showModal();
 }

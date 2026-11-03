@@ -1,0 +1,141 @@
+---
+// Senadores tab: bloc cohesion and attendance from the official actas, and the linkage quality.
+import QualityBox from './QualityBox.astro';
+import SourceLine from './SourceLine.astro';
+import type { Senator } from '../lib/legislators.ts';
+import type { SenateVotesData } from '../lib/sources.ts';
+import { DATASETS, formatDate, formatNumber, formatShare } from '../lib/view.ts';
+
+interface Props {
+  votes: SenateVotesData;
+  senators: Senator[];
+}
+
+const EDGE = 5;
+const { votes, senators } = Astro.props;
+const blocs = [...votes.summary.blocs].sort((a, b) => b.senators - a.senators || a.bloque.localeCompare(b.bloque, 'es'));
+const attendance = senators
+  .flatMap(senator => {
+    const own = votes.summary.senators.get(senator.id);
+    return own ? [{ senator, own }] : [];
+  })
+  .sort((a, b) => b.own.asistencia - a.own.asistencia || b.own.actas - a.own.actas || a.senator.nombre.localeCompare(b.senator.nombre, 'es'));
+const groups = [
+  { title: `Mayor asistencia (${EDGE})`, rows: attendance.slice(0, EDGE) },
+  { title: `Menor asistencia (${EDGE})`, rows: attendance.slice(-EDGE).reverse() },
+];
+---
+
+<div class="senate-votes">
+  <h2>Votaciones del Senado</h2>
+  <p>
+    {formatNumber(votes.actas)} actas de votación nominal entre el {formatDate(votes.period.desde)} y el
+    {formatDate(votes.period.hasta)} (sin las votaciones canceladas).
+  </p>
+  {votes.stale && (
+    <p class="note stale">
+      El sitio del Senado no respondió al generar el sitio; se usan las actas guardadas al {formatDate(votes.cacheDate)}.
+    </p>
+  )}
+  {votes.summary.inconsistencias.actasConFilasRepetidas.length > 0 && (
+    <p class="note">
+      {votes.summary.inconsistencias.actasConFilasRepetidas.length === 1 ? 'Un acta publicada' : `${votes.summary.inconsistencias.actasConFilasRepetidas.length} actas publicadas`}
+      por el Senado repite filas (acta {votes.summary.inconsistencias.actasConFilasRepetidas.join(', ')}): contamos una sola vez a cada senador
+      {votes.summary.inconsistencias.votosDescartados > 0 && ` y descartamos ${votes.summary.inconsistencias.votosDescartados} votos repetidos con valores distintos`}.
+    </p>
+  )}
+
+  <h3>Cohesión por bloque</h3>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Bloque</th><th class="num">Senadores</th><th class="num">Actas</th><th class="num">Índice de Rice medio</th></tr></thead>
+      <tbody>
+        {
+          blocs.map(b => (
+            <tr>
+              <td>{b.bloque}</td>
+              <td class="num">{b.senators}</td>
+              <td class="num">{b.actas}</td>
+              <td class="num">{b.riceMedio === null ? '—' : formatNumber(b.riceMedio)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="note">
+    Índice de Rice = |afirmativos − negativos| / (afirmativos + negativos) del bloque en cada acta, promediado sobre las
+    actas en que el bloque votó: 1 es un bloque que vota todo junto, 0 uno dividido a la mitad. Senadores cuenta a quienes
+    votaron por el bloque en el período; con uno o dos el índice dice poco.
+  </p>
+
+  <h3>Asistencia de los senadores en funciones</h3>
+  <div class="attendance">
+    {
+      groups.map(group => (
+        <table class="data-table">
+          <caption>{group.title}</caption>
+          <thead><tr><th>Nombre</th><th>Bloque</th><th class="num">Actas en el cargo</th><th class="num">Ausente</th><th class="num">Asistencia</th></tr></thead>
+          <tbody>
+            {group.rows.map(({ senator, own }) => (
+              <tr>
+                <td><a href={`/senadores/${senator.id}/`}>{senator.nombre}</a></td>
+                <td>{senator.bloque}</td>
+                <td class="num">{formatNumber(own.actas)}</td>
+                <td class="num">{formatNumber(own.ausente)}</td>
+                <td class="num">{formatShare(own.asistencia)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ))
+    }
+  </div>
+  <p class="note">
+    Asistencia = actas en que no figura ausente, sobre las actas desde que asumió. El acta registra «ausente» sin indicar el
+    motivo (licencia, misión oficial u otro). Son estadísticas descriptivas: no evalúan el desempeño.
+  </p>
+  <SourceLine links={[DATASETS.actas]} period={votes.period} />
+
+  <QualityBox
+    title="Calidad del emparejamiento de las actas"
+    quality={votes.quality}
+    period={votes.period}
+    rowsLabel="votos registrados"
+    against="senadores en funciones hoy y los que figuran en las actas del período"
+  />
+</div>
+
+<style>
+  .senate-votes {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+  }
+
+  h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+  }
+
+  h3 {
+    font-size: 16px;
+    margin: 16px 0 8px;
+  }
+
+  .attendance {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 0 20px;
+  }
+
+  caption {
+    text-align: left;
+    font-weight: bold;
+    padding: 4px 0;
+  }
+
+  .stale {
+    color: #a65b00;
+  }
+</style>

@@ -33,7 +33,7 @@ Read until `## Log`. Technical artifacts in English; UI copy in Spanish (Argenti
 | T1 | S1, S2, S6 | worker + parent | done | `feat(viajes): link trip names` |
 | T2 | S3 | worker | done | see git log `feat(viajes): normalize trip files` |
 | T3 | S3, S4, S5, S6 | worker | done | b490f40 |
-| T4 | S3, S7 | worker | pending | |
+| T4 | S3, S7 | worker | done | feat(viajes): compare deputies against peers at a similar estimated distance |
 
 - T0: commit the existing Astro site as the baseline on branch `feat/viajes`.
 - T1: `src/lib/linkage.ts` + tests: normalization, Jaro-Winkler, candidate scoring, match/doubtful/unmatched with confidence.
@@ -48,3 +48,4 @@ Read until `## Log`. Technical artifacts in English; UI copy in Spanish (Argenti
 - L4 (user, verbatim): "Hay que buscar mas apis oficiales o con datos reales para nutrir nuestra app." → read-only source survey delegated; new sources need the user's pick before implementation.
 - L5 (parent decision): S1 "aunque cambien el orden" means the composition's "Apellido, Nombres" versus the trips' "APELLIDO NOMBRES", and given names in any order; surnames come first in every real trip file, so surname-last names stay unmatched. PROVINCIA (2024 files) narrows candidates to its district, breaking same-name ties. Real result after T1: 1S2026 214 matched / 0 doubtful / 3 unmatched; remaining doubtful rows elsewhere are unrecoverable source mojibake (`JOSA?`, `INA?S`, `RAAsL`) and one same-name case, reported per S1.
 - L6 (parent evidence): with regions AMBA, 4 BUENOS AIRES deputies were flagged (Santillán Juárez Brahim z 9.44, López z 7.88, Carrancio z 5.57, Monzón z 3.64), top routes Aeroparque↔Mar del Plata and Necochea↔Retiro: commuting home. Splitting CABA from the province kept the same 4 (province median 0.38). User chose S7.
+- L7 (parent evidence, T4 real build): bands <100 (86, median 0.33/mo), 100-400 (32, 3.23), 400-800 (45, 5.58), 800-1200 (62, 5.93), >=1200 (30, 6.08); the four L6 deputies are no longer flagged (Mar del Plata 377 km, Necochea 440 km); flagged: Monzón (z 4.72, home fallback La Plata, top route Aeroparque-Posadas) and Arabia (z 3.54, CABA, Aeroparque-Bariloche). Endpoint coverage 99.99% of matched legs; coordinates spot-checked (AEP, BRC, RES, USH, MDZ) against known values.

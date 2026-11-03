@@ -25,11 +25,12 @@ Read until `## Log`. Technical artifacts in English; UI copy in Spanish (Argenti
 
 | ID | Specs | Route | Status | Commit |
 | --- | --- | --- | --- | --- |
-| F1 | S2, S6 | worker | pending | |
+| F1 | S2, S6 | worker | done | feat(misiones) |
 | F2 | S3, S6 | worker | done | feat(comisiones) |
 | F3 | S4, S6 | worker | pending | |
-| F4 | S5, S6 | worker | pending | |
-| F5 | S1-S6 | worker, after viajes T3 | pending | |
+| F4 | S5, S6 | worker | done | feat(senado) |
+| F6 | S6 | worker | done | feat(linkage) |
+| F5 | S1-S6 | worker, after T4, F3, F6 | pending | |
 
 - F1: `src/lib/misiones.ts` + tests: header variants, dates, viáticos parsing (amount + currency, "-" → null), per-deputy aggregation (missions, destinations, institutions, viáticos otorgados/consumidos summed per currency).
 - F2: `src/lib/comisiones.ts` + tests: members, authorities (role: presidente, vicepresidente, secretario, vocal…), committee names; per-deputy list of committees with role.
@@ -43,3 +44,6 @@ Read until `## Log`. Technical artifacts in English; UI copy in Spanish (Argenti
 - L2 (parent): read-only survey done; ranked list presented; Deputies votes after 2020 have no official machine-readable source; OA asset declarations exclude legislators.
 - L3 (user, verbatim): "4 1  2+3, y 5"
 - L4 (parent): F2 real probe 256/261 names matched (98.1%). Linker follow-ups for F5: move district alias CABA→CIUDAD DE BUENOS AIRES into linkage.ts; accept a given-name subset when surname is exact and district matches ("GÓNZALEZ, Diógenes" vs "González, Diógenes Ignacio").
+- L5 (parent): F4 real check: index year filter is a POST form (2024: 91 actas, 2025: 97, 2026: 165); 7 full real actas parsed with counts equal to header totals. F5 decisions: drop actas whose resultado starts with CANCELADA; show senators and actas count beside loyalty/Rice so one-member blocs are not misread.
+- L6 (parent): F1 real data 2024-2026: 26/56 names matched (46%). Causes: given-name-first order (`VERONICA KARINA BANFI`, `CARLOS RAMIRO GUTIERREZ`), reversed `MARGARITA, STOLBIZER`, partial compound surname (`JULIANA SANTILLAN`), given-name subset (`YEDLIN,PABLO` 0.875), former deputies absent from the current composition. New task F6 improves linkage.ts with a before/after differential on viajes, comisiones and misiones.
+- L7 (parent audit, F6 differential on real data): viajes 0 changes; comisiones 1 (GÓNZALEZ, Diógenes doubtful→matched, correct); misiones 5 (VALDES, BANFI, SANTILLAN, YEDLIN matched, correct; CARLOS RAMIRO GUTIERREZ unmatched→doubtful). No false positives.

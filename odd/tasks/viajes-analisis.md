@@ -12,6 +12,8 @@ Read until `## Log`. Technical artifacts in English; UI copy in Spanish (Argenti
 - **S5 (data quality is shown):** the page reports how many distinct trip names were matched, doubtful, and unmatched, and lists the doubtful ones.
 - **S6 (the CV claim must be true):** "X % emparejado automáticamente, 0 errores en los casos verificados" — the numbers shown come from the real build output, and the S2 examples are pinned by tests.
 
+- **S7 (user decision, verbatim choice):** "Comparar por distancia (Recomendado)" — option text: "Estimar la distancia de cada diputado a Buenos Aires según su ruta habitual y comparar contra pares a distancia similar. Más justo y más algoritmo, pero es una estimación y se aclara como tal."
+
 ## Design decisions (parent)
 
 - **Window:** the 4 most recent semesters published (today 2S2024, 1S2025, 2S2025, 1S2026). Resolve resources via CKAN `package_show?id=viajes-nacionales`, CSV only, choose by the period parsed from the rows, not by resource name.
@@ -30,7 +32,8 @@ Read until `## Log`. Technical artifacts in English; UI copy in Spanish (Argenti
 | T0 | — | inline | done | baseline |
 | T1 | S1, S2, S6 | worker + parent | done | `feat(viajes): link trip names` |
 | T2 | S3 | worker | done | see git log `feat(viajes): normalize trip files` |
-| T3 | S3, S4, S5, S6 | worker | pending | |
+| T3 | S3, S4, S5, S6 | worker | done | b490f40 |
+| T4 | S3, S7 | worker | pending | |
 
 - T0: commit the existing Astro site as the baseline on branch `feat/viajes`.
 - T1: `src/lib/linkage.ts` + tests: normalization, Jaro-Winkler, candidate scoring, match/doubtful/unmatched with confidence.
@@ -44,3 +47,4 @@ Read until `## Log`. Technical artifacts in English; UI copy in Spanish (Argenti
 - L3 (parent evidence, T1 first pass on real data): 1S2026 213 matched / 1 doubtful / 3 unmatched. Older semesters showed defects: surname matched against a trip given name (`BARLETTA MARIO DOMINGO` → `Marino, Juan`), former deputies sharing a surname reported doubtful instead of unmatched (`AGUIRRE MANUEL IGNACIO` → `Aguirre, Hilda`), quoted nicknames (`Alí, Ernesto "Pipi"`), mojibake in source (`BELÃ‰N`, `BRÃœGGE`, `BELA?N`). Fixes: surname tokens must sit in the first positions of the trip name; no given-name match → unmatched; drop nicknames; repair mojibake.
 - L4 (user, verbatim): "Hay que buscar mas apis oficiales o con datos reales para nutrir nuestra app." → read-only source survey delegated; new sources need the user's pick before implementation.
 - L5 (parent decision): S1 "aunque cambien el orden" means the composition's "Apellido, Nombres" versus the trips' "APELLIDO NOMBRES", and given names in any order; surnames come first in every real trip file, so surname-last names stay unmatched. PROVINCIA (2024 files) narrows candidates to its district, breaking same-name ties. Real result after T1: 1S2026 214 matched / 0 doubtful / 3 unmatched; remaining doubtful rows elsewhere are unrecoverable source mojibake (`JOSA?`, `INA?S`, `RAAsL`) and one same-name case, reported per S1.
+- L6 (parent evidence): with regions AMBA, 4 BUENOS AIRES deputies were flagged (Santillán Juárez Brahim z 9.44, López z 7.88, Carrancio z 5.57, Monzón z 3.64), top routes Aeroparque↔Mar del Plata and Necochea↔Retiro: commuting home. Splitting CABA from the province kept the same 4 (province median 0.38). User chose S7.

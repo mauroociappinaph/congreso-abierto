@@ -1,3 +1,4 @@
+import { estimateHome, type EndpointTable, type Home } from './distance.ts';
 import { normalizeText, type Row } from './legislators.ts';
 
 export type Region = 'CABA' | 'Buenos Aires' | 'Centro' | 'Cuyo' | 'NOA' | 'NEA' | 'Patagonia';
@@ -33,11 +34,17 @@ export interface Route {
 
 export interface DeputyTravel {
   deputyId: string;
+  // shown for context only; peers are chosen by band
   region: Region | null;
+  // distance band label, e.g. "100–400 km"; null without an estimated home
+  band: string | null;
+  // estimated km from home to the Obelisco, rounded
+  homeKm: number | null;
+  homeSource: Home['source'] | null;
   legs: number;
   months: number;
   legsPerMonth: number;
-  regionMedian: number | null;
+  bandMedian: number | null;
   z: number | null;
   flagged: boolean;
   eligible: boolean;
@@ -45,19 +52,23 @@ export interface DeputyTravel {
   bySemester: Record<string, number>;
 }
 
-export interface RegionSummary {
-  region: Region;
+export interface BandSummary {
+  band: string;
   deputies: number;
   medianLegsPerMonth: number;
+  medianKm: number;
 }
 
 export interface TravelAnalysis {
   deputies: DeputyTravel[];
-  regions: RegionSummary[];
+  bands: BandSummary[];
 }
 
 export const MIN_MONTHS = 3;
 export const Z_THRESHOLD = 3.5;
+// Upper bounds (km) of the distance bands; the last band is open-ended.
+export const BAND_LIMITS = [100, 400, 800, 1200];
+export const MIN_BAND_PEERS = 5;
 
 const MONTHS: Record<string, number> = {
   ene: 1, enero: 1, feb: 2, febrero: 2, mar: 3, marzo: 3, abr: 4, abril: 4, may: 5, mayo: 5,
@@ -114,7 +125,7 @@ export function normalizeTripRows(rows: Row[]): TripRow[] {
   return result;
 }
 
-// CABA and Buenos Aires province are separate peers: a deputy from Mar del Plata travels far more than one from CABA.
+// Regions are only displayed; peers are grouped by estimated distance (bandsOf).
 const REGIONS: Record<Region, string[]> = {
   CABA: ['ciudad de buenos aires'],
   'Buenos Aires': ['buenos aires'],
@@ -185,7 +196,52 @@ const topRouteOf = (legs: Leg[]): Route | null => {
   return { origen, destino, count: best[1] };
 };
 
-export function analyzeTravel(deputies: TravelDeputyInput[], legs: Leg[], windowMonths: string[]): TravelAnalysis {
+interface BandRange {
+  from: number;
+  // exclusive; Infinity for the open band
+  to: number;
+}
+
+export function bandLabel({ from, to }: BandRange): string {
+  if (from === 0) return `< ${to} km`;
+  if (to === Infinity) return `≥ ${from} km`;
+  return `${from}–${to} km`;
+}
+
+const BASE_BANDS: BandRange[] = [0, ...BAND_LIMITS].map((from, i) => ({ from, to: BAND_LIMITS[i] ?? Infinity }));
+const baseBandOf = (km: number) => BASE_BANDS.findIndex(b => km >= b.from && km < b.to);
+
+/**
+ * Groups the base bands that have eligible deputies. Walking from the farthest, a group with fewer than
+ * MIN_BAND_PEERS merges into the adjacent nearer group; if the nearest is still short, it merges into the next one.
+ * Returns, per base band index, its (possibly merged) range; bands without eligible deputies are absent.
+ */
+function bandsOf(eligibleKm: number[]): Map<number, BandRange> {
+  const counts = BASE_BANDS.map(() => 0);
+  for (const km of eligibleKm) counts[baseBandOf(km)]++;
+  const groups = BASE_BANDS.map((_, i) => ({ members: [i], count: counts[i] })).filter(g => g.count > 0);
+  for (let i = groups.length - 1; i > 0; i--) {
+    if (groups[i].count >= MIN_BAND_PEERS) continue;
+    groups[i - 1] = { members: [...groups[i - 1].members, ...groups[i].members], count: groups[i - 1].count + groups[i].count };
+    groups.splice(i, 1);
+  }
+  if (groups.length > 1 && groups[0].count < MIN_BAND_PEERS) {
+    groups.splice(0, 2, { members: [...groups[0].members, ...groups[1].members], count: groups[0].count + groups[1].count });
+  }
+  const result = new Map<number, BandRange>();
+  for (const { members } of groups) {
+    const range = { from: BASE_BANDS[members[0]].from, to: BASE_BANDS[members[members.length - 1]].to };
+    for (const i of members) result.set(i, range);
+  }
+  return result;
+}
+
+export function analyzeTravel(
+  deputies: TravelDeputyInput[],
+  legs: Leg[],
+  windowMonths: string[],
+  endpoints: EndpointTable = {},
+): TravelAnalysis {
   const legsByDeputy = new Map<string, Leg[]>();
   for (const leg of legs) {
     const list = legsByDeputy.get(leg.deputyId) ?? [];
@@ -199,9 +255,13 @@ export function analyzeTravel(deputies: TravelDeputyInput[], legs: Leg[], window
     const bySemester: Record<string, number> = {};
     for (const leg of own) bySemester[semesterOf(leg.period)] = (bySemester[semesterOf(leg.period)] ?? 0) + 1;
     const months = office.size;
+    // the home uses every leg of the deputy, also outside the office months, to read the habitual route
+    const home = estimateHome(deputy.lugar, legsByDeputy.get(deputy.id) ?? [], endpoints);
     return {
       deputyId: deputy.id,
       region: regionOf(deputy.lugar),
+      homeKm: home ? Math.round(home.km) : null,
+      homeSource: home?.source ?? null,
       legs: own.length,
       months,
       rate: months ? own.length / months : 0,
@@ -211,30 +271,40 @@ export function analyzeTravel(deputies: TravelDeputyInput[], legs: Leg[], window
     };
   });
 
+  const merged = bandsOf(base.filter(d => d.eligible && d.homeKm !== null).map(d => d.homeKm!));
+  const bandOf = (km: number | null) => {
+    if (km === null) return null;
+    const i = baseBandOf(km);
+    return bandLabel(merged.get(i) ?? BASE_BANDS[i]);
+  };
+  const withBand = base.map(d => ({ ...d, band: bandOf(d.homeKm) }));
+
   const zById = new Map<string, number>();
-  const regions: RegionSummary[] = [];
-  const medianByRegion = new Map<Region, number>();
-  for (const region of Object.keys(REGIONS) as Region[]) {
-    const peers = base.filter(d => d.region === region && d.eligible);
-    if (!peers.length) continue;
+  const bands: BandSummary[] = [];
+  const medianByBand = new Map<string, number>();
+  for (const band of [...new Set([...merged.values()].map(bandLabel))]) {
+    const peers = withBand.filter(d => d.band === band && d.eligible);
     const rates = peers.map(d => d.rate);
     const med = median(rates);
-    medianByRegion.set(region, med);
+    medianByBand.set(band, med);
     modifiedZScores(rates).forEach((z, i) => zById.set(peers[i].deputyId, z));
-    regions.push({ region, deputies: peers.length, medianLegsPerMonth: round(med) });
+    bands.push({ band, deputies: peers.length, medianLegsPerMonth: round(med), medianKm: Math.round(median(peers.map(d => d.homeKm!))) });
   }
 
   return {
-    deputies: base.map(({ rate, ...d }) => {
+    deputies: withBand.map(({ rate, ...d }) => {
       const z = zById.get(d.deputyId);
-      const regionMedian = d.region ? medianByRegion.get(d.region) : undefined;
+      const bandMedian = d.band ? medianByBand.get(d.band) : undefined;
       return {
         deputyId: d.deputyId,
         region: d.region,
+        band: d.band,
+        homeKm: d.homeKm,
+        homeSource: d.homeSource,
         legs: d.legs,
         months: d.months,
         legsPerMonth: round(rate),
-        regionMedian: regionMedian === undefined ? null : round(regionMedian),
+        bandMedian: bandMedian === undefined ? null : round(bandMedian),
         z: z === undefined ? null : round(z),
         flagged: z !== undefined && z > Z_THRESHOLD,
         eligible: d.eligible,
@@ -242,6 +312,6 @@ export function analyzeTravel(deputies: TravelDeputyInput[], legs: Leg[], window
         bySemester: d.bySemester,
       };
     }),
-    regions,
+    bands,
   };
 }

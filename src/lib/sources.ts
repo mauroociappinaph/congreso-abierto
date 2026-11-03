@@ -1,5 +1,7 @@
 // Build-time data loading. Runs in Node during `astro build`/`astro dev`, so CORS does not apply.
+import endpointsData from '../data/endpoints.json';
 import snapshot from '../data/senadores.json';
+import type { EndpointTable } from './distance.ts';
 import {
   normalizeDeputy,
   normalizeSenator,
@@ -89,7 +91,7 @@ export async function loadTravel(deputies: Deputy[]): Promise<TravelReport> {
       }
     }))));
   }
-  return buildTravelReport(deputies, files);
+  return buildTravelReport(deputies, files, endpointsData.endpoints as EndpointTable);
 }
 
 function byName(a: { nombre: string }, b: { nombre: string }) {

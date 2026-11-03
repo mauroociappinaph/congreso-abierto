@@ -25,17 +25,25 @@ export const formatNumber = (value: number) => value.toLocaleString('es-AR', { m
 // S4: only "viaja (bastante) más que sus pares", never a judgment about the trips.
 export function travelComparison(travel: DeputyTravel): string {
   if (!travel.eligible) return `No comparado (menos de ${MIN_MONTHS} meses en el cargo)`;
-  if (!travel.region || travel.regionMedian === null) return 'No comparado (distrito sin región)';
+  if (!travel.band || travel.bandMedian === null) return 'No comparado (sin distancia estimada)';
   if (travel.flagged) {
-    return `Viaja bastante más que sus pares de ${travel.region} (mediana ${formatNumber(travel.regionMedian)} por mes)`;
+    return `Viaja bastante más que sus pares a distancia similar (mediana ${formatNumber(travel.bandMedian)} por mes)`;
   }
-  return `En línea con su región (${travel.region})`;
+  return 'En línea con sus pares a distancia similar';
+}
+
+const HOME_SOURCE = { ruta: 'ruta más frecuente', capital: 'capital de la provincia' } as const;
+
+export function homeDistance(travel: DeputyTravel): string {
+  if (travel.homeKm === null || !travel.homeSource) return 'N/A';
+  return `${formatNumber(travel.homeKm)} km (${HOME_SOURCE[travel.homeSource]})`;
 }
 
 const travelFields = (travel: DeputyTravel): Field[] => [
   ['Tramos (últimos 4 semestres)', formatNumber(travel.legs)],
   ['Tramos por mes', formatNumber(travel.legsPerMonth)],
-  ['Comparación regional', travelComparison(travel)],
+  ['Distancia estimada', homeDistance(travel)],
+  ['Comparación con sus pares', travelComparison(travel)],
 ];
 
 export function toDeputyItem(deputy: Deputy, pay: PaySummary, travel?: DeputyTravel): ChamberItem {

@@ -1,9 +1,9 @@
 ---
-// Viajes tab: methodology, regional medians, the per-deputy table and the linkage quality (S5).
+// Viajes tab: methodology, distance-band medians, the per-deputy table and the linkage quality (S5).
 // The table is rendered at build time; the script only filters rows.
 import { normalizeText, type Deputy } from '../lib/legislators.ts';
 import { semesterLabel, type TravelReport } from '../lib/travel-report.ts';
-import { MIN_MONTHS, Z_THRESHOLD } from '../lib/viajes.ts';
+import { MIN_BAND_PEERS, MIN_MONTHS, Z_THRESHOLD } from '../lib/viajes.ts';
 import { formatNumber } from '../lib/view.ts';
 
 interface Props {
@@ -31,8 +31,16 @@ const orDash = (value: number | null) => (value === null ? '—' : formatNumber(
       queda en desventaja.
     </p>
     <p>
-      No es lo mismo viajar desde Jujuy que desde la Ciudad de Buenos Aires, por eso cada diputado/a se compara solo con
-      los de su región. Medimos cuánto se aparta de la mediana de su región usando el desvío absoluto mediano, una medida
+      No es lo mismo viajar desde Jujuy que desde la Ciudad de Buenos Aires, ni desde Mar del Plata que desde el conurbano.
+      Por eso cada diputado/a se compara con sus pares a distancia similar de Buenos Aires. Usamos una distancia estimada a partir
+      de su ruta más frecuente o de la capital de su provincia; es una estimación: tomamos la terminal o el aeropuerto de su
+      provincia que más aparece en sus tramos (al menos 3) y, si no hay, la capital provincial, y medimos la distancia en
+      línea recta hasta el Obelisco. Con esa distancia armamos grupos (menos de 100 km, 100–400, 400–800, 800–1200 y
+      1200 km o más); un grupo con menos de {MIN_BAND_PEERS} diputados comparables se une al grupo vecino más cercano a Buenos Aires
+      (el primero, al siguiente).
+    </p>
+    <p>
+      Medimos cuánto se aparta cada uno de la mediana de su grupo usando el desvío absoluto mediano, una medida
       robusta: un par de casos extremos no mueven la comparación. Cuando ese puntaje (z robusto) supera {formatNumber(Z_THRESHOLD)}
       decimos que <strong>viaja bastante más que sus pares</strong>. Quienes tienen menos de {MIN_MONTHS} meses en el cargo
       dentro del período se muestran, pero no se comparan.
@@ -42,13 +50,18 @@ const orDash = (value: number | null) => (value === null ? '—' : formatNumber(
     </p>
   </div>
 
-  <h3>Mediana por región</h3>
-  <table class="regions">
-    <thead><tr><th>Región</th><th>Diputados comparados</th><th>Mediana de tramos por mes</th></tr></thead>
+  <h3>Mediana por distancia a Buenos Aires</h3>
+  <table class="bands">
+    <thead>
+      <tr><th>Grupo</th><th>Diputados comparados</th><th>Mediana de tramos por mes</th><th>Mediana de distancia estimada</th></tr>
+    </thead>
     <tbody>
       {
-        report.analysis.regions.map(r => (
-          <tr><td>{r.region}</td><td>{r.deputies}</td><td>{formatNumber(r.medianLegsPerMonth)}</td></tr>
+        report.analysis.bands.map(b => (
+          <tr>
+            <td>{b.band}</td><td class="num">{b.deputies}</td><td class="num">{formatNumber(b.medianLegsPerMonth)}</td>
+            <td class="num">{formatNumber(b.medianKm)} km</td>
+          </tr>
         ))
       }
     </tbody>
@@ -64,8 +77,8 @@ const orDash = (value: number | null) => (value === null ? '—' : formatNumber(
     <table class="deputies">
       <thead>
         <tr>
-          <th>Nombre</th><th>Distrito</th><th>Región</th><th>Tramos</th><th>Meses</th><th>Tramos por mes</th>
-          <th>Mediana regional</th><th>z robusto</th><th>Comparación</th><th>Ruta más frecuente</th>
+          <th>Nombre</th><th>Distrito</th><th>Región</th><th>Distancia estimada</th><th>Grupo</th><th>Tramos</th><th>Meses</th>
+          <th>Tramos por mes</th><th>Mediana del grupo</th><th>z robusto</th><th>Comparación</th><th>Ruta más frecuente</th>
         </tr>
       </thead>
       <tbody>
@@ -75,10 +88,15 @@ const orDash = (value: number | null) => (value === null ? '—' : formatNumber(
               <td>{deputy.nombre}</td>
               <td>{deputy.lugar}</td>
               <td>{travel.region ?? '—'}</td>
+              <td class="num">
+                {travel.homeKm === null ? '—' : `${formatNumber(travel.homeKm)} km`}
+                {travel.homeSource && <span class="muted"> ({travel.homeSource === 'ruta' ? 'ruta' : 'capital'})</span>}
+              </td>
+              <td>{travel.band ?? '—'}</td>
               <td class="num">{travel.legs}</td>
               <td class="num">{travel.months}</td>
               <td class="num">{formatNumber(travel.legsPerMonth)}</td>
-              <td class="num">{orDash(travel.regionMedian)}</td>
+              <td class="num">{orDash(travel.bandMedian)}</td>
               <td class="num">{orDash(travel.z)}</td>
               <td>
                 {travel.flagged ? (
@@ -198,8 +216,8 @@ const orDash = (value: number | null) => (value === null ? '—' : formatNumber(
     margin-bottom: 20px;
   }
 
-  .regions {
-    max-width: 520px;
+  .bands {
+    max-width: 680px;
   }
 
   th,

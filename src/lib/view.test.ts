@@ -27,18 +27,26 @@ test('toDeputyItem shows the chamber-wide pay on the card and in the detail', ()
 
 test('toDeputyItem adds the travel comparison to the detail when given', () => {
   const travel = {
-    deputyId: 'dip-a', region: 'NOA' as const, legs: 60, months: 24, legsPerMonth: 2.5, regionMedian: 1.2,
-    z: 4.12, flagged: true, eligible: true, topRoute: null, bySemester: {},
+    deputyId: 'dip-a', region: 'NOA' as const, band: '800–1200 km', homeKm: 1050, homeSource: 'ruta' as const,
+    legs: 60, months: 24, legsPerMonth: 2.5, bandMedian: 1.2, z: 4.12, flagged: true, eligible: true, topRoute: null, bySemester: {},
   };
   const base = toDeputyItem(deputy, pay).detail;
   assert.deepEqual(toDeputyItem(deputy, pay, travel).detail, [
     ...base,
     ['Tramos (últimos 4 semestres)', '60'],
     ['Tramos por mes', '2,5'],
-    ['Comparación regional', 'Viaja bastante más que sus pares de NOA (mediana 1,2 por mes)'],
+    ['Distancia estimada', '1.050 km (ruta más frecuente)'],
+    ['Comparación con sus pares', 'Viaja bastante más que sus pares a distancia similar (mediana 1,2 por mes)'],
   ]);
   const inLine = { ...travel, z: 0.4, flagged: false };
-  assert.equal(toDeputyItem(deputy, pay, inLine).detail.at(-1)![1], 'En línea con su región (NOA)');
+  assert.equal(toDeputyItem(deputy, pay, inLine).detail.at(-1)![1], 'En línea con sus pares a distancia similar');
+  const capital = { ...inLine, homeKm: 1150, homeSource: 'capital' as const };
+  assert.deepEqual(toDeputyItem(deputy, pay, capital).detail.at(-2), ['Distancia estimada', '1.150 km (capital de la provincia)']);
+  const noHome = { ...inLine, band: null, homeKm: null, homeSource: null, bandMedian: null, z: null };
+  assert.deepEqual(toDeputyItem(deputy, pay, noHome).detail.slice(-2), [
+    ['Distancia estimada', 'N/A'],
+    ['Comparación con sus pares', 'No comparado (sin distancia estimada)'],
+  ]);
   const newcomer = { ...travel, months: 2, eligible: false, z: null, flagged: false };
   assert.equal(toDeputyItem(deputy, pay, newcomer).detail.at(-1)![1], 'No comparado (menos de 3 meses en el cargo)');
 });

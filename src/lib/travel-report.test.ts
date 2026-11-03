@@ -79,3 +79,16 @@ test('buildTravelReport keeps one file per semester when a file is republished',
 test('buildTravelReport fails loudly when no row has a valid period', () => {
   assert.throws(() => buildTravelReport(deputies, [[]]), /Viajes: no trip rows/);
 });
+
+test('buildTravelReport estimates homes from the endpoint table it is given', () => {
+  const endpoints = {
+    'santa rosa': { lat: -36.5883, lon: -64.2757, provincia: 'LA PAMPA', kind: 'airport' as const },
+    aeroparque: { lat: -34.5592, lon: -58.4156, provincia: 'CIUDAD DE BUENOS AIRES', kind: 'airport' as const, hub: true },
+  };
+  const withTable = buildTravelReport(deputies, [fileA, fileB], endpoints).analysis.deputies.find(d => d.deputyId === 'dip-chiconi')!;
+  assert.equal(withTable.homeSource, 'ruta');
+  // the two Torres (≥ 1200 km, fewer than 5) merge into Chiconi's nearer band
+  assert.equal(withTable.band, '≥ 400 km');
+  const withoutTable = buildTravelReport(deputies, [fileA, fileB]).analysis.deputies.find(d => d.deputyId === 'dip-chiconi')!;
+  assert.equal(withoutTable.homeSource, 'capital');
+});

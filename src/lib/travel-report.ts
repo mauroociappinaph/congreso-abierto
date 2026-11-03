@@ -1,4 +1,5 @@
 // Pure assembly of the travel tab: picks the window, links trip names and measures the linkage quality.
+import type { EndpointTable } from './distance.ts';
 import { normalizeText } from './legislators.ts';
 import { createLinker, type LinkableDeputy, type LinkResult, type LinkStatus } from './linkage.ts';
 import { analyzeTravel, type Leg, type TravelAnalysis, type TravelDeputyInput, type TripRow } from './viajes.ts';
@@ -81,6 +82,7 @@ function rowsBySemester(files: TripRow[][]): Map<string, TripRow[]> {
 export function buildTravelReport(
   deputies: ReportDeputy[],
   files: TripRow[][],
+  endpoints: EndpointTable = {},
   semesterCount = WINDOW_SEMESTERS,
 ): TravelReport {
   const bySemester = rowsBySemester(files);
@@ -112,7 +114,7 @@ export function buildTravelReport(
   }
 
   return {
-    analysis: analyzeTravel(deputies, legs, windowMonths),
+    analysis: analyzeTravel(deputies, legs, windowMonths, endpoints),
     semesters,
     windowMonths,
     windowLabel: `${semesterLabel(semesters[0])} – ${semesterLabel(latest)}`,

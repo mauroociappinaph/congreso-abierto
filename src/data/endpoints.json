@@ -1,0 +1,681 @@
+{
+  "source": "Coordenadas públicas aproximadas (grados decimales, WGS84): aeropuertos según la ficha de cada aeródromo de ANAC/ORSNA y Wikipedia; terminales de ómnibus y localidades según el centro de la ciudad (Wikipedia). Las claves son los nombres de ORIGEN/DESTINO de \"Viajes Nacionales\" (HCDN) normalizados con endpointKey (src/lib/distance.ts). hub: true marca las terminales de Buenos Aires (Aeroparque, Ezeiza, Retiro, Liniers), que nunca son el domicilio estimado. Nombres repetidos en varias provincias (Las Heras, San Roque, Concepción) se ubican en la provincia de quienes viajan allí. Sin ubicar: BUEN RETIRO, SAN ROQUE (ambiguos).",
+  "endpoints": {
+    "aeroparque internacional jorge newbery": {
+      "lat": -34.5592,
+      "lon": -58.4156,
+      "provincia": "CIUDAD DE BUENOS AIRES",
+      "kind": "airport",
+      "hub": true
+    },
+    "aeropuerto brigadier mayor cesar raul ojeda": {
+      "lat": -33.2732,
+      "lon": -66.3564,
+      "provincia": "SAN LUIS",
+      "kind": "airport"
+    },
+    "aeropuerto calafate": {
+      "lat": -50.2803,
+      "lon": -72.0531,
+      "provincia": "SANTA CRUZ",
+      "kind": "airport"
+    },
+    "aeropuerto de bahaa blanco comandante espora": {
+      "lat": -38.725,
+      "lon": -62.1693,
+      "provincia": "BUENOS AIRES",
+      "kind": "airport"
+    },
+    "aeropuerto de bahia blanco comandante espora": {
+      "lat": -38.725,
+      "lon": -62.1693,
+      "provincia": "BUENOS AIRES",
+      "kind": "airport"
+    },
+    "aeropuerto de santa rosa": {
+      "lat": -36.5883,
+      "lon": -64.2757,
+      "provincia": "LA PAMPA",
+      "kind": "airport"
+    },
+    "aeropuerto el tehuelche": {
+      "lat": -42.7592,
+      "lon": -65.1027,
+      "provincia": "CHUBUT",
+      "kind": "airport"
+    },
+    "aeropuerto esquel brigadier general antonio parodi": {
+      "lat": -42.908,
+      "lon": -71.1395,
+      "provincia": "CHUBUT",
+      "kind": "airport"
+    },
+    "aeropuerto internacional almirante marcos zar": {
+      "lat": -43.2105,
+      "lon": -65.2703,
+      "provincia": "CHUBUT",
+      "kind": "airport"
+    },
+    "aeropuerto internacional astor piazzolla": {
+      "lat": -37.9342,
+      "lon": -57.5733,
+      "provincia": "BUENOS AIRES",
+      "kind": "airport"
+    },
+    "aeropuerto internacional comandante armando tola de el calafate": {
+      "lat": -50.2803,
+      "lon": -72.0531,
+      "provincia": "SANTA CRUZ",
+      "kind": "airport"
+    },
+    "aeropuerto internacional coronel felipe varela": {
+      "lat": -28.5956,
+      "lon": -65.7518,
+      "provincia": "CATAMARCA",
+      "kind": "airport"
+    },
+    "aeropuerto internacional de bariloche teniente luis candelaria": {
+      "lat": -41.1512,
+      "lon": -71.1578,
+      "provincia": "RIO NEGRO",
+      "kind": "airport"
+    },
+    "aeropuerto internacional de formosa": {
+      "lat": -26.2127,
+      "lon": -58.2281,
+      "provincia": "FORMOSA",
+      "kind": "airport"
+    },
+    "aeropuerto internacional de puerto iguazu doctor carlos eduardo krause": {
+      "lat": -25.7373,
+      "lon": -54.4734,
+      "provincia": "MISIONES",
+      "kind": "airport"
+    },
+    "aeropuerto internacional de resistencia": {
+      "lat": -27.45,
+      "lon": -59.0561,
+      "provincia": "CHACO",
+      "kind": "airport"
+    },
+    "aeropuerto internacional de ushuaia malvinas argentinas": {
+      "lat": -54.8433,
+      "lon": -68.2958,
+      "provincia": "TIERRA DEL FUEGO",
+      "kind": "airport"
+    },
+    "aeropuerto internacional doctor fernando piragine niveyro": {
+      "lat": -27.4455,
+      "lon": -58.7619,
+      "provincia": "CORRIENTES",
+      "kind": "airport"
+    },
+    "aeropuerto internacional domingo faustino sarmiento": {
+      "lat": -31.5715,
+      "lon": -68.4182,
+      "provincia": "SAN JUAN",
+      "kind": "airport"
+    },
+    "aeropuerto internacional el plumerillo mendoza": {
+      "lat": -32.8317,
+      "lon": -68.7929,
+      "provincia": "MENDOZA",
+      "kind": "airport"
+    },
+    "aeropuerto internacional general enrique mosconi": {
+      "lat": -45.7853,
+      "lon": -67.4655,
+      "provincia": "CHUBUT",
+      "kind": "airport"
+    },
+    "aeropuerto internacional general martin miguel de guemes": {
+      "lat": -24.856,
+      "lon": -65.4862,
+      "provincia": "SALTA",
+      "kind": "airport"
+    },
+    "aeropuerto internacional gobernador edgardo castello": {
+      "lat": -40.8692,
+      "lon": -63.0004,
+      "provincia": "RIO NEGRO",
+      "kind": "airport"
+    },
+    "aeropuerto internacional gobernador horacio guzman": {
+      "lat": -24.3928,
+      "lon": -65.0978,
+      "provincia": "JUJUY",
+      "kind": "airport"
+    },
+    "aeropuerto internacional gobernador ramon trejo noel": {
+      "lat": -53.7777,
+      "lon": -67.7494,
+      "provincia": "TIERRA DEL FUEGO",
+      "kind": "airport"
+    },
+    "aeropuerto internacional ingeniero ambrosio taravella": {
+      "lat": -31.3236,
+      "lon": -64.208,
+      "provincia": "CORDOBA",
+      "kind": "airport"
+    },
+    "aeropuerto internacional islas malvinas": {
+      "lat": -32.9036,
+      "lon": -60.785,
+      "provincia": "SANTA FE",
+      "kind": "airport"
+    },
+    "aeropuerto internacional juan domingo peron": {
+      "lat": -38.949,
+      "lon": -68.1557,
+      "provincia": "NEUQUEN",
+      "kind": "airport"
+    },
+    "aeropuerto internacional ministro pistarini": {
+      "lat": -34.8222,
+      "lon": -58.5358,
+      "provincia": "BUENOS AIRES",
+      "kind": "airport",
+      "hub": true
+    },
+    "aeropuerto internacional piloto civil norberto fernandez": {
+      "lat": -51.6089,
+      "lon": -69.3126,
+      "provincia": "SANTA CRUZ",
+      "kind": "airport"
+    },
+    "aeropuerto internacional suboficial ayudante santiago germano": {
+      "lat": -34.5883,
+      "lon": -68.4039,
+      "provincia": "MENDOZA",
+      "kind": "airport"
+    },
+    "aeropuerto internacional teniente benjamin matienzo": {
+      "lat": -26.8409,
+      "lon": -65.1049,
+      "provincia": "TUCUMAN",
+      "kind": "airport"
+    },
+    "aeropuerto internacional termas de rio hondo": {
+      "lat": -27.4966,
+      "lon": -64.936,
+      "provincia": "SANTIAGO DEL ESTERO",
+      "kind": "airport"
+    },
+    "aeropuerto internacional valle del conlara": {
+      "lat": -32.3847,
+      "lon": -65.1865,
+      "provincia": "SAN LUIS",
+      "kind": "airport"
+    },
+    "aeropuerto la rioja capitan vicente almandos almonacid": {
+      "lat": -29.3816,
+      "lon": -66.7958,
+      "provincia": "LA RIOJA",
+      "kind": "airport"
+    },
+    "aeropuerto libertador jose de san martin": {
+      "lat": -27.3858,
+      "lon": -55.9707,
+      "provincia": "MISIONES",
+      "kind": "airport"
+    },
+    "aeropuerto mendoza": {
+      "lat": -32.8317,
+      "lon": -68.7929,
+      "provincia": "MENDOZA",
+      "kind": "airport"
+    },
+    "aeropuerto rio cuarto": {
+      "lat": -33.0851,
+      "lon": -64.2614,
+      "provincia": "CORDOBA",
+      "kind": "airport"
+    },
+    "aeropuerto santiago del estero vicecomodoro angel de la paz aragonez": {
+      "lat": -27.7656,
+      "lon": -64.31,
+      "provincia": "SANTIAGO DEL ESTERO",
+      "kind": "airport"
+    },
+    "aeropuerto sauce viejo": {
+      "lat": -31.7117,
+      "lon": -60.8117,
+      "provincia": "SANTA FE",
+      "kind": "airport"
+    },
+    "aviador carlos campos airport": {
+      "lat": -40.0754,
+      "lon": -71.1373,
+      "provincia": "NEUQUEN",
+      "kind": "airport"
+    },
+    "bahia blanca": {
+      "lat": -38.7196,
+      "lon": -62.2724,
+      "provincia": "BUENOS AIRES",
+      "kind": "bus"
+    },
+    "bella vista": {
+      "lat": -28.5086,
+      "lon": -59.0447,
+      "provincia": "CORRIENTES",
+      "kind": "bus"
+    },
+    "ceres": {
+      "lat": -29.8811,
+      "lon": -61.945,
+      "provincia": "SANTA FE",
+      "kind": "bus"
+    },
+    "chivilcoy": {
+      "lat": -34.8957,
+      "lon": -60.0167,
+      "provincia": "BUENOS AIRES",
+      "kind": "bus"
+    },
+    "cipolletti": {
+      "lat": -38.9339,
+      "lon": -67.9903,
+      "provincia": "RIO NEGRO",
+      "kind": "bus"
+    },
+    "comodoro rivadavia": {
+      "lat": -45.8641,
+      "lon": -67.4966,
+      "provincia": "CHUBUT",
+      "kind": "bus"
+    },
+    "concepcion acceso": {
+      "lat": -28.3917,
+      "lon": -57.8867,
+      "provincia": "CORRIENTES",
+      "kind": "bus"
+    },
+    "concepcion del uruguay acceso": {
+      "lat": -32.4846,
+      "lon": -58.2321,
+      "provincia": "ENTRE RIOS",
+      "kind": "bus"
+    },
+    "concordia": {
+      "lat": -31.3929,
+      "lon": -58.0209,
+      "provincia": "ENTRE RIOS",
+      "kind": "bus"
+    },
+    "corrientes centro": {
+      "lat": -27.4692,
+      "lon": -58.8306,
+      "provincia": "CORRIENTES",
+      "kind": "bus"
+    },
+    "crespo": {
+      "lat": -32.0287,
+      "lon": -60.3065,
+      "provincia": "ENTRE RIOS",
+      "kind": "bus"
+    },
+    "el talar": {
+      "lat": -34.4667,
+      "lon": -58.65,
+      "provincia": "BUENOS AIRES",
+      "kind": "bus"
+    },
+    "elortondo acceso": {
+      "lat": -33.7,
+      "lon": -61.6167,
+      "provincia": "SANTA FE",
+      "kind": "bus"
+    },
+    "esquina": {
+      "lat": -30.0144,
+      "lon": -59.5272,
+      "provincia": "CORRIENTES",
+      "kind": "bus"
+    },
+    "general pico": {
+      "lat": -35.6566,
+      "lon": -63.7568,
+      "provincia": "LA PAMPA",
+      "kind": "bus"
+    },
+    "goya acceso": {
+      "lat": -29.14,
+      "lon": -59.2627,
+      "provincia": "CORRIENTES",
+      "kind": "bus"
+    },
+    "gualeguaychu": {
+      "lat": -33.0094,
+      "lon": -58.5172,
+      "provincia": "ENTRE RIOS",
+      "kind": "bus"
+    },
+    "la rioja": {
+      "lat": -29.4131,
+      "lon": -66.8558,
+      "provincia": "LA RIOJA",
+      "kind": "bus"
+    },
+    "las grutas terminal": {
+      "lat": -40.806,
+      "lon": -65.084,
+      "provincia": "RIO NEGRO",
+      "kind": "bus"
+    },
+    "las heras": {
+      "lat": -46.5419,
+      "lon": -68.9351,
+      "provincia": "SANTA CRUZ",
+      "kind": "bus"
+    },
+    "las lenas": {
+      "lat": -35.15,
+      "lon": -70.0833,
+      "provincia": "MENDOZA",
+      "kind": "bus"
+    },
+    "liniers gral paz 10868 limite con ciudadela": {
+      "lat": -34.642,
+      "lon": -58.527,
+      "provincia": "CIUDAD DE BUENOS AIRES",
+      "kind": "bus",
+      "hub": true
+    },
+    "merlo": {
+      "lat": -32.3429,
+      "lon": -65.0139,
+      "provincia": "SAN LUIS",
+      "kind": "bus"
+    },
+    "monte caseros": {
+      "lat": -30.2533,
+      "lon": -57.6363,
+      "provincia": "CORRIENTES",
+      "kind": "bus"
+    },
+    "necochea": {
+      "lat": -38.5545,
+      "lon": -58.7396,
+      "provincia": "BUENOS AIRES",
+      "kind": "bus"
+    },
+    "oran": {
+      "lat": -23.1322,
+      "lon": -64.3264,
+      "provincia": "SALTA",
+      "kind": "bus"
+    },
+    "parana": {
+      "lat": -31.7319,
+      "lon": -60.5238,
+      "provincia": "ENTRE RIOS",
+      "kind": "bus"
+    },
+    "parana aeropuerto": {
+      "lat": -31.7948,
+      "lon": -60.4804,
+      "provincia": "ENTRE RIOS",
+      "kind": "airport"
+    },
+    "pigue": {
+      "lat": -37.6058,
+      "lon": -62.4036,
+      "provincia": "BUENOS AIRES",
+      "kind": "bus"
+    },
+    "posadas": {
+      "lat": -27.3671,
+      "lon": -55.8961,
+      "provincia": "MISIONES",
+      "kind": "bus"
+    },
+    "retiro": {
+      "lat": -34.5925,
+      "lon": -58.3747,
+      "provincia": "CIUDAD DE BUENOS AIRES",
+      "kind": "bus",
+      "hub": true
+    },
+    "rio cuarto centro": {
+      "lat": -33.1232,
+      "lon": -64.3493,
+      "provincia": "CORDOBA",
+      "kind": "bus"
+    },
+    "rio gallegos": {
+      "lat": -51.623,
+      "lon": -69.2168,
+      "provincia": "SANTA CRUZ",
+      "kind": "bus"
+    },
+    "salta": {
+      "lat": -24.7821,
+      "lon": -65.4232,
+      "provincia": "SALTA",
+      "kind": "bus"
+    },
+    "san bernardo": {
+      "lat": -36.687,
+      "lon": -56.679,
+      "provincia": "BUENOS AIRES",
+      "kind": "bus"
+    },
+    "san juan": {
+      "lat": -31.5375,
+      "lon": -68.5364,
+      "provincia": "SAN JUAN",
+      "kind": "bus"
+    },
+    "san luis": {
+      "lat": -33.3017,
+      "lon": -66.3378,
+      "provincia": "SAN LUIS",
+      "kind": "bus"
+    },
+    "san martin de los andes": {
+      "lat": -40.1572,
+      "lon": -71.3534,
+      "provincia": "NEUQUEN",
+      "kind": "bus"
+    },
+    "san miguel de tucuman": {
+      "lat": -26.8083,
+      "lon": -65.2176,
+      "provincia": "TUCUMAN",
+      "kind": "bus"
+    },
+    "san rafael acceso": {
+      "lat": -34.6177,
+      "lon": -68.3301,
+      "provincia": "MENDOZA",
+      "kind": "bus"
+    },
+    "san roque acceso": {
+      "lat": -28.5736,
+      "lon": -58.7093,
+      "provincia": "CORRIENTES",
+      "kind": "bus"
+    },
+    "san salvador de jujuy": {
+      "lat": -24.1858,
+      "lon": -65.2995,
+      "provincia": "JUJUY",
+      "kind": "bus"
+    },
+    "santa fe": {
+      "lat": -31.6333,
+      "lon": -60.7,
+      "provincia": "SANTA FE",
+      "kind": "bus"
+    },
+    "santa rosa": {
+      "lat": -36.6167,
+      "lon": -64.2833,
+      "provincia": "LA PAMPA",
+      "kind": "bus"
+    },
+    "santiago del estero": {
+      "lat": -27.7951,
+      "lon": -64.2615,
+      "provincia": "SANTIAGO DEL ESTERO",
+      "kind": "bus"
+    },
+    "tandil": {
+      "lat": -37.3217,
+      "lon": -59.1332,
+      "provincia": "BUENOS AIRES",
+      "kind": "bus"
+    },
+    "terminal de canada de gomez": {
+      "lat": -32.8164,
+      "lon": -61.3949,
+      "provincia": "SANTA FE",
+      "kind": "bus"
+    },
+    "terminal de catamarca": {
+      "lat": -28.4696,
+      "lon": -65.7795,
+      "provincia": "CATAMARCA",
+      "kind": "bus"
+    },
+    "terminal de concepcion del uruguay": {
+      "lat": -32.4846,
+      "lon": -58.2321,
+      "provincia": "ENTRE RIOS",
+      "kind": "bus"
+    },
+    "terminal de cordoba": {
+      "lat": -31.4237,
+      "lon": -64.1752,
+      "provincia": "CORDOBA",
+      "kind": "bus"
+    },
+    "terminal de corrientes": {
+      "lat": -27.4692,
+      "lon": -58.8306,
+      "provincia": "CORRIENTES",
+      "kind": "bus"
+    },
+    "terminal de formosa": {
+      "lat": -26.1849,
+      "lon": -58.1731,
+      "provincia": "FORMOSA",
+      "kind": "bus"
+    },
+    "terminal de goya": {
+      "lat": -29.14,
+      "lon": -59.2627,
+      "provincia": "CORRIENTES",
+      "kind": "bus"
+    },
+    "terminal de mendoza": {
+      "lat": -32.895,
+      "lon": -68.827,
+      "provincia": "MENDOZA",
+      "kind": "bus"
+    },
+    "terminal de neuquen": {
+      "lat": -38.9516,
+      "lon": -68.0591,
+      "provincia": "NEUQUEN",
+      "kind": "bus"
+    },
+    "terminal de omnibus de mar del plata": {
+      "lat": -38.0055,
+      "lon": -57.5426,
+      "provincia": "BUENOS AIRES",
+      "kind": "bus"
+    },
+    "terminal de omnibus de rosario": {
+      "lat": -32.9468,
+      "lon": -60.6393,
+      "provincia": "SANTA FE",
+      "kind": "bus"
+    },
+    "terminal de pinamar": {
+      "lat": -37.1077,
+      "lon": -56.8615,
+      "provincia": "BUENOS AIRES",
+      "kind": "bus"
+    },
+    "terminal de resistencia": {
+      "lat": -27.4606,
+      "lon": -58.9839,
+      "provincia": "CHACO",
+      "kind": "bus"
+    },
+    "terminal de rio cuarto": {
+      "lat": -33.1232,
+      "lon": -64.3493,
+      "provincia": "CORDOBA",
+      "kind": "bus"
+    },
+    "terminal de san carlos de bariloche": {
+      "lat": -41.1335,
+      "lon": -71.3103,
+      "provincia": "RIO NEGRO",
+      "kind": "bus"
+    },
+    "terminal de trelew": {
+      "lat": -43.2489,
+      "lon": -65.3051,
+      "provincia": "CHUBUT",
+      "kind": "bus"
+    },
+    "terminal de viedma": {
+      "lat": -40.8135,
+      "lon": -62.9967,
+      "provincia": "RIO NEGRO",
+      "kind": "bus"
+    },
+    "terminal de villa mercedes": {
+      "lat": -33.6757,
+      "lon": -65.4578,
+      "provincia": "SAN LUIS",
+      "kind": "bus"
+    },
+    "terminal jujuy nueva": {
+      "lat": -24.1858,
+      "lon": -65.2995,
+      "provincia": "JUJUY",
+      "kind": "bus"
+    },
+    "terminal salta": {
+      "lat": -24.7821,
+      "lon": -65.4232,
+      "provincia": "SALTA",
+      "kind": "bus"
+    },
+    "traslado a villa general belgrano": {
+      "lat": -31.9783,
+      "lon": -64.5564,
+      "provincia": "CORDOBA",
+      "kind": "bus"
+    },
+    "tucuman terminal": {
+      "lat": -26.8083,
+      "lon": -65.2176,
+      "provincia": "TUCUMAN",
+      "kind": "bus"
+    },
+    "villa de las rosas": {
+      "lat": -31.95,
+      "lon": -65.05,
+      "provincia": "CORDOBA",
+      "kind": "bus"
+    },
+    "villa gesell terminal": {
+      "lat": -37.2635,
+      "lon": -56.973,
+      "provincia": "BUENOS AIRES",
+      "kind": "bus"
+    },
+    "virasoro": {
+      "lat": -28.05,
+      "lon": -56.0167,
+      "provincia": "CORRIENTES",
+      "kind": "bus"
+    }
+  }
+}

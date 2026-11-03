@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Dirección 03 · Mapa por provincias — Gastos y trabajo de legisladores</title>
+<style>
+  :root {
+    --bg: #FBF6EE;
+    --paper: #FFFFFF;
+    --sand: #F3EADB;
+    --line: #E2D4BE;
+    --ink: #2B2118;
+    --muted: #5C4A3B;
+    --accent: #9C3A17;
+    --teal: #1F5F5B;
+    --teal-soft: #E3EFEC;
+    --b0: #F7E6CC; --b1: #EFC88F; --b2: #DD9A55; --b3: #A3542A; --b4: #6B2F16;
+    --blocA: #1F5F5B; --blocB: #C08A1E; --blocC: #7A4E8C; --blocD: #9C3A17;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --mono: ui-monospace, Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); }
+  a { color: var(--accent); text-underline-offset: 2px; }
+  a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible {
+    outline: 3px solid var(--teal); outline-offset: 2px; border-radius: 4px;
+  }
+  .skip { position: absolute; left: -9999px; top: 8px; background: var(--ink); color: #fff; padding: 8px 12px; }
+  .skip:focus { left: 16px; }
+  .artboard { width: 1440px; margin: 0 auto; }
+
+  /* Screen labels */
+  .screen { border-top: 1px solid var(--line); }
+  .screen-cap { display: flex; gap: 12px; align-items: baseline; padding: 10px 48px; background: var(--ink); color: #F7E6CC; font-size: 12px; letter-spacing: .04em; }
+  .screen-cap strong { color: #fff; text-transform: uppercase; letter-spacing: .08em; }
+
+  /* Site chrome */
+  .site-head { display: flex; align-items: center; gap: 32px; padding: 18px 48px; background: var(--paper); border-bottom: 1px solid var(--line); }
+  .brand { font: 700 20px/1.1 var(--serif); color: var(--ink); text-decoration: none; }
+  .brand small { display: block; font: 12px var(--sans); color: var(--muted); }
+  .site-nav ul { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; }
+  .site-nav a { display: block; padding: 6px 12px; border-radius: 999px; color: var(--ink); text-decoration: none; font-size: 14px; }
+  .site-nav a[aria-current="page"] { background: var(--sand); font-weight: 600; }
+  .site-nav a:hover { background: var(--sand); }
+  .search { margin-left: auto; display: flex; gap: 8px; }
+  .search label { position: absolute; left: -9999px; }
+  .search input { width: 280px; padding: 8px 12px; border: 1px solid #A8957C; border-radius: 8px; font: inherit; background: var(--bg); color: var(--ink); }
+
+  .wrap { padding: 32px 48px 40px; }
+  h1, h2, h3 { font-family: var(--serif); line-height: 1.2; }
+  h1 { font-size: 38px; margin: 0 0 6px; }
+  h2 { font-size: 22px; margin: 0 0 10px; }
+  h3 { font-size: 17px; margin: 0 0 8px; }
+  .lede { font-size: 17px; color: var(--muted); max-width: 720px; margin: 0 0 24px; }
+  .card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; }
+  .source { font-size: 12px; color: var(--muted); margin: 10px 0 0; }
+  .source b { color: var(--ink); font-weight: 600; }
+  .note { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; background: var(--sand); color: var(--ink); text-decoration: none; font-size: 13px; border: 1px solid var(--line); }
+  a.chip:hover { border-color: var(--accent); }
+  .chip .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .quality { background: var(--teal-soft); border: 1px solid #B9D5CF; border-radius: 12px; padding: 14px 18px; font-size: 13px; }
+  .quality h3 { font-family: var(--sans); font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--teal); margin: 0 0 6px; }
+  .quality ul { margin: 0; padding-left: 18px; }
+  .avatar { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--sand); border: 2px solid var(--line); font: 700 15px var(--sans); color: var(--ink); }
+  .avatar.lg { width: 88px; height: 88px; font-size: 30px; font-family: var(--serif); background: var(--b1); border-color: var(--b2); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; }
+  td.num, th.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .mono { font-family: var(--mono); font-size: 13px; }
+  .grid { display: grid; gap: 20px; }
+
+  /* Pantalla 1: map */
+  .home-grid { display: grid; grid-template-columns: 420px 1fr; gap: 28px; align-items: start; }
+  .map svg a rect { transition: transform .15s ease; transform-box: fill-box; transform-origin: center; }
+  .map svg a:hover rect { transform: scale(1.06); }
+  .map svg a:focus { outline: none; }
+  .map svg a:focus-visible rect { stroke: var(--teal); stroke-width: 4; }
+  .map .sel rect { stroke: var(--ink); stroke-width: 3; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; list-style: none; padding: 0; margin: 12px 0 0; font-size: 12px; color: var(--muted); }
+  .legend li { display: flex; align-items: center; gap: 6px; }
+  .legend i { width: 14px; height: 14px; border-radius: 3px; border: 1px solid rgba(0,0,0,.15); }
+  .live { margin: 10px 0 0; padding: 8px 12px; background: var(--sand); border-radius: 8px; font-size: 14px; min-height: 38px; }
+  .prov-panel header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .prov-panel .count { font: 700 15px var(--sans); color: var(--muted); }
+  .people { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; list-style: none; margin: 12px 0 0; padding: 0; }
+  .people a { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; text-decoration: none; color: var(--ink); background: var(--bg); }
+  .people a:hover { border-color: var(--accent); }
+  .people .name { font-weight: 600; font-size: 14px; line-height: 1.25; }
+  .people .meta { font-size: 12px; color: var(--muted); }
+  .people .avatar { width: 36px; height: 36px; font-size: 13px; }
+  .prov-list { columns: 4; column-gap: 24px; list-style: none; padding: 0; margin: 10px 0 0; font-size: 14px; }
+  .prov-list li { break-inside: avoid; padding: 3px 0; display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dotted var(--line); }
+  .prov-list span { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .same { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 10px; }
+  .same dt { font-size: 12px; color: var(--muted); }
+  .same dd { margin: 0; font: 700 22px var(--serif); }
+
+  /* Pantalla 2: profile */
+  .crumbs { font-size: 13px; color: var(--muted); margin: 0 0 14px; }
+  .crumbs ol { list-style: none; display: flex; gap: 6px; padding: 0; margin: 0; }
+  .crumbs li + li::before { content: "/"; margin-right: 6px; color: #A8957C; }
+  .who { display: flex; gap: 20px; align-items: center; }
+  .who .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .rel { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin: 22px 0 26px; list-style: none; padding: 0; }
+  .rel a, .rel div { display: block; height: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--paper); text-decoration: none; color: var(--ink); }
+  .rel a:hover { border-color: var(--accent); }
+  .rel .k { font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+  .rel .v { font: 700 22px var(--serif); display: block; margin-top: 2px; }
+  .rel .s { font-size: 12px; color: var(--muted); }
+  .rel .na { background: var(--sand); border-style: dashed; }
+  .profile-grid { display: grid; grid-template-columns: 1fr 360px; gap: 22px; align-items: start; }
+  .trip-head { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin: 10px 0 14px; }
+  .trip-head dt { font-size: 12px; color: var(--muted); }
+  .trip-head dd { margin: 0; font: 700 22px var(--serif); }
+  .verdict { display: inline-block; padding: 4px 12px; border-radius: 999px; background: var(--teal-soft); color: var(--teal); font-weight: 600; font-size: 14px; }
+  .funnel td.bar { width: 55%; }
+  .side-list { list-style: none; padding: 0; margin: 8px 0 0; font-size: 14px; }
+  .side-list li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+  .side-list span { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  /* Pantalla 3: province */
+  .prov-hero { display: grid; grid-template-columns: 1fr 360px; gap: 28px; align-items: center; }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 18px 0 0; }
+  .kpis div { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .kpis dt { font-size: 12px; color: var(--muted); }
+  .kpis dd { margin: 2px 0 0; font: 700 24px var(--serif); }
+  .prov-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 24px; }
+  .sen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; list-style: none; padding: 0; margin: 10px 0 0; }
+  .sen li { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--bg); }
+  .sen .top { display: flex; gap: 10px; align-items: center; }
+  .sen dl { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; margin: 10px 0 0; font-size: 13px; }
+  .sen dt { color: var(--muted); }
+  .sen dd { margin: 0; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+  .site-foot { padding: 22px 48px 34px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); background: var(--paper); }
+  @media (prefers-reduced-motion: reduce) {
+    .map svg a rect { transition: none; }
+    .map svg a:hover rect { transform: none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#p1">Saltar al contenido</a>
+<div class="artboard">
+
+<!-- ===================== PANTALLA 1 · INICIO ===================== -->
+<section class="screen" aria-labelledby="cap1">
+  <p class="screen-cap" id="cap1"><strong>Pantalla 1</strong> Inicio · el mapa es la puerta de entrada: elegís tu provincia y ves a quién la representa</p>
+
+  <header class="site-head">
+    <a class="brand" href="#p1">Tu Congreso, por provincia<small>Datos abiertos de Diputados y Senado</small></a>
+    <nav class="site-nav" aria-label="Principal">
+      <ul>
+        <li><a href="#p1" aria-current="page">Provincias</a></li>
+        <li><a href="#p3-bloques">Bloques</a></li>
+        <li><a href="#p3-comisiones">Comisiones</a></li>
+        <li><a href="#p2-proyectos">Proyectos</a></li>
+        <li><a href="#p2-viajes">Viajes</a></li>
+        <li><a href="#p3-senado">Votaciones</a></li>
+      </ul>
+    </nav>
+    <form class="search" role="search" onsubmit="return false">
+      <label for="q">Buscar legislador, bloque o comisión</label>
+      <input id="q" type="search" placeholder="Buscá: Yedlin, Presupuesto, Independencia…">
+    </form>
+  </header>
+
+  <main id="p1" class="wrap">
+    <h1>¿Quién representa a tu provincia?</h1>
+    <p class="lede">257 diputados y 72 senadores, ordenados por el lugar que representan. Tocá una provincia: vas a ver sus legisladores, sus bloques, sus comisiones y cuánto viajan comparados con quienes viven a una distancia parecida de Buenos Aires.</p>
+
+    <div class="home-grid">
+      <div class="card map">
+        <h2 id="map-title">Mapa de provincias</h2>
+        <p class="note" style="margin-top:0">Esquema de mosaicos, no a escala. El color indica la distancia estimada a Buenos Aires del grupo más frecuente entre sus diputados.</p>
+        <svg viewBox="0 0 360 640" width="360" height="640" role="group" aria-labelledby="map-title" style="display:block;margin:10px auto 0">
+          <g font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif" text-anchor="middle">
+          </g>
+        </svg>
+        <ul class="legend" aria-label="Referencia de colores: distancia estimada a Buenos Aires">
+          <li><i style="background:var(--b0)"></i>&lt; 100 km</li>
+          <li><i style="background:var(--b1)"></i>100–400</li>
+          <li><i style="background:var(--b2)"></i>400–800</li>
+          <li><i style="background:var(--b3)"></i>800–1200</li>
+          <li><i style="background:var(--b4)"></i>≥ 1200 km</li>
+        </ul>
+        <p class="live" id="live" aria-live="polite">Seleccionada: <b>Tucumán</b> · 9 diputados · 3 senadores · 800–1200 km</p>
+      </div>
+
+      <div class="grid">
+        <section class="card prov-panel" aria-labelledby="sel-title">
+          <header>
+            <h2 id="sel-title" style="margin:0">Tucumán</h2>
+            <span class="count">9 diputados · 3 senadores</span>
+            <a class="chip" href="#p3" style="margin-left:auto">Ver todo Tucumán →</a>
+          </header>
+          <p class="note">Distancia estimada a Buenos Aires: grupo 800–1200 km · mediana de la provincia 5,71 tramos por mes.</p>
+
+          <h3 style="margin-top:16px">Diputados</h3>
+          <ul class="people">
+            <li><a href="#p2"><span class="avatar" aria-hidden="true">PY</span><span><span class="name">Yedlin, Pablo Raúl</span><br><span class="meta">Unión por la Patria · 2023–2027</span></span></a></li>
+            <li><a href="#p3-dip"><span class="avatar" aria-hidden="true">MC</span><span><span class="name">Campero, Mariano</span><br><span class="meta">La Libertad Avanza · 2023–2027</span></span></a></li>
+            <li><a href="#p3-dip"><span class="avatar" aria-hidden="true">GH</span><span><span class="name">Huesen, Gerardo</span><br><span class="meta">La Libertad Avanza · 2023–2027</span></span></a></li>
+            <li><a href="#p3-dip"><span class="avatar" aria-hidden="true">EF</span><span><span class="name">Fernández, Elia Marina</span><br><span class="meta">Independencia · 2023–2027</span></span></a></li>
+            <li><a href="#p3-dip"><span class="avatar" aria-hidden="true">GM</span><span><span class="name">Medina, Gladys</span><br><span class="meta">Independencia · 2025–2029</span></span></a></li>
+            <li><a href="#p3-dip"><span class="avatar" aria-hidden="true">CC</span><span><span class="name">Cisneros, Carlos</span><br><span class="meta">Unión por la Patria · 2023–2027</span></span></a></li>
+          </ul>
+          <p class="note"><a href="#p3-dip">y 3 más: Molinuevo, Noguera, Pelli</a></p>
+
+          <h3 style="margin-top:16px">Senadores</h3>
+          <ul class="people">
+            <li><a href="#p3-senado"><span class="avatar" aria-hidden="true">JM</span><span><span class="name">Manzur, Juan Luis</span><br><span class="meta">Justicialista · 2021–2027</span></span></a></li>
+            <li><a href="#p3-senado"><span class="avatar" aria-hidden="true">SM</span><span><span class="name">Mendoza, Sandra Mariela</span><br><span class="meta">Convicción Federal · 2021–2027</span></span></a></li>
+            <li><a href="#p3-senado"><span class="avatar" aria-hidden="true">BA</span><span><span class="name">Ávila, Beatriz Luisa</span><br><span class="meta">Independencia · 2021–2027</span></span></a></li>
+          </ul>
+          <p class="source">Fuente: <b>HCDN - Legisladores</b>, <b>Senado - Datos Abiertos</b>. Período: composición vigente al 03/11/2026.</p>
+        </section>
+
+        <section class="card" aria-labelledby="same-title">
+          <h2 id="same-title">Lo que es igual en todas las provincias</h2>
+          <dl class="same">
+            <div><dt>Dieta mensual de cada diputado/a</dt><dd>$ 6.125.805,18</dd></div>
+            <div><dt>Gastos de representación</dt><dd>$ 464.489,12</dd></div>
+            <div><dt>Total bruto</dt><dd>$ 6.590.294,30</dd></div>
+          </dl>
+          <p class="note">Montos generales publicados por la Cámara, iguales para los 257 diputados; no son gastos individuales. El Senado no publica dietas en sus datos abiertos.</p>
+          <p class="source">Fuente: <b>HCDN - Dietas y Gastos de Representación</b>. Período: montos vigentes al 03/11/2026.</p>
+        </section>
+
+        <aside class="quality" aria-labelledby="q1">
+          <h3 id="q1">Calidad de los datos</h3>
+          <ul>
+            <li>Comisiones: 99,6 % de las filas asignadas a un diputado/a (1.612 de 1.618).</li>
+            <li>Misiones oficiales: 97 % · Proyectos: 99,1 % · Votaciones del Senado: 100 %.</li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+
+    <section class="card" style="margin-top:24px" aria-labelledby="list-title">
+      <h2 id="list-title">Todas las provincias (lista)</h2>
+      <p class="note" style="margin-top:0">Misma información que el mapa, para lectores de pantalla y teclado. Entre paréntesis: diputados · senadores.</p>
+      <ul class="prov-list" id="prov-list"></ul>
+    </section>
+  </main>
+</section>
+
+<!-- ===================== PANTALLA 2 · FICHA DE LEGISLADOR ===================== -->
+<section class="screen" aria-labelledby="cap2">
+  <p class="screen-cap" id="cap2"><strong>Pantalla 2</strong> Ficha de diputado · la distancia a Buenos Aires da contexto a los viajes; cada vínculo lleva a su página</p>
+
+  <div id="p2" class="wrap">
+    <nav class="crumbs" aria-label="Ruta de navegación">
+      <ol>
+        <li><a href="#p1">Provincias</a></li>
+        <li><a href="#p3">Tucumán</a></li>
+        <li aria-current="page">Yedlin, Pablo Raúl</li>
+      </ol>
+    </nav>
+
+    <header class="who">
+      <span class="avatar lg" aria-hidden="true">PY</span>
+      <div>
+        <h1>Yedlin, Pablo Raúl</h1>
+        <p style="margin:0;color:var(--muted)">Diputado nacional por Tucumán · mandato 2023–2027 · en el cargo desde el 10/12/2023</p>
+        <div class="chips">
+          <a class="chip" href="#p3"><span class="dot" style="background:var(--b3)"></span>Provincia: Tucumán</a>
+          <a class="chip" href="#p3-bloques"><span class="dot" style="background:var(--blocB)"></span>Bloque: Unión por la Patria (92)</a>
+          <a class="chip" href="#p3-comisiones">6 comisiones</a>
+        </div>
+      </div>
+    </header>
+
+    <ul class="rel" aria-label="Con qué se relaciona este diputado">
+      <li><a href="#p3"><span class="k">Provincia</span><span class="v">Tucumán</span><span class="s">9 diputados · 3 senadores</span></a></li>
+      <li><a href="#p3-bloques"><span class="k">Bloque</span><span class="v">UxP</span><span class="s">2 de los 9 de Tucumán</span></a></li>
+      <li><a href="#p2-comisiones"><span class="k">Comisiones</span><span class="v">6</span><span class="s">integrante en todas</span></a></li>
+      <li><a href="#p2-proyectos"><span class="k">Proyectos</span><span class="v">69</span><span class="s">como primer firmante</span></a></li>
+      <li><a href="#p2-viajes"><span class="k">Viajes</span><span class="v">185</span><span class="s">tramos · 4 misiones</span></a></li>
+      <li><div class="na"><span class="k">Votaciones</span><span class="v">—</span><span class="s">solo hay actas nominales del Senado</span></div></li>
+    </ul>
+
+    <div class="profile-grid">
+      <div class="grid">
+        <section class="card" id="p2-viajes" aria-labelledby="trav">
+          <h2 id="trav">Viajes nacionales, en contexto de distancia</h2>
+          <svg viewBox="0 0 760 90" width="100%" role="img" aria-labelledby="route-t route-d">
+            <title id="route-t">Ruta más frecuente</title>
+            <desc id="route-d">De Aeroparque Jorge Newbery, Buenos Aires, al Aeropuerto Teniente Benjamín Matienzo, Tucumán: 158 de 185 tramos. Distancia estimada en el grupo de 800 a 1200 kilómetros.</desc>
+            <path d="M60 60 C 250 0, 510 0, 700 60" fill="none" stroke="#A3542A" stroke-width="3" stroke-dasharray="7 6"/>
+            <circle cx="60" cy="60" r="9" fill="#2B2118"/><circle cx="700" cy="60" r="9" fill="#A3542A"/>
+            <text x="60" y="86" text-anchor="middle" font-size="13" fill="#2B2118">Aeroparque (CABA)</text>
+            <text x="700" y="86" text-anchor="middle" font-size="13" fill="#2B2118">Matienzo (Tucumán)</text>
+            <text x="380" y="26" text-anchor="middle" font-size="14" font-weight="700" fill="#2B2118">800–1200 km · 158 de 185 tramos</text>
+          </svg>
+          <dl class="trip-head">
+            <div><dt>Tramos</dt><dd>185</dd></div>
+            <div><dt>Meses en el cargo en el período</dt><dd>24</dd></div>
+            <div><dt>Tramos por mes</dt><dd>7,71</dd></div>
+            <div><dt>Grupo por distancia</dt><dd>800–1200 km</dd></div>
+          </dl>
+          <p style="margin:0">Comparación con sus pares: <span class="verdict">En línea con sus pares a distancia similar</span></p>
+
+          <h3 style="margin-top:18px">Tramos por mes según distancia a Buenos Aires (mediana de cada grupo)</h3>
+          <svg viewBox="0 0 760 210" width="100%" role="img" aria-labelledby="bands-t bands-d">
+            <title id="bands-t">Mediana de tramos por mes por grupo de distancia</title>
+            <desc id="bands-d">Menos de 100 km: 0,33. 100 a 400: 3,23. 400 a 800: 5,58. 800 a 1200: 5,93. 1200 o más: 6,08. Yedlin: 7,71, en el grupo 800 a 1200.</desc>
+            <g font-size="13" fill="#2B2118">
+              <line x1="120" y1="10" x2="120" y2="190" stroke="#E2D4BE"/>
+              <text x="110" y="34" text-anchor="end">&lt; 100 km</text><rect x="120" y="22" width="22" height="18" rx="3" fill="#F7E6CC" stroke="#C9B08C"/><text x="150" y="36">0,33</text>
+              <text x="110" y="68" text-anchor="end">100–400</text><rect x="120" y="56" width="217" height="18" rx="3" fill="#EFC88F"/><text x="345" y="70">3,23</text>
+              <text x="110" y="102" text-anchor="end">400–800</text><rect x="120" y="90" width="374" height="18" rx="3" fill="#DD9A55"/><text x="502" y="104">5,58</text>
+              <text x="110" y="136" text-anchor="end" font-weight="700">800–1200</text><rect x="120" y="124" width="397" height="18" rx="3" fill="#A3542A"/><text x="525" y="138" font-weight="700">5,93</text>
+              <text x="110" y="170" text-anchor="end">≥ 1200 km</text><rect x="120" y="158" width="407" height="18" rx="3" fill="#6B2F16"/><text x="535" y="172">6,08</text>
+              <line x1="637" y1="114" x2="637" y2="152" stroke="#1F5F5B" stroke-width="3"/>
+              <circle cx="637" cy="133" r="8" fill="#1F5F5B"/>
+              <text x="652" y="128" fill="#1F5F5B" font-weight="700">Yedlin</text><text x="652" y="146" fill="#1F5F5B">7,71</text>
+            </g>
+          </svg>
+          <p class="note">Más tramos no implica irregularidad: depende de la distancia, la agenda y los traslados a la provincia. La distancia es estimada por grupo, no por kilómetro exacto.</p>
+          <p class="source">Fuente: <b>HCDN - Viajes Nacionales</b>. Período: 2.º semestre 2024 – 1.º semestre 2026.</p>
+        </section>
+
+        <section class="card" aria-labelledby="mis">
+          <h2 id="mis">Misiones oficiales al exterior · 4</h2>
+          <table>
+            <thead><tr><th scope="col">Fechas</th><th scope="col">Lugar</th><th scope="col">Motivo</th><th scope="col">Viáticos</th></tr></thead>
+            <tbody>
+              <tr><td>03/04/2026 al 12/04/2026</td><td>Londres y Oxford, Reino Unido</td><td>III Seminario de Innovación en Sistemas de Salud</td><td>—</td></tr>
+              <tr><td>15/11/2025 al 23/11/2025</td><td>Roma, Italia</td><td>Disertante en el 9° Seminario de «Ética en el gerenciamiento de la salud»</td><td>—</td></tr>
+              <tr><td>19/04/2025 al 27/04/2025</td><td>Londres y Oxford, Reino Unido</td><td>Disertante del II Seminario de Innovación en Sistemas de Salud</td><td>—</td></tr>
+              <tr><td>28/07/2024 al 04/08/2024</td><td>Washington D.C., Estados Unidos</td><td>Seminario de sistemas de salud e instituciones de excelencia</td><td>—</td></tr>
+            </tbody>
+          </table>
+          <p class="note">«—» indica que la Cámara no publicó el dato.</p>
+          <p class="source">Fuente: <b>HCDN - Misiones Oficiales</b>. Período: del 11/03/2024 al 09/05/2026.</p>
+        </section>
+
+        <section class="card" id="p2-proyectos" aria-labelledby="proy">
+          <h2 id="proy">Proyectos · 69 como primer firmante</h2>
+          <p class="note" style="margin-top:0">37 de resolución · 16 de declaración · 16 de ley.</p>
+          <table class="funnel">
+            <caption class="note" style="text-align:left;caption-side:top;margin-bottom:6px">Cuántos llegaron al menos a cada etapa</caption>
+            <thead><tr><th scope="col">Etapa</th><th scope="col">Avance</th><th scope="col" class="num">Proyectos</th></tr></thead>
+            <tbody>
+              <tr><td>Presentado</td><td class="bar"><svg viewBox="0 0 100 12" width="100%" height="12" aria-hidden="true"><rect width="100" height="12" rx="2" fill="#A3542A"/></svg></td><td class="num">69 (100 %)</td></tr>
+              <tr><td>En comisión</td><td class="bar"><svg viewBox="0 0 100 12" width="100%" height="12" aria-hidden="true"><rect width="10.1" height="12" rx="2" fill="#A3542A"/></svg></td><td class="num">7 (10,1 %)</td></tr>
+              <tr><td>Con dictamen</td><td class="bar"><svg viewBox="0 0 100 12" width="100%" height="12" aria-hidden="true"><rect width="8.7" height="12" rx="2" fill="#A3542A"/></svg></td><td class="num">6 (8,7 %)</td></tr>
+              <tr><td>Media sanción</td><td class="bar"><svg viewBox="0 0 100 12" width="100%" height="12" aria-hidden="true"><rect width="8.7" height="12" rx="2" fill="#A3542A"/></svg></td><td class="num">6 (8,7 %)</td></tr>
+              <tr><td>Sancionado</td><td class="bar"><svg viewBox="0 0 100 12" width="100%" height="12" aria-hidden="true"><rect width="8.7" height="12" rx="2" fill="#A3542A"/></svg></td><td class="num">6 (8,7 %)</td></tr>
+            </tbody>
+          </table>
+          <h3 style="margin-top:16px">Últimos proyectos</h3>
+          <table>
+            <thead><tr><th scope="col">Fecha</th><th scope="col">Expediente</th><th scope="col">Tipo</th><th scope="col">Título</th><th scope="col">Etapa</th></tr></thead>
+            <tbody>
+              <tr><td>25/09/2026</td><td class="mono"><a href="#p2-proyectos">4981-D-2026</a></td><td>Ley</td><td>Acceso equitativo y de calidad a los servicios de salud pediátrica en hospitales públicos</td><td>Presentado</td></tr>
+              <tr><td>15/09/2026</td><td class="mono"><a href="#p2-proyectos">4769-D-2026</a></td><td>Ley</td><td>Gestión integral, detección y eliminación segura del asbesto instalado</td><td>Presentado</td></tr>
+              <tr><td>08/07/2026</td><td class="mono"><a href="#p2-proyectos">3296-D-2026</a></td><td>Ley</td><td>Marco regulatorio para el ejercicio profesional de la psicomotricidad</td><td>Presentado</td></tr>
+            </tbody>
+          </table>
+          <p class="note">«Sancionado» no significa «es ley»: resoluciones y declaraciones se aprueban en una sola Cámara. La fuente registra solo al primer firmante.</p>
+          <p class="source">Fuente: <b>HCDN - Proyectos Parlamentarios</b>, <b>HCDN - Movimientos de Proyectos</b>. Período: del 03/01/2024 al 06/10/2026.</p>
+        </section>
+      </div>
+
+      <aside class="grid" aria-label="Relaciones de la ficha">
+        <section class="card" id="p2-comisiones" aria-labelledby="com">
+          <h2 id="com">Comisiones · 6</h2>
+          <ul class="side-list">
+            <li><a href="#p3-comisiones">Acción Social y Salud Pública</a><span>Integrante</span></li>
+            <li><a href="#p3-comisiones">Ciencia, Tecnología e Innovación Productiva</a><span>Integrante</span></li>
+            <li><a href="#p3-comisiones">Discapacidad</a><span>Integrante</span></li>
+            <li><a href="#p3-comisiones">Población y Desarrollo Humano</a><span>Integrante</span></li>
+            <li><a href="#p3-comisiones">Presupuesto y Hacienda</a><span>Integrante</span></li>
+            <li><a href="#p3-comisiones">Prevención de Adicciones y Control del Narcotráfico</a><span>Integrante</span></li>
+          </ul>
+          <p class="note">En Discapacidad lo acompaña Gerardo Huesen (Tucumán), que la preside.</p>
+          <p class="source">Fuente: <b>HCDN - Comisiones</b>. Período: composición vigente al 03/11/2026.</p>
+        </section>
+
+        <section class="card" aria-labelledby="pares">
+          <h2 id="pares">Otros diputados de Tucumán</h2>
+          <p class="note" style="margin-top:0">Tramos por mes, mismo grupo de distancia (800–1200 km).</p>
+          <ul class="side-list">
+            <li><a href="#p3-dip">Campero, Mariano</a><span>7,83</span></li>
+            <li><a href="#p3-dip">Huesen, Gerardo</a><span>7,54</span></li>
+            <li><a href="#p3-dip">Molinuevo, Soledad</a><span>6,71</span></li>
+            <li><a href="#p3-dip">Pelli, Federico Agustín</a><span>5,71</span></li>
+            <li><a href="#p3-dip">Fernández, Elia Marina</a><span>5,43</span></li>
+            <li><a href="#p3-dip">Medina, Gladys</a><span>5,14</span></li>
+            <li><a href="#p3-dip">Noguera, Javier</a><span>5</span></li>
+            <li><a href="#p3-dip">Cisneros, Carlos</a><span>0</span></li>
+          </ul>
+          <p class="source">Fuente: <b>HCDN - Viajes Nacionales</b>. Período: 2.º semestre 2024 – 1.º semestre 2026.</p>
+        </section>
+
+        <section class="card" aria-labelledby="rem">
+          <h2 id="rem">Remuneración</h2>
+          <ul class="side-list">
+            <li>Dieta<span>$ 6.125.805,18</span></li>
+            <li>Gastos de representación<span>$ 464.489,12</span></li>
+            <li>Neto estimado<span>$ 5.187.411,88</span></li>
+          </ul>
+          <p class="note">Iguales para todos los diputados; no son gastos individuales.</p>
+          <p class="source">Fuente: <b>HCDN - Dietas y Gastos de Representación</b>. Período: montos vigentes al 03/11/2026.</p>
+        </section>
+
+        <aside class="quality" aria-labelledby="q2">
+          <h3 id="q2">Calidad de los datos</h3>
+          <p style="margin:0">Comisiones 99,6 % · misiones 97 % · proyectos 99,1 % de filas asignadas a un legislador. Las filas dudosas no se asignan.</p>
+        </aside>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PANTALLA 3 · PÁGINA DE PROVINCIA ===================== -->
+<section class="screen" aria-labelledby="cap3">
+  <p class="screen-cap" id="cap3"><strong>Pantalla 3</strong> Página de provincia · Tucumán: sus legisladores, los bloques presentes, cuánto viajan y en qué comisiones están</p>
+
+  <div id="p3" class="wrap">
+    <nav class="crumbs" aria-label="Ruta de navegación">
+      <ol><li><a href="#p1">Provincias</a></li><li aria-current="page">Tucumán</li></ol>
+    </nav>
+    <div class="prov-hero">
+      <div>
+        <h1>Tucumán</h1>
+        <p class="lede" style="margin:0">9 bancas en Diputados y 3 en el Senado. Distancia estimada a Buenos Aires: grupo 800–1200 km, como Catamarca, Santiago del Estero o Mendoza.</p>
+        <dl class="kpis">
+          <div><dt>Diputados</dt><dd>9</dd></div>
+          <div><dt>Senadores</dt><dd>3</dd></div>
+          <div><dt>Bloques presentes</dt><dd>5</dd></div>
+          <div><dt>Mediana de tramos por mes</dt><dd>5,71</dd></div>
+        </dl>
+      </div>
+      <svg viewBox="0 0 360 200" width="360" height="200" role="img" aria-labelledby="mini-t">
+        <title id="mini-t">Tucumán resaltada en el noroeste, con línea a Buenos Aires</title>
+        <g stroke="#FBF6EE" stroke-width="3">
+          <rect x="70" y="10" width="44" height="44" rx="8" fill="#6B2F16"/><rect x="118" y="10" width="44" height="44" rx="8" fill="#6B2F16"/><rect x="166" y="10" width="44" height="44" rx="8" fill="#A3542A"/>
+          <rect x="70" y="58" width="44" height="44" rx="8" fill="#A3542A"/><rect x="118" y="58" width="44" height="44" rx="8" fill="#A3542A" stroke="#2B2118" stroke-width="4"/><rect x="166" y="58" width="44" height="44" rx="8" fill="#DD9A55"/>
+          <rect x="70" y="106" width="44" height="44" rx="8" fill="#A3542A"/><rect x="118" y="106" width="44" height="44" rx="8" fill="#A3542A"/><rect x="166" y="106" width="44" height="44" rx="8" fill="#EFC88F"/>
+          <rect x="214" y="154" width="44" height="44" rx="8" fill="#F7E6CC"/><rect x="262" y="154" width="44" height="44" rx="8" fill="#F7E6CC"/>
+        </g>
+        <text x="140" y="85" text-anchor="middle" font-size="14" font-weight="700" fill="#FFFFFF">TUC</text>
+        <text x="284" y="181" text-anchor="middle" font-size="12" font-weight="700" fill="#2B2118">CABA</text>
+        <path d="M150 90 Q 230 110 280 168" fill="none" stroke="#1F5F5B" stroke-width="3" stroke-dasharray="6 5"/>
+      </svg>
+    </div>
+
+    <div class="prov-grid">
+      <section class="card" id="p3-bloques" aria-labelledby="blq">
+        <h2 id="blq">Bloques presentes</h2>
+        <svg viewBox="0 0 560 150" width="100%" role="img" aria-labelledby="blq-t blq-d">
+          <title id="blq-t">Bancas de Tucumán por bloque</title>
+          <desc id="blq-d">Diputados: La Libertad Avanza 4, Independencia 3, Unión por la Patria 2. Senadores: Justicialista 1, Convicción Federal 1, Independencia 1.</desc>
+          <g font-size="13" fill="#2B2118">
+            <text x="0" y="22" font-weight="700">Diputados (9)</text>
+            <rect x="0" y="32" width="244" height="26" fill="#7A4E8C"/><rect x="244" y="32" width="183" height="26" fill="#1F5F5B"/><rect x="427" y="32" width="122" height="26" fill="#C08A1E"/>
+            <text x="8" y="50" fill="#FFFFFF" font-weight="700">LLA 4</text><text x="252" y="50" fill="#FFFFFF" font-weight="700">Independencia 3</text><text x="435" y="50" fill="#2B2118" font-weight="700">UxP 2</text>
+            <text x="0" y="94" font-weight="700">Senadores (3)</text>
+            <rect x="0" y="104" width="183" height="26" fill="#9C3A17"/><rect x="183" y="104" width="183" height="26" fill="#F3EADB" stroke="#C9B08C"/><rect x="366" y="104" width="183" height="26" fill="#1F5F5B"/>
+            <text x="8" y="122" fill="#FFFFFF" font-weight="700">Justicialista 1</text><text x="191" y="122" font-weight="700">Convicción Federal 1</text><text x="374" y="122" fill="#FFFFFF" font-weight="700">Independencia 1</text>
+          </g>
+        </svg>
+        <p class="note">Independencia es el único bloque con bancas de Tucumán en las dos Cámaras. Cohesión en el Senado (índice de Rice medio): Justicialista 0,97 con 22 senadores; Convicción Federal 0,97 con 3; Independencia 1 con 1 (con uno o dos senadores el índice dice poco).</p>
+        <p class="chips" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0">
+          <a class="chip" href="#p3-bloques">La Libertad Avanza →</a><a class="chip" href="#p3-bloques">Independencia →</a><a class="chip" href="#p3-bloques">Unión por la Patria →</a><a class="chip" href="#p3-bloques">Justicialista →</a><a class="chip" href="#p3-bloques">Convicción Federal →</a>
+        </p>
+        <p class="source">Fuente: <b>HCDN - Legisladores</b>, <b>Senado - Actas de votación</b>. Período: composición vigente al 03/11/2026; actas del 23/02/2024 al 29/10/2026.</p>
+      </section>
+
+      <section class="card" aria-labelledby="via">
+        <h2 id="via">Cuánto viajan sus diputados</h2>
+        <svg viewBox="0 0 560 170" width="100%" role="img" aria-labelledby="via-t via-d">
+          <title id="via-t">Tramos por mes de los 9 diputados de Tucumán</title>
+          <desc id="via-d">Valores: Cisneros 0, Noguera 5, Medina 5,14, Fernández 5,43, Pelli 5,71, Molinuevo 6,71, Huesen 7,54, Yedlin 7,71, Campero 7,83. Mediana de Tucumán 5,71; mediana del grupo 800 a 1200 km 5,93.</desc>
+          <g font-size="12" fill="#5C4A3B">
+            <line x1="20" y1="90" x2="540" y2="90" stroke="#C9B08C"/>
+            <text x="20" y="112" text-anchor="middle">0</text><text x="150" y="112" text-anchor="middle">2</text><text x="280" y="112" text-anchor="middle">4</text><text x="410" y="112" text-anchor="middle">6</text><text x="540" y="112" text-anchor="middle">8</text>
+            <line x1="391" y1="40" x2="391" y2="98" stroke="#2B2118" stroke-dasharray="4 3"/>
+            <text x="387" y="34" text-anchor="end" fill="#2B2118">Tucumán 5,71</text>
+            <line x1="405" y1="56" x2="405" y2="98" stroke="#A3542A" stroke-width="2"/>
+            <text x="409" y="52" fill="#9C3A17">Grupo 800–1200: 5,93</text>
+            <circle cx="20" cy="90" r="7" fill="#DD9A55"/>
+            <circle cx="345" cy="90" r="7" fill="#DD9A55"/><circle cx="354" cy="80" r="7" fill="#DD9A55"/><circle cx="373" cy="90" r="7" fill="#DD9A55"/><circle cx="391" cy="80" r="7" fill="#DD9A55"/>
+            <circle cx="456" cy="90" r="7" fill="#DD9A55"/><circle cx="510" cy="90" r="7" fill="#DD9A55"/><circle cx="521" cy="76" r="8" fill="#1F5F5B"/><circle cx="529" cy="62" r="7" fill="#DD9A55"/>
+            <line x1="521" y1="98" x2="521" y2="124" stroke="#1F5F5B"/>
+            <text x="521" y="138" text-anchor="middle" fill="#1F5F5B" font-weight="700">Yedlin 7,71</text>
+            <text x="20" y="138" fill="#2B2118">Cisneros: 0 tramos registrados</text>
+            <text x="280" y="162" text-anchor="middle">tramos por mes</text>
+          </g>
+        </svg>
+        <p class="note">Los 9 están en el grupo 800–1200 km y el sitio describe a cada uno como «en línea con sus pares a distancia similar». Más tramos no implica irregularidad.</p>
+        <p class="source">Fuente: <b>HCDN - Viajes Nacionales</b>. Período: 2.º semestre 2024 – 1.º semestre 2026.</p>
+      </section>
+    </div>
+
+    <section class="card" id="p3-dip" style="margin-top:22px" aria-labelledby="dtab">
+      <h2 id="dtab">Diputados de Tucumán</h2>
+      <table>
+        <thead><tr><th scope="col">Diputado/a</th><th scope="col">Bloque</th><th scope="col">Mandato</th><th scope="col" class="num">Tramos por mes</th><th scope="col" class="num">Proyectos</th><th scope="col" class="num">Comisiones</th></tr></thead>
+        <tbody>
+          <tr><td><a href="#p2">Yedlin, Pablo Raúl</a></td><td><a href="#p3-bloques">Unión por la Patria</a></td><td>2023–2027</td><td class="num">7,71</td><td class="num">69</td><td class="num">6</td></tr>
+          <tr><td><a href="#p3-dip">Medina, Gladys</a></td><td><a href="#p3-bloques">Independencia</a></td><td>2025–2029</td><td class="num">5,14</td><td class="num">26</td><td class="num">2</td></tr>
+          <tr><td><a href="#p3-dip">Fernández, Elia Marina</a></td><td><a href="#p3-bloques">Independencia</a></td><td>2023–2027</td><td class="num">5,43</td><td class="num">17</td><td class="num">1</td></tr>
+          <tr><td><a href="#p3-dip">Cisneros, Carlos</a></td><td><a href="#p3-bloques">Unión por la Patria</a></td><td>2023–2027</td><td class="num">0</td><td class="num">13</td><td class="num">3</td></tr>
+          <tr><td><a href="#p3-dip">Huesen, Gerardo</a></td><td><a href="#p3-bloques">La Libertad Avanza</a></td><td>2023–2027</td><td class="num">7,54</td><td class="num">10</td><td class="num">10</td></tr>
+          <tr><td><a href="#p3-dip">Campero, Mariano</a></td><td><a href="#p3-bloques">La Libertad Avanza</a></td><td>2023–2027</td><td class="num">7,83</td><td class="num">8</td><td class="num">2</td></tr>
+          <tr><td><a href="#p3-dip">Noguera, Javier</a></td><td><a href="#p3-bloques">Independencia</a></td><td>2025–2029</td><td class="num">5</td><td class="num">8</td><td class="num">2</td></tr>
+          <tr><td><a href="#p3-dip">Pelli, Federico Agustín</a></td><td><a href="#p3-bloques">La Libertad Avanza</a></td><td>2025–2029</td><td class="num">5,71</td><td class="num">3</td><td class="num">6</td></tr>
+          <tr><td><a href="#p3-dip">Molinuevo, Soledad</a></td><td><a href="#p3-bloques">La Libertad Avanza</a></td><td>2025–2029</td><td class="num">6,71</td><td class="num">2</td><td class="num">6</td></tr>
+        </tbody>
+      </table>
+      <p class="note">Proyectos = como primer firmante (la fuente no incluye cofirmantes). Quien asumió en 2025 tiene menos meses en el período.</p>
+      <p class="source">Fuentes: <b>HCDN - Viajes Nacionales</b> (2.º sem. 2024 – 1.º sem. 2026), <b>HCDN - Proyectos Parlamentarios</b> (03/01/2024 – 06/10/2026), <b>HCDN - Comisiones</b> (vigente al 03/11/2026).</p>
+    </section>
+
+    <div class="prov-grid">
+      <section class="card" id="p3-senado" aria-labelledby="stab">
+        <h2 id="stab">Senadores de Tucumán y sus votaciones</h2>
+        <ul class="sen">
+          <li><div class="top"><span class="avatar" aria-hidden="true">JM</span><div><a href="#p3-senado"><b>Manzur, Juan Luis</b></a><br><span class="note">Justicialista</span></div></div>
+            <dl><dt>Actas</dt><dd>345</dd><dt>Asistencia</dt><dd>90,1 %</dd><dt>Lealtad al bloque</dt><dd>95,2 %</dd></dl></li>
+          <li><div class="top"><span class="avatar" aria-hidden="true">SM</span><div><a href="#p3-senado"><b>Mendoza, Sandra M.</b></a><br><span class="note">Convicción Federal</span></div></div>
+            <dl><dt>Actas</dt><dd>345</dd><dt>Asistencia</dt><dd>94,5 %</dd><dt>Lealtad al bloque</dt><dd>96 %</dd></dl></li>
+          <li><div class="top"><span class="avatar" aria-hidden="true">BA</span><div><a href="#p3-senado"><b>Ávila, Beatriz Luisa</b></a><br><span class="note">Independencia</span></div></div>
+            <dl><dt>Actas</dt><dd>345</dd><dt>Asistencia</dt><dd>93,9 %</dd><dt>Lealtad al bloque</dt><dd>100 %</dd></dl></li>
+        </ul>
+        <p class="note">Asistencia = actas en que no figura ausente. El acta registra «ausente» sin indicar el motivo (licencia, misión oficial u otro). Son estadísticas descriptivas: no evalúan el desempeño. El Senado no publica dietas ni viajes en sus datos abiertos.</p>
+        <p class="source">Fuente: <b>Senado - Actas de votación</b>. Período: 345 actas del 23/02/2024 al 29/10/2026.</p>
+      </section>
+
+      <section class="card" id="p3-comisiones" aria-labelledby="ctab">
+        <h2 id="ctab">Comisiones donde está Tucumán</h2>
+        <p class="note" style="margin-top:0">Sus 9 diputados ocupan 38 lugares en 27 comisiones distintas. Una presidencia: <a href="#p3-dip">Discapacidad</a> (Gerardo Huesen).</p>
+        <svg viewBox="0 0 560 230" width="100%" role="img" aria-labelledby="ctab-t ctab-d">
+          <title id="ctab-t">Comisiones con más diputados de Tucumán</title>
+          <desc id="ctab-d">Presupuesto y Hacienda 3; Acción Social y Salud Pública, Discapacidad, Economía, Legislación General, Seguridad Interior, Vivienda y Ordenamiento Urbano y Mercosur 2 cada una.</desc>
+          <g font-size="13" fill="#2B2118">
+            <text x="250" y="20" text-anchor="end">Presupuesto y Hacienda</text><rect x="260" y="8" width="210" height="16" rx="3" fill="#A3542A"/><text x="478" y="21" font-weight="700">3</text>
+            <text x="250" y="48" text-anchor="end">Acción Social y Salud Pública</text><rect x="260" y="36" width="140" height="16" rx="3" fill="#DD9A55"/><text x="408" y="49">2</text>
+            <text x="250" y="76" text-anchor="end">Discapacidad</text><rect x="260" y="64" width="140" height="16" rx="3" fill="#DD9A55"/><text x="408" y="77">2</text>
+            <text x="250" y="104" text-anchor="end">Economía</text><rect x="260" y="92" width="140" height="16" rx="3" fill="#DD9A55"/><text x="408" y="105">2</text>
+            <text x="250" y="132" text-anchor="end">Legislación General</text><rect x="260" y="120" width="140" height="16" rx="3" fill="#DD9A55"/><text x="408" y="133">2</text>
+            <text x="250" y="160" text-anchor="end">Seguridad Interior</text><rect x="260" y="148" width="140" height="16" rx="3" fill="#DD9A55"/><text x="408" y="161">2</text>
+            <text x="250" y="188" text-anchor="end">Vivienda y Ordenamiento Urbano</text><rect x="260" y="176" width="140" height="16" rx="3" fill="#DD9A55"/><text x="408" y="189">2</text>
+            <text x="250" y="216" text-anchor="end">Mercosur</text><rect x="260" y="204" width="140" height="16" rx="3" fill="#DD9A55"/><text x="408" y="217">2</text>
+          </g>
+        </svg>
+        <p class="note"><a href="#p3-comisiones">Ver las 27 comisiones →</a></p>
+        <p class="source">Fuente: <b>HCDN - Comisiones</b>. Período: composición vigente al 03/11/2026.</p>
+      </section>
+    </div>
+
+    <aside class="quality" style="margin-top:22px" aria-labelledby="q3">
+      <h3 id="q3">Calidad de los datos de esta página</h3>
+      <ul>
+        <li>Comisiones: 99,6 % de las filas asignadas (1.612 de 1.618); 1 nombre dudoso y 1 sin emparejar no se asignan.</li>
+        <li>Misiones oficiales: 97 % · Proyectos: 99,1 % · Votaciones del Senado: 100 % de filas asignadas a un legislador.</li>
+        <li>La distancia a Buenos Aires es un grupo estimado, no una medición exacta.</li>
+      </ul>
+    </aside>
+  </div>
+
+  <footer class="site-foot">
+    Datos actualizados al 3/11/2026. Cada sección indica su fuente oficial (HCDN y Senado de la Nación, datos abiertos) y su período. Sitio sin afiliación partidaria.
+  </footer>
+</section>
+</div>
+
+<script>
+  // [code, name, col, row, deputies, band index]; senators are 3 per district.
+  var P = [
+    ["JUJ","Jujuy",1,0,6,4],["SAL","Salta",2,0,7,4],["FOR","Formosa",3,0,5,3],["MIS","Misiones",4,0,7,3],
+    ["CAT","Catamarca",1,1,5,3],["TUC","Tucumán",2,1,9,3],["CHA","Chaco",3,1,7,2],["COR","Corrientes",4,1,7,2],
+    ["SJU","San Juan",0,2,6,3],["LRI","La Rioja",1,2,5,3],["SDE","Santiago del Estero",2,2,7,3],["SFE","Santa Fe",3,2,19,1],["ERI","Entre Ríos",4,2,9,1],
+    ["MZA","Mendoza",0,3,10,3],["SLU","San Luis",1,3,5,2],["CBA","Córdoba",2,3,18,2],["BUE","Buenos Aires",3,3,70,0],["CABA","Ciudad de Buenos Aires",4,3,25,0],
+    ["NQN","Neuquén",0,4,5,3],["LPA","La Pampa",1,4,5,2],["RNE","Río Negro",1,5,5,4],["CHU","Chubut",1,6,5,4],
+    ["SCR","Santa Cruz",1,7,5,4],["TDF","Tierra del Fuego",2,8,5,4]
+  ];
+  var BANDS = ["< 100 km","100–400 km","400–800 km","800–1200 km","≥ 1200 km"];
+  var FILL = ["#F7E6CC","#EFC88F","#DD9A55","#A3542A","#6B2F16"];
+  var TEXT = ["#2B2118","#2B2118","#2B2118","#FFFFFF","#FFFFFF"];
+  var NS = "http://www.w3.org/2000/svg";
+  var g = document.querySelector(".map svg g");
+  var live = document.getElementById("live");
+  var list = document.getElementById("prov-list");
+  function summary(p) { return p[1] + " · " + p[4] + " diputados · 3 senadores · " + BANDS[p[5]]; }
+  function select(p, el) {
+    document.querySelectorAll(".map .sel").forEach(function (n) { n.classList.remove("sel"); });
+    if (el) el.classList.add("sel");
+    live.innerHTML = "Seleccionada: <b>" + p[1] + "</b>" + summary(p).slice(p[1].length);
+  }
+  P.forEach(function (p) {
+    var x = 8 + p[2] * 70, y = 8 + p[3] * 70;
+    var a = document.createElementNS(NS, "a");
+    a.setAttribute("href", p[0] === "TUC" ? "#p3" : "#p1");
+    a.setAttribute("aria-label", summary(p));
+    if (p[0] === "TUC") a.classList.add("sel");
+    var r = document.createElementNS(NS, "rect");
+    r.setAttribute("x", x); r.setAttribute("y", y); r.setAttribute("width", 64); r.setAttribute("height", 64);
+    r.setAttribute("rx", 10); r.setAttribute("fill", FILL[p[5]]);
+    var t1 = document.createElementNS(NS, "text");
+    t1.setAttribute("x", x + 32); t1.setAttribute("y", y + 30); t1.setAttribute("font-size", "15");
+    t1.setAttribute("font-weight", "700"); t1.setAttribute("fill", TEXT[p[5]]); t1.textContent = p[0];
+    var t2 = document.createElementNS(NS, "text");
+    t2.setAttribute("x", x + 32); t2.setAttribute("y", y + 49); t2.setAttribute("font-size", "12");
+    t2.setAttribute("fill", TEXT[p[5]]); t2.textContent = p[4] + " · 3";
+    a.appendChild(r); a.appendChild(t1); a.appendChild(t2);
+    a.addEventListener("click", function (e) { if (p[0] !== "TUC") e.preventDefault(); select(p, a); });
+    a.addEventListener("focus", function () { select(p, a); });
+    g.appendChild(a);
+    var li = document.createElement("li");
+    var link = document.createElement("a");
+    link.href = p[0] === "TUC" ? "#p3" : "#p1"; link.textContent = p[1];
+    var s = document.createElement("span"); s.textContent = "(" + p[4] + " · 3) " + BANDS[p[5]];
+    li.appendChild(link); li.appendChild(s); list.appendChild(li);
+  });
+</script>
+<!--
+SELF-CHECK (design/system.md does not exist; free direction, warm civic palette)
+Colors:
+  #FBF6EE background cream · #FFFFFF paper · #F3EADB sand · #E2D4BE / #C9B08C / #A8957C lines
+  #2B2118 ink (on cream ~15:1) · #5C4A3B muted text (on cream ~8:1) · #9C3A17 accent links (on cream ~6.6:1)
+  #1F5F5B teal focus/highlight (on cream ~7.3:1) · #E3EFEC / #B9D5CF teal-soft quality box
+  Distance bands: #F7E6CC, #EFC88F, #DD9A55 (ink text), #A3542A, #6B2F16 (white text, ≥4.9:1)
+  Bloc bars: #7A4E8C, #1F5F5B, #9C3A17 (white text), #C08A1E and #F3EADB (ink text)
+  Screen captions: #2B2118 band with #F7E6CC / #FFFFFF text
+Font stacks:
+  Sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
+  Serif (headings, figures): Georgia, "Iowan Old Style", "Times New Roman", serif
+  Mono (expedientes): ui-monospace, Menlo, Consolas, "Liberation Mono", monospace
+External resources: none (no URLs, fonts, images or remote scripts; the SVG namespace string is not a fetch).
+Accessibility: landmarks (header/nav/main/aside/footer), skip link, map tiles focusable with aria-label + aria-live summary,
+  province list fallback, SVG charts with title/desc, :focus-visible outlines, prefers-reduced-motion disables tile/scroll motion.
+Honesty: every metric shows source + period; quality boxes on all 3 screens; descriptive wording only.
+-->
+</body>
+</html>

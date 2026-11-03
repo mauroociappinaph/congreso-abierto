@@ -1,0 +1,28 @@
+{
+  "title": "Gastos y trabajo de legisladores: rediseño",
+  "brief": "Rediseñar la UI del sitio de datos abiertos del Congreso argentino y ordenar la información por sus relaciones: legislador, bloque, provincia, comisiones, proyectos, viajes, misiones y votaciones. Público: ciudadanos, periodistas y reclutadores que ven el portfolio.",
+  "feature": "odd/tasks/ui-rediseno.md",
+  "artboards": [
+    {
+      "file": "01-ficha-central.html",
+      "title": "Ficha central (buscar y relacionar)",
+      "tradeoff": "Ideal para encontrar a una persona y navegar sus vínculos; da menos panorama general del Congreso",
+      "width": 1440,
+      "height": 5600
+    },
+    {
+      "file": "02-tablero-por-temas.html",
+      "title": "Tablero por temas (datos que cuentan una historia)",
+      "tradeoff": "Panorama y hallazgos a primera vista, muy vistoso para portfolio; buscar a una persona concreta queda en segundo plano",
+      "width": 1440,
+      "height": 5540
+    },
+    {
+      "file": "03-mapa-provincias.html",
+      "title": "Mapa por provincias (lo de mi provincia)",
+      "tradeoff": "Muy intuitivo para el ciudadano y explica la distancia en los viajes; el mapa suma complejidad y no ayuda para comparar bloques",
+      "width": 1440,
+      "height": 5810
+    }
+  ]
+}

@@ -245,6 +245,8 @@ export interface SenateQuality {
 
 export interface SenateVotesSummary {
   periodo: { desde: string | null; hasta: string | null; actas: number };
+  // Source defects: actas listing a senator more than once, and votes dropped because the repeats disagree.
+  inconsistencias: { actasConFilasRepetidas: number[]; votosDescartados: number };
   senators: Map<string, SenatorVotes>;
   blocs: BlocCohesion[];
   quality: SenateQuality;
@@ -274,7 +276,33 @@ function blocMajority(votes: ActaVote[]): VoteValue | null {
   return tied ? null : best;
 }
 
-export function summarizeSenateVotes(actas: ActaDetail[], linkFn: SenateLinkFn): SenateVotesSummary {
+// The official page sometimes repeats rows (acta 2850 lists all 72 senators twice). Identical repeats count
+// once; repeats with different votes cannot be resolved, so that senator's vote is dropped for the acta.
+function uniqueVotes(votos: ActaVote[]): { votos: ActaVote[]; repeated: boolean; dropped: number } {
+  const groups = new Map<string, ActaVote[]>();
+  for (const v of votos) {
+    const key = normalizeText(v.nombre).replace(/\s+/g, ' ').trim();
+    groups.set(key, [...(groups.get(key) ?? []), v]);
+  }
+  const unique: ActaVote[] = [];
+  let repeated = false;
+  let dropped = 0;
+  for (const group of groups.values()) {
+    if (group.length > 1) repeated = true;
+    if (group.every(v => v.voto === group[0].voto)) unique.push(group[0]);
+    else dropped++;
+  }
+  return { votos: unique, repeated, dropped };
+}
+
+export function summarizeSenateVotes(rawActas: ActaDetail[], linkFn: SenateLinkFn): SenateVotesSummary {
+  const inconsistencias = { actasConFilasRepetidas: [] as number[], votosDescartados: 0 };
+  const actas = rawActas.map(acta => {
+    const { votos, repeated, dropped } = uniqueVotes(acta.votos);
+    if (repeated) inconsistencias.actasConFilasRepetidas.push(acta.id);
+    inconsistencias.votosDescartados += dropped;
+    return repeated ? { ...acta, votos } : acta;
+  });
   const senators = new Map<string, SenatorVotes & { loyal: number }>();
   const names = new Map<string, { nombre: string; provincia: string; result: LinkResult }>();
   const blocs = new Map<string, { members: Set<string>; rice: number[] }>();
@@ -360,6 +388,7 @@ export function summarizeSenateVotes(actas: ActaDetail[], linkFn: SenateLinkFn):
         riceMedio: rice.length ? rice.reduce((sum, r) => sum + r, 0) / rice.length : null,
       }))
       .sort((a, b) => a.bloque.localeCompare(b.bloque, 'es')),
+    inconsistencias,
     quality,
     doubtful: doubtful.sort(byName),
     unmatched: unmatched.sort(byName),

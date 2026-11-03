@@ -264,3 +264,23 @@ test('summarizeSenateVotes reports linking quality by distinct name', () => {
   assert.deepEqual(summary.unmatched, [{ nombre: 'DESCONOCIDO, Y', provincia: 'SALTA' }]);
   assert.equal(summary.senators.size, 5);
 });
+
+test('summarizeSenateVotes counts a senator once per acta when the source repeats the table', () => {
+  // Real case: acta 2850 publishes all 72 senators twice with the same votes.
+  const repeated = acta(9, '2026-10-29', [
+    vote('A1', 'A', 'afirmativo'), vote('B1', 'B', 'negativo'),
+    vote('B1', 'B', 'negativo'), vote('A1', 'A', 'afirmativo'),
+  ]);
+  const summary = summarizeSenateVotes([repeated], linkFn);
+  assert.deepEqual([summary.senators.get('sen-a1')!.actas, summary.senators.get('sen-a1')!.afirmativo], [1, 1]);
+  assert.equal(summary.blocs.find(b => b.bloque === 'B')!.riceMedio, 1);
+  assert.deepEqual(summary.inconsistencias, { actasConFilasRepetidas: [9], votosDescartados: 0 });
+});
+
+test('summarizeSenateVotes drops a senator vote that the source repeats with different values', () => {
+  const conflicting = acta(10, '2026-10-29', [vote('A1', 'A', 'afirmativo'), vote('A1', 'A', 'negativo'), vote('A2', 'A', 'afirmativo')]);
+  const summary = summarizeSenateVotes([conflicting], linkFn);
+  assert.equal(summary.senators.has('sen-a1'), false);
+  assert.equal(summary.senators.get('sen-a2')!.actas, 1);
+  assert.deepEqual(summary.inconsistencias, { actasConFilasRepetidas: [10], votosDescartados: 1 });
+});

@@ -1,0 +1,70 @@
+---
+// One key figure: label, big value, optional unit and a small note with its source or period.
+// Renders a <div> of <dt>/<dd>: place it inside <dl class="stat-grid">.
+interface Props {
+  label: string;
+  value: string;
+  // small text after the value, e.g. "km"
+  unit?: string;
+  // under the value, e.g. "de 257 diputados · HCDN, vigente"
+  note?: string;
+  size?: 'md' | 'lg';
+  tone?: 'default' | 'flag' | 'ok';
+}
+
+const { label, value, unit, note, size = 'lg', tone = 'default' } = Astro.props;
+---
+
+<div class:list={['stat', size, tone]}>
+  <dt>{label}</dt>
+  <dd>
+    <span class="value">{value}</span>{unit && <span class="unit"> {unit}</span>}
+    {note && <small>{note}</small>}
+  </dd>
+</div>
+
+<style>
+  dt {
+    font-size: var(--text-xs);
+    color: var(--muted);
+  }
+
+  dd {
+    margin: 2px 0 0;
+  }
+
+  .value {
+    font-family: var(--serif);
+    font-weight: 600;
+    line-height: var(--leading-tight);
+    overflow-wrap: anywhere;
+  }
+
+  .lg .value {
+    font-size: var(--text-3xl);
+  }
+
+  .md .value {
+    font-size: var(--text-xl);
+  }
+
+  .flag .value {
+    color: var(--flag);
+  }
+
+  .ok .value {
+    color: var(--quality);
+  }
+
+  .unit {
+    font-size: var(--text-sm);
+    color: var(--muted);
+  }
+
+  small {
+    display: block;
+    margin-top: 3px;
+    font-size: var(--text-2xs);
+    color: var(--muted);
+  }
+</style>

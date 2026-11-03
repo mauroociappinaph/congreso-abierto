@@ -1,0 +1,237 @@
+/* Design tokens and base element styles. Direction 01 (ficha central) of design/ui-rediseno/, with the topic
+   cards of 02. Text/background pairs meet WCAG AA; see the contrast table in the U2 handoff. */
+
+:root {
+  color-scheme: light;
+
+  /* Color */
+  --ink: #1c1b19;
+  --muted: #55524b;
+  --placeholder: #76726a;
+  --paper: #fbfaf7;
+  --surface: #ffffff;
+  --canvas: #e9e6df;
+  --line: #d9d5cc;
+  --line-soft: #ebe8e1;
+  --accent: #1f4e79;
+  --accent-ink: #163a5c;
+  --accent-soft: #e8eef5;
+  --focus: #1f4e79;
+  --flag: #8a3b12;
+  --flag-soft: #f7ebe3;
+  --flag-line: #e2c3ae;
+  --quality: #2f6b3a;
+  --quality-soft: #e7f1e8;
+  --quality-line: #bfd8c3;
+  --highlight: #fde9a8;
+  --row-current: #f3f6fa;
+  --badge: #f1efe9;
+  /* chart fills: primary series, secondary series. 01 used #9db3c8 (2.2:1); darkened to pass 3:1 as non-text */
+  --chart: #1f4e79;
+  --chart-muted: #7a94ad;
+
+  /* Bloc palette: white text passes AA on each */
+  --bloc-1: #1e3a8a;
+  --bloc-2: #0f766e;
+  --bloc-3: #6d28d9;
+  --bloc-4: #be123c;
+  --bloc-5: #b45309;
+  --bloc-other: #55524b;
+
+  /* Type */
+  --serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --text-2xs: 11px;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-md: 15px;
+  --text-lg: 16px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 32px;
+  --text-4xl: 38px;
+  --leading: 1.45;
+  --leading-tight: 1.1;
+  --tracking-caps: 0.08em;
+
+  /* Space */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 40px;
+  --page-max: 1200px;
+  --page-pad: clamp(16px, 3vw, 40px);
+
+  /* Shape */
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 2px rgba(28, 27, 25, 0.06);
+  --shadow-raised: 0 6px 18px rgba(28, 27, 25, 0.1);
+  --shadow-popover: 0 10px 30px rgba(28, 27, 25, 0.1);
+  --focus-ring: 3px solid var(--focus);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--paper);
+}
+
+body {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: var(--text-md);
+  line-height: var(--leading);
+  color: var(--ink);
+  background: var(--paper);
+  font-variant-numeric: tabular-nums;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--serif);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+a {
+  color: var(--accent);
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  color: var(--accent-ink);
+}
+
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+kbd {
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  padding: 0 4px;
+  color: var(--muted);
+  background: var(--surface);
+}
+
+mark {
+  background: var(--highlight);
+  color: inherit;
+  padding: 0 1px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: var(--text-sm);
+}
+
+th,
+td {
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--line-soft);
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  font-size: var(--text-2xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+  border-bottom-color: var(--line);
+}
+
+caption {
+  text-align: left;
+  font-size: var(--text-xs);
+  color: var(--muted);
+  padding-bottom: var(--space-1);
+}
+
+input,
+select,
+button,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+details > summary {
+  cursor: pointer;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.eyebrow {
+  font-size: var(--text-2xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+  margin: 0 0 var(--space-1);
+}
+
+.tag {
+  display: inline-block;
+  font-size: var(--text-2xs);
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  background: var(--surface);
+  white-space: nowrap;
+}
+
+.tag.flag {
+  border-color: var(--flag-line);
+  background: var(--flag-soft);
+  color: var(--flag);
+}
+
+.tag.ok {
+  border-color: var(--quality-line);
+  background: var(--quality-soft);
+  color: var(--quality);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}

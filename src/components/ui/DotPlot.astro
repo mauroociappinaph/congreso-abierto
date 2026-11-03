@@ -1,0 +1,254 @@
+---
+// Strip of dots per row (01, Pantalla 3): each dot is one person, the vertical bar is the row's median.
+// Compare within a row, never across rows. Drawn on the server as SVG with a title and description;
+// a visually hidden table repeats the numbers for screen readers.
+import { formatNumber } from '../../lib/view.ts';
+import { uid } from './ids.ts';
+
+interface DotPoint {
+  value: number;
+  // shown next to highlighted or flagged dots, e.g. "Yedlin 7,71"
+  label?: string;
+  // the person of the current page
+  highlight?: boolean;
+  // "viaja bastante más que sus pares"
+  flag?: boolean;
+}
+
+interface DotRow {
+  label: string;
+  points: DotPoint[];
+  median?: number;
+  // bold row label, e.g. the row of the highlighted person
+  emphasis?: boolean;
+}
+
+interface Props {
+  title: string;
+  // the full reading in words, used as the SVG description
+  desc: string;
+  rows: DotRow[];
+  // axis label, e.g. "tramos por mes"
+  unit: string;
+  max?: number;
+  step?: number;
+  // what the median bar stands for, e.g. "mediana de los 257 diputados en ese grupo"
+  medianLabel?: string;
+}
+
+const { title, desc, rows, unit, medianLabel = 'mediana del grupo' } = Astro.props;
+const id = uid('dotplot');
+
+const W = 820;
+const LABEL_W = 130;
+const RIGHT = 20;
+const ROW_H = 40;
+const TOP = 22;
+const allValues = rows.flatMap(r => [...r.points.map(p => p.value), r.median ?? 0]);
+const max = Astro.props.max ?? Math.max(1, Math.ceil(Math.max(...allValues)));
+const step = Astro.props.step ?? Math.max(1, Math.ceil(max / 9));
+const ticks = Array.from({ length: Math.floor(max / step) + 1 }, (_, i) => i * step);
+const H = TOP + rows.length * ROW_H + 20;
+const x = (v: number) => LABEL_W + ((W - LABEL_W - RIGHT) * Math.min(v, max)) / max;
+
+const drawn = rows.map((row, i) => {
+  const y = TOP + i * ROW_H;
+  const seen = new Map<string, number>();
+  const points = row.points
+    .map(point => {
+      const key = point.value.toFixed(2);
+      const n = (seen.get(key) ?? 0) + 1;
+      seen.set(key, n);
+      // stack equal values up and down so every person stays visible
+      const dy = (n - 1) * 4 * (n % 2 ? 1 : -1);
+      return { ...point, cx: x(point.value), cy: y + dy };
+    })
+    // marked dots last, so they sit on top
+    .sort((a, b) => Number(a.highlight || a.flag) - Number(b.highlight || b.flag));
+  return { ...row, y, points };
+});
+
+const listed = (row: DotRow) =>
+  row.points
+    .filter(p => p.label)
+    .map(p => p.label)
+    .join('; ');
+---
+
+<figure class="dotplot">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby={`${id}-t ${id}-d`}>
+    <title id={`${id}-t`}>{title}</title>
+    <desc id={`${id}-d`}>{desc}</desc>
+    {
+      ticks.map(t => (
+        <>
+          <line class="grid" x1={x(t)} x2={x(t)} y1={4} y2={H - 30} />
+          <text class="tick" x={x(t)} y={H - 16} text-anchor="middle">{formatNumber(t)}</text>
+        </>
+      ))
+    }
+    <text class="tick" x={W - RIGHT} y={H - 2} text-anchor="end">{unit}</text>
+    {
+      drawn.map(row => (
+        <g>
+          <text class:list={['row-label', { em: row.emphasis }]} x={0} y={row.y + 4}>{row.label}</text>
+          <line class="axis" x1={LABEL_W} x2={W - RIGHT} y1={row.y} y2={row.y} />
+          {row.points.map(p => (
+            <circle
+              class:list={['dot', { hi: p.highlight, flag: p.flag }]}
+              cx={p.cx}
+              cy={p.cy}
+              r={p.highlight || p.flag ? 6 : 4}
+            />
+          ))}
+          {row.median !== undefined && (
+            <line class="median" x1={x(row.median)} x2={x(row.median)} y1={row.y - 11} y2={row.y + 11} />
+          )}
+          {row.points
+            .filter(p => p.label && (p.highlight || p.flag))
+            .map(p => {
+              const end = p.cx > W - 180;
+              return (
+                <text
+                  class:list={['mark-label', { flag: p.flag }]}
+                  x={end ? p.cx - 9 : p.cx + 9}
+                  y={row.y - 9}
+                  text-anchor={end ? 'end' : 'start'}
+                >
+                  {p.label}
+                </text>
+              );
+            })}
+        </g>
+      ))
+    }
+  </svg>
+  <ul class="legend" aria-hidden="true">
+    <li><span class="key dot-key"></span>una persona</li>
+    {rows.some(r => r.points.some(p => p.highlight)) && <li><span class="key dot-key hi"></span>esta ficha</li>}
+    {rows.some(r => r.points.some(p => p.flag)) && <li><span class="key dot-key flag"></span>viaja bastante más que sus pares</li>}
+    {rows.some(r => r.median !== undefined) && <li><span class="key median-key"></span>{medianLabel}</li>}
+  </ul>
+  <slot />
+  <table class="visually-hidden">
+    <caption>{title}</caption>
+    <thead>
+      <tr><th scope="col">Grupo</th><th scope="col">Mediana</th><th scope="col">Personas</th><th scope="col">Destacados</th><th scope="col">Valores ({unit})</th></tr>
+    </thead>
+    <tbody>
+      {
+        rows.map(row => (
+          <tr>
+            <th scope="row">{row.label}</th>
+            <td>{row.median === undefined ? '—' : formatNumber(row.median)}</td>
+            <td>{row.points.length}</td>
+            <td>{listed(row) || '—'}</td>
+            <td>{row.points.map(p => formatNumber(p.value)).join('; ')}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</figure>
+
+<style>
+  .dotplot {
+    margin: 0;
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    font-family: var(--sans);
+  }
+
+  .grid {
+    stroke: var(--line-soft);
+  }
+
+  .axis {
+    stroke: var(--line);
+  }
+
+  .tick {
+    font-size: 11px;
+    fill: var(--muted);
+  }
+
+  .row-label {
+    font-size: 12px;
+    fill: var(--ink);
+  }
+
+  .row-label.em {
+    font-weight: 700;
+  }
+
+  .dot {
+    fill: var(--chart-muted);
+    stroke: var(--surface);
+    stroke-width: 1;
+  }
+
+  .dot.hi {
+    fill: var(--accent);
+  }
+
+  .dot.flag {
+    fill: var(--flag);
+  }
+
+  .median {
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+
+  .mark-label {
+    font-size: 11px;
+    font-weight: 700;
+    fill: var(--accent);
+  }
+
+  .mark-label.flag {
+    fill: var(--flag);
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin: var(--space-1) 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-xs);
+    color: var(--muted);
+  }
+
+  .key {
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: -1px;
+  }
+
+  .dot-key {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--chart-muted);
+  }
+
+  .dot-key.hi {
+    background: var(--accent);
+  }
+
+  .dot-key.flag {
+    background: var(--flag);
+  }
+
+  .median-key {
+    width: 2px;
+    height: 12px;
+    background: var(--ink);
+  }
+</style>

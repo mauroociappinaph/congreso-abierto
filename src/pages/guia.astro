@@ -1,0 +1,391 @@
+---
+// Temporary style guide (U2): every shared component with real sample data, for review. Remove before release.
+// Figures copied from the built site (dist/) on 03/11/2026; entity pages (/bloques/, /provincias/, /comisiones/)
+// arrive with U3a, so those links do not resolve yet.
+import SiteLayout from '../layouts/SiteLayout.astro';
+import QualityBox from '../components/QualityBox.astro';
+import SourceLine from '../components/SourceLine.astro';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
+import Chip from '../components/ui/Chip.astro';
+import RelationStrip from '../components/ui/RelationStrip.astro';
+import StatTile from '../components/ui/StatTile.astro';
+import Section from '../components/ui/Section.astro';
+import DataTable from '../components/ui/DataTable.astro';
+import DotPlot from '../components/ui/DotPlot.astro';
+import BarChart from '../components/ui/BarChart.astro';
+import Funnel from '../components/ui/Funnel.astro';
+import TopicCard from '../components/ui/TopicCard.astro';
+import SearchBox from '../components/ui/SearchBox.astro';
+import type { SearchEntry } from '../components/ui/search.ts';
+import type { LinkQuality } from '../lib/link-policy.ts';
+import { DATASETS } from '../lib/view.ts';
+
+const YEDLIN = '/diputados/dip-yedlin-pablo-raul-tucuman/';
+const UXP = '/bloques/union-por-la-patria/';
+const TUCUMAN = '/provincias/tucuman/';
+const commission = (slug: string) => `/comisiones/${slug}/`;
+
+const searchIndex: SearchEntry[] = [
+  { type: 'Provincias', name: 'Tucumán', meta: '9 diputados · 3 senadores', right: '800–1200 km', href: TUCUMAN, badge: 'P' },
+  { type: 'Diputados', name: 'Yedlin, Pablo Raúl', meta: 'Tucumán · Unión por la Patria', right: '7,71 tramos/mes', href: YEDLIN, badge: 'PY' },
+  { type: 'Diputados', name: 'Campero, Mariano', meta: 'Tucumán · La Libertad Avanza', href: '/diputados/dip-campero-mariano-tucuman/', badge: 'MC' },
+  { type: 'Diputados', name: 'Huesen, Gerardo', meta: 'Tucumán · La Libertad Avanza', href: '/diputados/dip-huesen-gerardo-tucuman/', badge: 'GH' },
+  { type: 'Diputados', name: 'Cisneros, Carlos', meta: 'Tucumán · Unión por la Patria', href: '/diputados/dip-cisneros-carlos-tucuman/', badge: 'CC' },
+  { type: 'Diputados', name: 'Monzón, Roxana', meta: 'Buenos Aires · Unión por la Patria', href: '/diputados/dip-monzon-roxana-buenos-aires/', badge: 'RM' },
+  { type: 'Senadores', name: 'Manzur, Juan Luis', meta: 'Tucumán · Justicialista', href: '/senadores/sen-576/', badge: 'JM' },
+  { type: 'Senadores', name: 'Zamora, Gerardo', meta: 'Santiago del Estero · Frente Cívico por Santiago', href: '/senadores/sen-450/', badge: 'GZ' },
+  { type: 'Bloques', name: 'Unión por la Patria', meta: 'Diputados', right: '92 integrantes', href: UXP, badge: 'B' },
+  { type: 'Bloques', name: 'Justicialista', meta: 'Senado · Rice 0,97', right: '22 senadores', href: '/bloques/justicialista/', badge: 'B' },
+  { type: 'Comisiones', name: 'Acción Social y Salud Pública', meta: 'Diputados', href: commission('accion-social-y-salud-publica'), badge: 'C' },
+  { type: 'Comisiones', name: 'Presupuesto y Hacienda', meta: 'Diputados', right: '47 integrantes', href: commission('presupuesto-y-hacienda'), badge: 'C' },
+  { type: 'Comisiones', name: 'Discapacidad', meta: 'Diputados', href: commission('discapacidad'), badge: 'C' },
+];
+
+// HCDN - Misiones Oficiales, as shown on the built home page.
+const missionsQuality: LinkQuality = {
+  names: { matchedCurrent: 30, matchedFormer: 24, doubtful: 2, unmatched: 0, total: 56 },
+  // the page shows only the sum of current and former: 65 of 67 rows
+  rows: { matchedCurrent: 65, matchedFormer: 0, doubtful: 2, unmatched: 0, total: 67, linkedPercent: 97 },
+  doubtful: [
+    { nombre: 'CARLOS RAMIRO GUTIERREZ', lugar: '', candidates: [{ personId: 'a', nombre: 'Gutiérrez, Carlos', confidence: 0.97 }, { personId: 'b', nombre: 'Gutiérrez, Ramiro', confidence: 0.97 }] },
+    { nombre: 'GUTIERREZ, CARLOS RAMIRO', lugar: '', candidates: [{ personId: 'a', nombre: 'Gutiérrez, Carlos', confidence: 1 }, { personId: 'b', nombre: 'Gutiérrez, Ramiro', confidence: 1 }] },
+  ],
+  unmatched: [],
+};
+const missionsPeriod = { desde: '2024-03-11', hasta: '2026-05-09' };
+
+const missions = [
+  ['03/04/2026 al 12/04/2026', 'Londres y Oxford, Reino Unido', 'III Seminario de Innovación en Sistemas de Salud'],
+  ['15/11/2025 al 23/11/2025', 'Roma, Italia', 'Disertante en el 9° Seminario de «Ética en el gerenciamiento de la salud»'],
+  ['19/04/2025 al 27/04/2025', 'Londres y Oxford, Reino Unido', 'Disertante del II Seminario de Innovación en Sistemas de Salud'],
+  ['28/07/2024 al 04/08/2024', 'Washington D.C., Estados Unidos', 'Seminario de sistemas de salud e instituciones de excelencia'],
+];
+
+// Unión por la Patria, tramos por mes per distance band (01, Pantalla 3).
+const dotRows = [
+  { label: '< 100 km', median: 0.33, values: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.08, 0.08, 0.08, 0.21, 0.29, 0.29, 0.33, 0.38, 0.38, 0.42, 0.46, 0.5, 0.57, 0.57, 0.58, 0.58, 0.67, 0.86, 0.86, 0.86, 1.14, 1.29, 1.33, 1.43, 1.57, 1.79, 2, 2.67], flag: 2.67, flagLabel: 'Monzón 2,67' },
+  { label: '100–400 km', median: 3.23, values: [0, 0.25, 0.29, 0.57, 0.71, 1.83, 3.38, 3.38, 3.43, 3.54, 5.21] },
+  { label: '400–800 km', median: 5.58, values: [4.79, 4.92, 5, 5.14, 5.29, 5.43, 5.57, 6.14, 6.5, 7.38, 8.25] },
+  { label: '800–1200 km', median: 5.93, values: [0, 2.92, 3.17, 3.46, 4, 4.29, 4.54, 4.71, 5.29, 5.42, 5.43, 5.43, 5.57, 6.25, 6.29, 6.29, 6.33, 6.33, 6.86, 7.08, 7.71, 7.83], highlight: 7.71, highlightLabel: 'Yedlin 7,71' },
+  { label: '≥ 1200 km', median: 6.08, values: [3.46, 3.86, 4.71, 4.71, 5.43, 5.63, 6.42, 6.92, 7.43, 8] },
+].map(row => ({
+  label: row.label,
+  median: row.median,
+  emphasis: row.highlight !== undefined,
+  points: row.values.map(value => ({
+    value,
+    highlight: value === row.highlight,
+    flag: value === row.flag,
+    label: value === row.highlight ? row.highlightLabel : value === row.flag ? row.flagLabel : undefined,
+  })),
+}));
+
+const bands = [
+  { label: '< 100 km', value: 0.33, detail: '86 diputados' },
+  { label: '100–400 km', value: 3.23, detail: '32 diputados' },
+  { label: '400–800 km', value: 5.58, detail: '45 diputados' },
+  { label: '800–1200 km', value: 5.93, detail: '62 diputados', highlight: true },
+  { label: '≥ 1200 km', value: 6.08, detail: '30 diputados' },
+];
+
+const swatches = [
+  ['--ink', '#1c1b19'], ['--muted', '#55524b'], ['--placeholder', '#76726a'], ['--paper', '#fbfaf7'], ['--surface', '#ffffff'],
+  ['--line', '#d9d5cc'], ['--line-soft', '#ebe8e1'], ['--accent', '#1f4e79'], ['--accent-ink', '#163a5c'], ['--accent-soft', '#e8eef5'],
+  ['--focus', '#1f4e79'], ['--flag', '#8a3b12'], ['--flag-soft', '#f7ebe3'], ['--quality', '#2f6b3a'], ['--quality-soft', '#e7f1e8'],
+  ['--highlight', '#fde9a8'], ['--chart-muted', '#7a94ad'], ['--bloc-1', '#1e3a8a'], ['--bloc-2', '#0f766e'], ['--bloc-3', '#6d28d9'],
+  ['--bloc-4', '#be123c'], ['--bloc-5', '#b45309'], ['--bloc-other', '#55524b'],
+];
+const typeScale = ['--text-4xl', '--text-3xl', '--text-2xl', '--text-xl', '--text-lg', '--text-md', '--text-sm', '--text-xs', '--text-2xs'];
+---
+
+<SiteLayout title="Guía de componentes (temporal)" noindex current={null}>
+  <SearchBox slot="search" label="Buscar legislador, bloque, provincia o comisión" labelHidden placeholder="Buscar otra persona, bloque o comisión" indexId="guia-indice" shortcut />
+
+  <div class="page-wrap guide">
+    <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Guía de componentes' }]} />
+    <p class="eyebrow">Página temporal · no indexada</p>
+    <h1>Guía de componentes</h1>
+    <p class="lede">Tokens y componentes compartidos del rediseño (dirección 01 con la portada de 02), con datos reales del sitio generado el 03/11/2026. Las páginas de bloque, provincia y comisión todavía no existen, así que esos enlaces no abren.</p>
+
+    <Section title="Búsqueda" id="busqueda" eyebrow="SearchBox">
+      <SearchBox
+        label="Buscar por nombre, provincia, bloque o comisión"
+        size="hero"
+        placeholder="Ej.: Yedlin, Tucumán, Presupuesto y Hacienda"
+        hint="Los resultados aparecen mientras escribís. Probá «tucu», «salud» o «patria»; ↑ ↓ para moverte, Enter para abrir, Escape para cerrar."
+        index={searchIndex}
+        order={['Provincias', 'Diputados', 'Senadores', 'Bloques', 'Comisiones']}
+      />
+      <p class="note">La caja del encabezado usa el mismo índice (atributo <code>indexId</code>) y se enfoca con «/».</p>
+      <script type="application/json" id="guia-indice" set:html={JSON.stringify(searchIndex).replace(/</g, '\\u003c')} />
+    </Section>
+
+    <Section title="Ruta de navegación" id="ruta" eyebrow="Breadcrumb">
+      <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Diputados', href: '/#diputados' }, { label: 'Tucumán', href: TUCUMAN }, { label: 'Yedlin, Pablo Raúl' }]} />
+      <Breadcrumb
+        variant="path"
+        items={[{ label: 'Tema: Viajes', href: '/viajes/' }, { label: 'Ranking: grupo 800–1200 km', current: true }, { label: 'Ficha del legislador' }]}
+      />
+    </Section>
+
+    <Section title="Fichas de entidad" id="chips" eyebrow="Chip">
+      <ul class="chip-list">
+        <li><Chip label="Unión por la Patria" href={UXP} type="bloque" meta="92 dip." /></li>
+        <li><Chip label="Tucumán" href={TUCUMAN} type="provincia" meta="9 dip. · 3 sen." /></li>
+        <li><Chip label="Presupuesto y Hacienda" href={commission('presupuesto-y-hacienda')} type="comision" meta="47 integrantes" /></li>
+        <li><Chip label="Yedlin, Pablo Raúl" href={YEDLIN} type="diputado" current /></li>
+        <li><Chip label="Manzur, Juan Luis" href="/senadores/sen-576/" type="senador" /></li>
+        <li><Chip label="Discapacidad" href={commission('discapacidad')} size="sm" /></li>
+      </ul>
+    </Section>
+
+    <h2 class="group-title">Franja de relaciones · RelationStrip</h2>
+    <RelationStrip
+      label="Relaciones de Yedlin, Pablo Raúl"
+      bloque={{ value: 'Unión por la Patria', detail: '92 de 257 diputados', href: UXP, cta: 'Ver el bloque' }}
+      provincia={{ value: 'Tucumán', detail: '9 diputados · 3 senadores', href: TUCUMAN, cta: 'Ver la provincia' }}
+      comisiones={{
+        summary: '6, todas como integrante',
+        items: [
+          { name: 'Acción Social y Salud Pública', href: commission('accion-social-y-salud-publica') },
+          { name: 'Presupuesto y Hacienda', href: commission('presupuesto-y-hacienda') },
+          { name: 'Discapacidad', href: commission('discapacidad') },
+          { name: 'Ciencia, Tecnología e Innovación Productiva', href: commission('ciencia-tecnologia-e-innovacion-productiva') },
+          { name: 'Población y Desarrollo Humano', href: commission('poblacion-y-desarrollo-humano') },
+          { name: 'Prevención de Adicciones y Control del Narcotráfico', href: commission('prevencion-de-adicciones') },
+        ],
+      }}
+      proyectos={{ value: '69 como primer firmante', detail: '6 sancionados', href: `${YEDLIN}#proyectos` }}
+      viajes={{ value: '185 tramos · 4 misiones', detail: 'En línea con sus pares', href: `${YEDLIN}#viajes` }}
+      votaciones={{ value: 'Sin datos', detail: 'Diputados no está cargado' }}
+      legend="Cada casilla lleva a otra página. Los números de esta franja salen de las secciones de abajo, cada una con su fuente y su período."
+    />
+
+    <div class="grid2">
+      <Section title="Viajes nacionales" id="viajes" eyebrow="Section + StatTile + BarChart" tag="En línea con sus pares a distancia similar" tagTone="ok" links={[DATASETS.viajes]} periodLabel="2.º semestre 2024 – 1.º semestre 2026">
+        <dl class="stat-grid">
+          <StatTile label="Tramos" value="185" />
+          <StatTile label="Meses en el cargo" value="24" />
+          <StatTile label="Tramos por mes" value="7,71" />
+          <StatTile label="Su grupo por distancia" value="800–1200" unit="km" />
+        </dl>
+        <BarChart title="Mediana de tramos por mes según la distancia estimada a Buenos Aires" titleHidden={false} bars={bands} labelWidth="120px" />
+        <p class="note">Barras: mediana de tramos por mes de cada grupo; resaltado, el grupo de Yedlin (7,71). Más tramos no implica irregularidad: depende de la distancia, la agenda y los traslados a la provincia.</p>
+      </Section>
+
+      <Section title="Misiones oficiales al exterior" id="misiones" eyebrow="DataTable + SourceLine + QualityBox" tag="4 misiones" links={[DATASETS.misiones]} period={missionsPeriod}>
+        <DataTable caption="Misiones oficiales de Yedlin, Pablo Raúl" captionHidden>
+          <thead><tr><th scope="col">Fechas</th><th scope="col">Lugar</th><th scope="col">Motivo</th><th scope="col" class="num">Viáticos</th></tr></thead>
+          <tbody>
+            {missions.map(([fechas, lugar, motivo]) => <tr><td>{fechas}</td><td>{lugar}</td><td>{motivo}</td><td class="num">—</td></tr>)}
+          </tbody>
+        </DataTable>
+        <p class="note">«—» indica que la Cámara no publicó el dato (viáticos otorgados y consumidos).</p>
+        <QualityBox slot="after" title="Calidad del emparejamiento de las misiones" quality={missionsQuality} period={missionsPeriod} rowsLabel="registros de participación" against="diputados/as en funciones durante el período (actuales y anteriores)" />
+      </Section>
+    </div>
+
+    <Section title="Viajes de sus integrantes frente a sus pares" id="dotplot" eyebrow="DotPlot" tag="91 en línea · 1 viaja bastante más que sus pares" links={[DATASETS.viajes]} periodLabel="2.º semestre 2024 – 1.º semestre 2026">
+      <DotPlot
+        title="Tramos por mes de los 92 integrantes de Unión por la Patria, por distancia estimada a Buenos Aires"
+        desc="Cada punto es un integrante y la raya vertical es la mediana de los 257 diputados en ese grupo. Destacados: Yedlin, Pablo Raúl, 7,71 en el grupo de 800 a 1200 km, en línea con sus pares; Monzón, Roxana, 2,67 en el grupo de menos de 100 km, viaja bastante más que sus pares (mediana 0,33)."
+        rows={dotRows}
+        unit="tramos por mes"
+        max={9}
+        medianLabel="mediana de los 257 diputados en ese grupo"
+      />
+      <p class="note">Comparar dentro de cada fila, nunca entre filas: la distancia explica buena parte de la diferencia. Más tramos no implica irregularidad.</p>
+    </Section>
+
+    <div class="grid2">
+      <Section title="Proyectos presentados" id="proyectos" eyebrow="Funnel" tag="69 como primer firmante" links={[DATASETS.proyectos, DATASETS.movimientos]} period={{ desde: '2024-01-03', hasta: '2026-10-06' }}>
+        <Funnel
+          title="Proyectos de Yedlin que llegaron al menos a cada etapa"
+          stages={[{ label: 'Presentado', value: 69 }, { label: 'En comisión', value: 7 }, { label: 'Con dictamen', value: 6 }, { label: 'Media sanción', value: 6 }, { label: 'Sancionado', value: 6 }]}
+          note="Llegaron al menos a esta etapa. «Sancionado» no significa «es ley»."
+        />
+      </Section>
+
+      <Section title="Por provincia" id="provincias" eyebrow="BarChart con enlaces" tag="21 distritos" links={[DATASETS.legisladores]} periodLabel="composición vigente">
+        <BarChart
+          title="Integrantes de Unión por la Patria por provincia"
+          bars={[
+            { label: 'Buenos Aires', value: 32, href: '/provincias/buenos-aires/' },
+            { label: 'Ciudad de Buenos Aires', value: 8, href: '/provincias/ciudad-de-buenos-aires/' },
+            { label: 'Santiago del Estero', value: 7, href: '/provincias/santiago-del-estero/' },
+            { label: 'Santa Fe', value: 6, href: '/provincias/santa-fe/' },
+            { label: 'Entre Ríos', value: 4, href: '/provincias/entre-rios/' },
+            { label: 'Chaco, Corrientes, Formosa…', value: 3, valueLabel: '3 c/u', muted: true },
+            { label: 'Tucumán', value: 2, href: TUCUMAN, muted: true },
+          ]}
+        />
+      </Section>
+    </div>
+
+    <h2 class="group-title">Portada por temas · TopicCard</h2>
+    <div class="topic-grid">
+      <TopicCard
+        span={4}
+        topic="Viajes nacionales"
+        title="Cuanto más lejos de Buenos Aires, más tramos: de 0,33 a 6,08 por mes"
+        lede="Mediana de tramos por mes de cada grupo de distancia estimada. Cada diputado se compara solo con sus pares a distancia similar."
+        href="/viajes/"
+        linkLabel="Ver ranking por grupo de distancia"
+        links={[DATASETS.viajes]}
+        periodLabel="2.º semestre 2024 – 1.º semestre 2026"
+        quality={{ label: 'Tramos: 65,3 % asignado', tone: 'warn' }}
+      >
+        <BarChart title="Mediana de tramos por mes por distancia" bars={bands} labelWidth="120px" />
+        <p slot="note" class="note">Más tramos no implica irregularidad: depende de la distancia, la agenda y los traslados a la provincia.</p>
+      </TopicCard>
+      <TopicCard
+        topic="Remuneración"
+        title="El mismo monto para los 257 diputados"
+        keyNumber="$ 6.590.294,30"
+        keyNote="bruto mensual · neto estimado $ 5.187.411,88"
+        href="/diputados/"
+        linkLabel="Ver adicionales y descuentos"
+        links={[DATASETS.dietas]}
+        periodLabel="montos vigentes al 03/11/2026"
+      >
+        <p slot="note" class="note">Son montos generales publicados por la Cámara, no gastos individuales.</p>
+      </TopicCard>
+      <TopicCard
+        topic="Proyectos"
+        title="De 8.836 proyectos, 7 % llegó a sancionarse en una Cámara"
+        href="/proyectos/"
+        linkLabel="Ranking de firmantes"
+        links={[DATASETS.proyectos, DATASETS.movimientos]}
+        period={{ desde: '2024-01-03', hasta: '2026-10-06' }}
+        quality={{ label: '99,1 % asignado' }}
+      >
+        <Funnel
+          title="Proyectos de diputados en funciones que llegaron al menos a cada etapa"
+          stages={[{ label: 'Presentado', value: 8836 }, { label: 'En comisión o más', value: 834 }, { label: 'Con dictamen o más', value: 634 }, { label: 'Media sanción o más', value: 634 }, { label: 'Sancionado', value: 619 }]}
+          highlightLast
+        />
+      </TopicCard>
+      <TopicCard
+        span={3}
+        topic="Misiones oficiales"
+        title="67 misiones al exterior en el período"
+        keyNumber="67"
+        keyNote="registros de participación, del 11/03/2024 al 09/05/2026"
+        href="/viajes/#misiones"
+        linkLabel="Ver las misiones"
+        links={[DATASETS.misiones]}
+        period={missionsPeriod}
+        quality={{ label: '97 % asignado' }}
+      />
+      <TopicCard
+        span={3}
+        topic="Votaciones del Senado"
+        title="Los bloques grandes votan casi siempre juntos"
+        href="/senado/"
+        linkLabel="Cohesión y asistencia"
+        links={[DATASETS.actas]}
+        period={{ desde: '2024-02-23', hasta: '2026-10-29' }}
+        quality={{ label: '100 % asignado' }}
+      >
+        <BarChart
+          title="Índice de Rice medio por bloque"
+          max={1}
+          bars={[{ label: 'Justicialista', value: 0.97, detail: '22 senadores · 343 actas' }, { label: 'La Libertad Avanza', value: 0.96, detail: '22 senadores · 340 actas' }]}
+        />
+      </TopicCard>
+    </div>
+
+    <h2 class="group-title">Tokens</h2>
+    <div class="grid2">
+      <Section title="Colores" id="colores" eyebrow="src/styles/tokens.css">
+        <ul class="swatches">
+          {swatches.map(([name, hex]) => <li><span class="swatch" style={{ background: `var(${name})` }} /><code>{name}</code> <span class="muted">{hex}</span></li>)}
+        </ul>
+      </Section>
+      <Section title="Tipografía" id="tipografia" eyebrow="--serif · --sans · --mono">
+        <ul class="type-scale">
+          {typeScale.map(name => <li style={{ fontSize: `var(${name})` }}><code>{name}</code> <span class="serif">Yedlin, Pablo Raúl</span> 7,71</li>)}
+        </ul>
+        <p class="note">Títulos y cifras grandes en serif; texto, tablas y gráficos en sans; <kbd>/</kbd> en mono.</p>
+        <SourceLine links={[DATASETS.legisladores]} periodLabel="ejemplo de SourceLine" />
+      </Section>
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  .guide {
+    padding-top: var(--space-7);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: var(--text-4xl);
+    line-height: var(--leading-tight);
+  }
+
+  .lede {
+    max-width: 720px;
+    color: var(--muted);
+    font-size: var(--text-lg);
+    margin: 10px 0 var(--space-6);
+  }
+
+  .group-title {
+    font-size: var(--text-2xl);
+    margin: var(--space-8) 0 var(--space-3);
+  }
+
+  .grid2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: 0 var(--space-5);
+    align-items: start;
+  }
+
+  .swatches {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    columns: 2;
+    font-size: var(--text-xs);
+  }
+
+  .swatches li {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    padding: 3px 0;
+    break-inside: avoid;
+  }
+
+  .swatch {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+  }
+
+  .type-scale {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .type-scale li {
+    padding: 2px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .type-scale code {
+    font-size: var(--text-2xs);
+    color: var(--muted);
+  }
+
+  .serif {
+    font-family: var(--serif);
+  }
+</style>

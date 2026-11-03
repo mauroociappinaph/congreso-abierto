@@ -1,0 +1,439 @@
+---
+// Instant search (01, Pantalla 1): results grouped by type while typing, accent-insensitive, keyboard navigable.
+// ARIA combobox with a listbox popup: ↑ ↓ move, Enter opens, Escape closes (and then clears).
+// The index comes from `index` (inlined as JSON), `indexId` (an existing <script type="application/json"> on the
+// page, so several boxes share one copy) or `indexUrl` (fetched on first focus).
+import { DEFAULT_ORDER, type SearchEntry } from './search.ts';
+import { uid } from './ids.ts';
+
+interface Props {
+  label: string;
+  labelHidden?: boolean;
+  placeholder?: string;
+  hint?: string;
+  index?: SearchEntry[];
+  indexId?: string;
+  indexUrl?: string;
+  // group order
+  order?: string[];
+  perGroup?: number;
+  size?: 'hero' | 'compact';
+  // "/" focuses this box
+  shortcut?: boolean;
+}
+
+const {
+  label,
+  labelHidden = false,
+  placeholder,
+  hint,
+  index,
+  indexId,
+  indexUrl,
+  order = DEFAULT_ORDER,
+  perGroup = 5,
+  size = 'compact',
+  shortcut = false,
+} = Astro.props;
+const id = uid('buscar');
+const ownIndexId = index ? `${id}-indice` : undefined;
+// keeps "</script>" inside a name from closing the JSON block
+const indexJson = index ? JSON.stringify(index).replace(/</g, '\\u003c') : '';
+---
+
+<div
+  class:list={['search', size]}
+  role="search"
+  data-search
+  data-index-id={ownIndexId ?? indexId}
+  data-index-url={indexUrl}
+  data-order={JSON.stringify(order)}
+  data-per-group={perGroup}
+  data-shortcut={shortcut ? '' : undefined}
+>
+  <label for={`${id}-q`} class:list={{ 'visually-hidden': labelHidden }}>{label}</label>
+  <div class="box">
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="10.5" cy="10.5" r="6.5" /><path d="M15.5 15.5 21 21" />
+    </svg>
+    <input
+      id={`${id}-q`}
+      type="search"
+      role="combobox"
+      aria-expanded="false"
+      aria-controls={`${id}-list`}
+      aria-autocomplete="list"
+      aria-describedby={hint ? `${id}-hint` : undefined}
+      autocomplete="off"
+      spellcheck="false"
+      placeholder={placeholder}
+    />
+    {shortcut && <kbd aria-hidden="true">/</kbd>}
+  </div>
+  {hint && <p id={`${id}-hint`} class="hint">{hint}</p>}
+  <div class="results" hidden>
+    <div role="listbox" id={`${id}-list`} aria-label={`Resultados: ${label}`}></div>
+    <p class="foot"></p>
+  </div>
+  <p class="visually-hidden" aria-live="polite" data-status></p>
+  {index && <script type="application/json" id={ownIndexId} set:html={indexJson} />}
+</div>
+
+<script>
+  import { matchRanges, searchEntries, type SearchEntry } from './search.ts';
+
+  const indexes = new Map<string, Promise<SearchEntry[]>>();
+
+  function loadIndex(root: HTMLElement): Promise<SearchEntry[]> {
+    const key = root.dataset.indexId ? `#${root.dataset.indexId}` : (root.dataset.indexUrl ?? '');
+    if (!key) return Promise.resolve([]);
+    if (!indexes.has(key)) {
+      const load = root.dataset.indexId
+        ? Promise.resolve(JSON.parse(document.getElementById(root.dataset.indexId)?.textContent || '[]'))
+        : fetch(key).then(response => (response.ok ? response.json() : []));
+      indexes.set(key, load.catch(() => []));
+    }
+    return indexes.get(key)!;
+  }
+
+  // Text with the matched words wrapped in <mark>, built as nodes (no HTML parsing of the data).
+  function highlighted(text: string, query: string): DocumentFragment {
+    const out = document.createDocumentFragment();
+    let at = 0;
+    for (const [start, end] of matchRanges(text, query)) {
+      out.append(text.slice(at, start));
+      const mark = document.createElement('mark');
+      mark.textContent = text.slice(start, end);
+      out.append(mark);
+      at = end;
+    }
+    out.append(text.slice(at));
+    return out;
+  }
+
+  const make = (tag: string, className?: string) => {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    return node;
+  };
+
+  function setup(root: HTMLElement) {
+    const input = root.querySelector<HTMLInputElement>('input')!;
+    const panel = root.querySelector<HTMLElement>('.results')!;
+    const list = root.querySelector<HTMLElement>('[role="listbox"]')!;
+    const foot = root.querySelector<HTMLElement>('.foot')!;
+    const status = root.querySelector<HTMLElement>('[data-status]')!;
+    const order: string[] = JSON.parse(root.dataset.order || '[]');
+    const perGroup = Number(root.dataset.perGroup) || 5;
+    let options: HTMLElement[] = [];
+    let active = -1;
+    let entries: SearchEntry[] | null = null;
+
+    const ensureIndex = async () => (entries ??= await loadIndex(root));
+
+    function setActive(next: number) {
+      options[active]?.setAttribute('aria-selected', 'false');
+      active = options.length ? (next + options.length) % options.length : -1;
+      const option = options[active];
+      if (option) {
+        option.setAttribute('aria-selected', 'true');
+        option.scrollIntoView({ block: 'nearest' });
+        input.setAttribute('aria-activedescendant', option.id);
+      } else {
+        input.removeAttribute('aria-activedescendant');
+      }
+    }
+
+    function close() {
+      panel.hidden = true;
+      input.setAttribute('aria-expanded', 'false');
+      setActive(-1);
+    }
+
+    function open(target: string) {
+      location.href = target;
+    }
+
+    async function render() {
+      const query = input.value;
+      const groups = searchEntries(await ensureIndex(), query, { order, perGroup });
+      if (query !== input.value) return; // a newer keystroke is rendering
+      list.replaceChildren();
+      options = [];
+      active = -1;
+      input.removeAttribute('aria-activedescendant');
+      if (query.trim().length < 2) {
+        status.textContent = '';
+        close();
+        return;
+      }
+      const total = groups.reduce((sum, g) => sum + g.total, 0);
+      groups.forEach((group, g) => {
+        const box = make('div', 'group');
+        box.setAttribute('role', 'group');
+        const heading = make('div', 'group-title');
+        heading.id = `${list.id}-g${g}`;
+        heading.setAttribute('role', 'presentation');
+        heading.textContent = `${group.type} · ${group.total}`;
+        box.setAttribute('aria-labelledby', heading.id);
+        box.append(heading);
+        for (const entry of group.entries) {
+          const option = make('div', 'option');
+          option.id = `${list.id}-o${options.length}`;
+          option.setAttribute('role', 'option');
+          option.setAttribute('aria-selected', 'false');
+          option.dataset.href = entry.href;
+          const badge = make('span', 'badge');
+          badge.setAttribute('aria-hidden', 'true');
+          badge.textContent = entry.badge ?? entry.type.charAt(0);
+          const text = make('span', 'text');
+          const name = make('span', 'name');
+          name.append(highlighted(entry.name, query));
+          text.append(name);
+          if (entry.meta) {
+            const meta = make('span', 'meta');
+            meta.append(highlighted(entry.meta, query));
+            text.append(meta);
+          }
+          option.append(badge, text);
+          if (entry.right) {
+            const right = make('span', 'right');
+            right.textContent = entry.right;
+            option.append(right);
+          }
+          box.append(option);
+          options.push(option);
+        }
+        list.append(box);
+      });
+      const summary = total
+        ? `${total} ${total === 1 ? 'resultado' : 'resultados'}`
+        : 'Sin coincidencias en nombres, provincias, bloques ni comisiones.';
+      foot.textContent = total ? `${summary} · ↑ ↓ para moverte, Enter para abrir` : summary;
+      status.textContent = summary;
+      panel.hidden = false;
+      input.setAttribute('aria-expanded', String(options.length > 0));
+    }
+
+    input.addEventListener('focus', () => void ensureIndex());
+    input.addEventListener('input', () => void render());
+    input.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        if (panel.hidden && input.value.trim().length >= 2) {
+          void render().then(() => setActive(event.key === 'ArrowDown' ? 0 : options.length - 1));
+          return;
+        }
+        setActive(active + (event.key === 'ArrowDown' ? 1 : -1));
+      } else if (event.key === 'Enter') {
+        const option = options[active] ?? options[0];
+        if (option && !panel.hidden) {
+          event.preventDefault();
+          open(option.dataset.href!);
+        }
+      } else if (event.key === 'Escape') {
+        if (!panel.hidden) {
+          event.preventDefault();
+          close();
+        } else if (input.value) {
+          event.preventDefault();
+          input.value = '';
+          status.textContent = '';
+        }
+      }
+    });
+    // keep the focus in the input while clicking an option
+    list.addEventListener('mousedown', event => event.preventDefault());
+    list.addEventListener('click', event => {
+      const option = (event.target as HTMLElement).closest<HTMLElement>('[role="option"]');
+      if (option?.dataset.href) open(option.dataset.href);
+    });
+    list.addEventListener('mousemove', event => {
+      const option = (event.target as HTMLElement).closest<HTMLElement>('[role="option"]');
+      const at = option ? options.indexOf(option) : -1;
+      if (at >= 0 && at !== active) setActive(at);
+    });
+    root.addEventListener('focusout', event => {
+      if (!root.contains(event.relatedTarget as Node | null)) close();
+    });
+  }
+
+  const boxes = [...document.querySelectorAll<HTMLElement>('[data-search]')];
+  boxes.forEach(setup);
+
+  document.addEventListener('keydown', event => {
+    if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey) return;
+    const target = event.target as HTMLElement;
+    if (target.closest('input, textarea, select, [contenteditable]')) return;
+    const box = boxes.find(b => b.hasAttribute('data-shortcut'));
+    if (!box) return;
+    event.preventDefault();
+    box.querySelector('input')!.focus();
+  });
+</script>
+
+<style>
+  .search {
+    position: relative;
+  }
+
+  label {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    /* the boundary identifies the input: 4.8:1, not the decorative --line */
+    border: 1px solid var(--placeholder);
+    border-radius: var(--radius);
+    padding: 6px 10px;
+  }
+
+  .hero .box {
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .box:focus-within {
+    outline: var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  svg {
+    flex: none;
+  }
+
+  svg circle,
+  svg path {
+    fill: none;
+    stroke: var(--muted);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+  }
+
+  .hero svg circle,
+  .hero svg path {
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    font-size: var(--text-sm);
+    color: var(--ink);
+  }
+
+  .hero input {
+    font-size: var(--text-xl);
+  }
+
+  input:focus-visible {
+    outline: none;
+  }
+
+  input::placeholder {
+    color: var(--placeholder);
+    opacity: 1;
+  }
+
+  .hint {
+    font-size: var(--text-xs);
+    color: var(--muted);
+    margin: 6px 0 0;
+  }
+
+  .results {
+    position: absolute;
+    z-index: 20;
+    left: 0;
+    right: 0;
+    margin-top: var(--space-2);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-popover);
+    overflow: hidden;
+  }
+
+  [role='listbox'] {
+    max-height: min(60vh, 480px);
+    overflow-y: auto;
+  }
+
+  .results :global(.group-title) {
+    font-size: var(--text-2xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    padding: 10px var(--space-4) var(--space-1);
+  }
+
+  .results :global(.option) {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+    gap: var(--space-3);
+    align-items: center;
+    padding: 7px var(--space-4);
+    cursor: pointer;
+  }
+
+  .results :global(.option[aria-selected='true']) {
+    background: var(--accent-soft);
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
+
+  .results :global(.badge) {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+  }
+
+  .results :global(.text) {
+    min-width: 0;
+  }
+
+  .results :global(.name),
+  .results :global(.meta) {
+    display: block;
+    overflow-wrap: anywhere;
+  }
+
+  .results :global(.meta),
+  .results :global(.right) {
+    font-size: var(--text-xs);
+    color: var(--muted);
+  }
+
+  .results :global(.right) {
+    text-align: right;
+  }
+
+  .foot {
+    margin: 0;
+    border-top: 1px solid var(--line-soft);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-xs);
+    color: var(--muted);
+  }
+
+  kbd {
+    flex: none;
+  }
+</style>

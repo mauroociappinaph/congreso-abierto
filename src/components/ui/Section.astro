@@ -1,0 +1,75 @@
+---
+// A titled block with its source and period at the bottom (S3: every metric keeps its source and period).
+// Slots: default content, "head" (right side of the title row), "after" (below the source, e.g. a QualityBox).
+import SourceLine from '../SourceLine.astro';
+import { uid } from './ids.ts';
+import type { SourcePeriod } from '../../lib/sources.ts';
+import type { SourceLink } from '../../lib/view.ts';
+
+interface Props {
+  title: string;
+  id?: string;
+  // heading level, 2 by default
+  level?: 2 | 3;
+  eyebrow?: string;
+  // short summary pill next to the title, e.g. "4 misiones"
+  tag?: string;
+  tagTone?: 'default' | 'ok' | 'flag';
+  links?: SourceLink[];
+  period?: SourcePeriod;
+  periodLabel?: string;
+  // white card with border; false for sections that sit on the page background
+  card?: boolean;
+}
+
+const { title, id, level = 2, eyebrow, tag, tagTone = 'default', links, period, periodLabel, card = true } = Astro.props;
+const Heading = `h${level}` as 'h2' | 'h3';
+const headingId = id ? `${id}-titulo` : uid('seccion');
+---
+
+<section class:list={['section', { card }]} id={id} aria-labelledby={headingId}>
+  <div class="head">
+    <div>
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <Heading id={headingId}>{title}</Heading>
+    </div>
+    {tag && <span class:list={['tag', { ok: tagTone === 'ok', flag: tagTone === 'flag' }]}>{tag}</span>}
+    <slot name="head" />
+  </div>
+  <slot />
+  {links && links.length > 0 && <SourceLine links={links} period={period} periodLabel={periodLabel} />}
+  <slot name="after" />
+</section>
+
+<style>
+  .section {
+    margin-bottom: var(--space-5);
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-3);
+    margin-bottom: 10px;
+  }
+
+  h2,
+  h3 {
+    margin: 0;
+    font-size: var(--text-xl);
+  }
+
+  .tag {
+    flex: none;
+    white-space: normal;
+  }
+</style>

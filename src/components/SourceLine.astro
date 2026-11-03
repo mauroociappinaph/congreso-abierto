@@ -17,3 +17,19 @@ const periodText = periodLabel ?? (period ? `del ${formatDate(period.desde)} al 
 <p class="source">
   Fuente: {links.map((link, i) => <>{i > 0 && ', '}<a href={link.href} target="_blank" rel="noopener">{link.label}</a></>)}.{periodText && ` Período: ${periodText}.`}
 </p>
+
+<style>
+  .source {
+    font-size: var(--text-xs);
+    color: var(--muted);
+    margin: var(--space-2) 0 var(--space-3);
+  }
+
+  .source a {
+    color: var(--muted);
+  }
+
+  .source a:hover {
+    color: var(--accent-ink);
+  }
+</style>

@@ -1,0 +1,201 @@
+---
+// Site frame: skip link, header with brand, global search slot and nav, main landmark and a footer with the sources.
+import Layout from './Layout.astro';
+import { DATASETS } from '../lib/view.ts';
+
+export type NavKey = 'inicio' | 'diputados' | 'senado' | 'bloques' | 'provincias' | 'comisiones' | 'viajes' | 'proyectos';
+
+interface Props {
+  title: string;
+  description?: string;
+  noindex?: boolean;
+  // nav item to mark as current; by default the one whose path starts the URL
+  current?: NavKey | null;
+}
+
+const NAV: { key: NavKey; label: string; href: string }[] = [
+  { key: 'inicio', label: 'Inicio', href: '/' },
+  { key: 'diputados', label: 'Diputados', href: '/diputados/' },
+  { key: 'senado', label: 'Senado', href: '/senado/' },
+  { key: 'bloques', label: 'Bloques', href: '/bloques/' },
+  { key: 'provincias', label: 'Provincias', href: '/provincias/' },
+  { key: 'comisiones', label: 'Comisiones', href: '/comisiones/' },
+  { key: 'viajes', label: 'Viajes', href: '/viajes/' },
+  { key: 'proyectos', label: 'Proyectos', href: '/proyectos/' },
+];
+
+const { title, description, noindex, current } = Astro.props;
+const path = Astro.url.pathname;
+const active =
+  current !== undefined
+    ? current
+    : (NAV.find(item => item.href !== '/' && path.startsWith(item.href))?.key ?? (path === '/' ? 'inicio' : null));
+const builtAt = new Date().toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
+const sources = Object.values(DATASETS);
+---
+
+<Layout title={title} description={description} noindex={noindex}>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="site-bar">
+      <a class="brand" href="/">
+        Gastos y trabajo legislativo
+        <small>Diputados y Senado de la Nación · datos oficiales</small>
+      </a>
+      <div class="site-search">
+        <slot name="search" />
+      </div>
+    </div>
+    <nav class="site-nav" aria-label="Secciones">
+      <ul>
+        {
+          NAV.map(item => (
+            <li>
+              <a href={item.href} aria-current={item.key === active ? 'page' : undefined}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </header>
+
+  <main id="contenido" tabindex="-1">
+    <slot />
+  </main>
+
+  <footer class="site-footer">
+    <div class="page-wrap">
+      <slot name="footer" />
+      <p>Datos actualizados al {builtAt}. Cada sección indica su fuente oficial y su período.</p>
+      <p>
+        Fuentes:
+        {sources.map((source, i) => <>{i > 0 && ' · '}<a href={source.href} target="_blank" rel="noopener">{source.label}</a></>)}.
+      </p>
+    </div>
+  </footer>
+</Layout>
+
+<style>
+  .skip {
+    position: absolute;
+    left: -9999px;
+    top: var(--space-4);
+    z-index: 10;
+    background: var(--surface);
+    color: var(--ink);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-popover);
+  }
+
+  .skip:focus {
+    left: var(--space-4);
+  }
+
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .site-bar {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 14px var(--page-pad) 6px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-6);
+  }
+
+  .brand {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.2;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .brand small {
+    display: block;
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: var(--text-2xs);
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .site-search {
+    margin-left: auto;
+    width: min(100%, 360px);
+  }
+
+  .site-search:empty {
+    display: none;
+  }
+
+  .site-nav {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 0 var(--page-pad) var(--space-2);
+    overflow-x: auto;
+  }
+
+  .site-nav ul {
+    display: flex;
+    gap: var(--space-1);
+    list-style: none;
+    margin: 0 0 0 -10px;
+    padding: 0;
+  }
+
+  .site-nav a {
+    display: block;
+    padding: 6px 10px;
+    font-size: var(--text-sm);
+    color: var(--ink);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    white-space: nowrap;
+  }
+
+  .site-nav a:hover {
+    background: var(--accent-soft);
+  }
+
+  .site-nav a[aria-current='page'] {
+    font-weight: 600;
+    box-shadow: inset 0 -2px 0 var(--accent);
+  }
+
+  main {
+    display: block;
+  }
+
+  main:focus {
+    outline: none;
+  }
+
+  .site-footer {
+    margin-top: var(--space-8);
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+    padding: var(--space-5) 0 var(--space-7);
+    font-size: var(--text-xs);
+    color: var(--muted);
+  }
+
+  .site-footer p {
+    margin: 0 0 var(--space-2);
+  }
+
+  .site-footer a {
+    color: var(--muted);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .site-nav a {
+      transition: background-color 0.12s ease;
+    }
+  }
+</style>

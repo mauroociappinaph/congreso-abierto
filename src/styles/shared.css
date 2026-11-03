@@ -1,0 +1,98 @@
+/* Shared classes used across pages and the older panels, drawn with the tokens. */
+
+.page-wrap {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 0 var(--page-pad);
+}
+
+.ui-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+
+.note {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  margin: 6px 0 0;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+/* Explanatory boxes inside the panels (method, quality). */
+.box {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-5);
+  font-size: var(--text-sm);
+}
+
+.box.quality {
+  border-color: var(--quality-line);
+  background: var(--quality-soft);
+}
+
+.box p {
+  margin: 0 0 var(--space-2);
+}
+
+.box ul {
+  margin: 0 0 var(--space-2);
+  padding-left: var(--space-5);
+}
+
+.data-table {
+  margin-bottom: var(--space-5);
+}
+
+.data-table .num,
+.data-table th.num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+/* Grids for StatTile and TopicCard. */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-4) var(--space-6);
+  margin: var(--space-1) 0 var(--space-3);
+}
+
+.topic-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 18px;
+}
+
+@media (max-width: 960px) {
+  .topic-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .topic-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

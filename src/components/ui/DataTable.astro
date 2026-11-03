@@ -1,0 +1,56 @@
+---
+// Table frame: put <thead>/<tbody> in the slot. The wrapper scrolls sideways on narrow screens and can be
+// focused, so keyboard users can scroll it too. Mark numeric cells with class="num".
+interface Props {
+  // table caption; also names the scroll region
+  caption: string;
+  // keeps the caption for screen readers only
+  captionHidden?: boolean;
+  dense?: boolean;
+  // rows with class="current" get the current-row background
+  class?: string;
+}
+
+const { caption, captionHidden = false, dense = false, class: extra } = Astro.props;
+---
+
+<div class="table-scroll" role="region" aria-label={caption} tabindex="0">
+  <table class:list={['data-table', extra, { dense }]}>
+    <caption class:list={{ 'visually-hidden': captionHidden }}>{caption}</caption>
+    <slot />
+  </table>
+</div>
+
+<style>
+  .table-scroll {
+    overflow-x: auto;
+    margin-bottom: var(--space-3);
+  }
+
+  .table-scroll:focus-visible {
+    outline-offset: 0;
+  }
+
+  table {
+    margin-bottom: 0;
+  }
+
+  .dense :global(th),
+  .dense :global(td) {
+    padding: 4px 6px;
+  }
+
+  table :global(td.num),
+  table :global(th.num) {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  table :global(tr.current td) {
+    background: var(--row-current);
+  }
+
+  table :global(tr.current td:first-child) {
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
+</style>

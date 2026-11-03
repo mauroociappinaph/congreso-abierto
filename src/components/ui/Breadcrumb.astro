@@ -1,0 +1,120 @@
+---
+// Where the page sits. "crumbs": Inicio / Diputados / Tucumán / Yedlin, the last item is the current page.
+// "path": a drill-down like Tema → Ranking → Ficha (02), with the current step marked.
+interface Item {
+  label: string;
+  href?: string;
+  current?: boolean;
+}
+
+interface Props {
+  items: Item[];
+  variant?: 'crumbs' | 'path';
+  label?: string;
+  // light text, for a dark header band
+  inverse?: boolean;
+}
+
+const { items, variant = 'crumbs', label, inverse = false } = Astro.props;
+const lastIndex = items.length - 1;
+const currentIndex = variant === 'path' ? items.findIndex(item => item.current) : lastIndex;
+---
+
+{
+  variant === 'crumbs' ? (
+    <nav class:list={['crumbs', { inverse }]} aria-label={label ?? 'Ruta de navegación'}>
+      <ol>
+        {items.map((item, i) => (
+          <li>
+            {i === currentIndex || !item.href ? (
+              <span aria-current={i === currentIndex ? 'page' : undefined}>{item.label}</span>
+            ) : (
+              <a href={item.href}>{item.label}</a>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  ) : (
+    <nav aria-label={label ?? 'Camino de navegación'}>
+      <ol class="path">
+        {items.map((item, i) => (
+          <li aria-current={i === currentIndex ? 'step' : undefined}>
+            <span class:list={['step', { on: i === currentIndex }]}>
+              {item.href && i !== currentIndex ? <a href={item.href}>{item.label}</a> : item.label}
+            </span>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}
+
+<style>
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    margin: 0 0 10px;
+    padding: 0;
+    font-size: var(--text-xs);
+    color: var(--muted);
+  }
+
+  .crumbs li + li::before {
+    content: '/';
+    content: '/' / '';
+    padding: 0 6px;
+    color: var(--muted);
+  }
+
+  .crumbs a {
+    color: var(--muted);
+  }
+
+  .crumbs a:hover {
+    color: var(--accent-ink);
+  }
+
+  .crumbs.inverse ol,
+  .crumbs.inverse a,
+  .crumbs.inverse li + li::before {
+    color: var(--surface);
+  }
+
+  .path {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) 10px;
+    margin: 0 0 var(--space-3);
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-sm);
+  }
+
+  .step {
+    display: inline-block;
+    padding: var(--space-1) 10px;
+    border-radius: var(--radius-md);
+    background: var(--badge);
+    color: var(--ink);
+  }
+
+  .path li + li::before {
+    content: '→';
+    content: '→' / '';
+    margin-right: 10px;
+    color: var(--muted);
+  }
+
+  .step a {
+    color: var(--ink);
+  }
+
+  .step.on {
+    background: var(--ink);
+    color: var(--surface);
+    font-weight: 600;
+  }
+</style>

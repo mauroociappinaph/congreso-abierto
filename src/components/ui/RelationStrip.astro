@@ -1,0 +1,199 @@
+---
+// The strip under a legislator's name (01, Pantalla 2): one cell per related entity, each linking to its page.
+// Plain data in, so pages build it from whatever indexes they have. Missing cells are left out.
+import Chip from './Chip.astro';
+
+interface Cell {
+  // main line, e.g. "Unión por la Patria", "69 como primer firmante"
+  value: string;
+  // second line, e.g. "92 de 257 diputados"
+  detail?: string;
+  href?: string;
+  // link text at the bottom, e.g. "Ver el bloque"
+  cta?: string;
+}
+
+interface CommitteeLink {
+  name: string;
+  href?: string;
+  // shown when it is not a plain member, e.g. "Preside"
+  role?: string;
+}
+
+interface Props {
+  // names the navigation landmark, e.g. "Relaciones de Yedlin, Pablo Raúl"
+  label: string;
+  bloque?: Cell;
+  provincia?: Cell;
+  comisiones?: { summary: string; items: CommitteeLink[] };
+  proyectos?: Cell;
+  viajes?: Cell;
+  votaciones?: Cell;
+  // note under the strip
+  legend?: string;
+}
+
+const { label, bloque, provincia, comisiones, proyectos, viajes, votaciones, legend } = Astro.props;
+const cells = [
+  { key: 'Bloque', cell: bloque, width: '1.1fr' },
+  { key: 'Provincia', cell: provincia, width: '1fr' },
+  { key: 'Comisiones', committees: comisiones, width: '2.4fr' },
+  { key: 'Proyectos', cell: proyectos, width: '1fr' },
+  { key: 'Viajes', cell: viajes, width: '1fr' },
+  { key: 'Votaciones', cell: votaciones, width: '1fr' },
+].filter(c => c.cell || c.committees);
+const columns = cells.map(c => c.width).join(' ');
+---
+
+<nav class="strip" aria-label={label}>
+  <ul style={{ '--columns': columns }}>
+    {
+      cells.map(({ key, cell, committees }) =>
+        committees ? (
+          <li class="rel wide">
+            <span class="k">{key} · {committees.summary}</span>
+            {committees.items.length > 0 && (
+              <ul class="committees">
+                {committees.items.map(item => (
+                  <li>
+                    <Chip label={item.name} href={item.href} meta={item.role} size="sm" />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ) : cell!.href ? (
+          <li>
+            <a class="rel" href={cell!.href}>
+              <span class="k">{key}</span>
+              <span class="v">{cell!.value}</span>
+              {cell!.detail && <span class="d">{cell!.detail}</span>}
+              {cell!.cta && <span class="go">{cell!.cta} →</span>}
+            </a>
+          </li>
+        ) : (
+          <li class="rel">
+            <span class="k">{key}</span>
+            <span class="v">{cell!.value}</span>
+            {cell!.detail && <span class="d">{cell!.detail}</span>}
+          </li>
+        ),
+      )
+    }
+  </ul>
+</nav>
+{legend && <p class="legend">{legend}</p>}
+
+<style>
+  .strip > ul {
+    display: grid;
+    grid-template-columns: var(--columns);
+    margin: var(--space-5) 0 6px;
+    padding: 0;
+    list-style: none;
+    border: 1px solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .strip > ul > li {
+    border-right: 1px solid var(--line);
+    min-width: 0;
+  }
+
+  .strip > ul > li:last-child {
+    border-right: 0;
+  }
+
+  .rel {
+    display: block;
+    height: 100%;
+    padding: var(--space-3) 14px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  a.rel:hover {
+    background: var(--accent-soft);
+    color: var(--ink);
+  }
+
+  a.rel:focus-visible {
+    outline-offset: -3px;
+  }
+
+  .k {
+    display: block;
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .v {
+    display: block;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .d {
+    display: block;
+    font-size: var(--text-xs);
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .go {
+    display: block;
+    color: var(--accent);
+    font-size: var(--text-xs);
+    margin-top: 2px;
+  }
+
+  .committees {
+    list-style: none;
+    margin: var(--space-1) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  .legend {
+    font-size: var(--text-xs);
+    color: var(--muted);
+    margin: 0 0 var(--space-5);
+  }
+
+  @media (max-width: 900px) {
+    .strip > ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .strip > ul > li {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .strip > ul > li.wide {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .strip > ul {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .strip > ul > li {
+      border-right: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    a.rel {
+      transition: background-color 0.12s ease;
+    }
+  }
+</style>

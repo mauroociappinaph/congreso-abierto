@@ -22,7 +22,10 @@ const unmatched = quality.unmatched.slice(0, LIST_LIMIT);
 ---
 
 <div class="box quality">
-  <h3>{title} ({formatDate(period.desde)} – {formatDate(period.hasta)})</h3>
+  <h3>
+    <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" /><path d="M4 7.2 6.1 9.2 10 5" /></svg>
+    {title} ({formatDate(period.desde)} – {formatDate(period.hasta)})
+  </h3>
   <p>
     Cada nombre de la fuente se compara con los {against} con la misma medida de parecido que usamos en Viajes
     (Jaro-Winkler y un puntaje de confianza). Los casos dudosos se informan y no se asignan.
@@ -68,13 +71,49 @@ const unmatched = quality.unmatched.slice(0, LIST_LIMIT);
 </div>
 
 <style>
+  .quality {
+    color: var(--ink);
+  }
+
   h3 {
-    font-size: 16px;
-    margin: 0 0 8px;
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    font-family: var(--sans);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--quality);
+    margin: 0 0 var(--space-2);
+  }
+
+  svg {
+    flex: none;
+  }
+
+  svg circle {
+    fill: var(--quality);
+  }
+
+  svg path {
+    fill: none;
+    stroke: var(--surface);
+    stroke-width: 1.6;
+  }
+
+  strong {
+    color: var(--quality);
+  }
+
+  details {
+    margin-top: var(--space-2);
+  }
+
+  summary {
+    color: var(--accent);
   }
 
   details ul {
     margin-top: 6px;
-    font-size: 13px;
+    font-size: var(--text-xs);
   }
 </style>

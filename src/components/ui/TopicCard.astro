@@ -1,0 +1,217 @@
+---
+// Home card for one topic (02, Pantalla 1): finding as title, key number, a small chart in the slot, source and
+// period, linkage quality and the link down to the topic page. Place cards inside <div class="topic-grid">.
+// Slots: default (chart), "note" (caveats under the chart).
+import SourceLine from '../SourceLine.astro';
+import type { SourcePeriod } from '../../lib/sources.ts';
+import type { SourceLink } from '../../lib/view.ts';
+import { uid } from './ids.ts';
+
+interface Props {
+  // eyebrow, e.g. "Viajes nacionales"
+  topic: string;
+  // the finding, descriptive wording only
+  title: string;
+  href: string;
+  // e.g. "Ver ranking por grupo de distancia"
+  linkLabel: string;
+  keyNumber?: string;
+  // under the key number, e.g. "bruto mensual"
+  keyNote?: string;
+  lede?: string;
+  links?: SourceLink[];
+  period?: SourcePeriod;
+  periodLabel?: string;
+  // e.g. { label: "Proyectos: 99,1 % emparejado" }
+  quality?: { label: string; tone?: 'ok' | 'warn' };
+  // columns of the 6-column grid
+  span?: 2 | 3 | 4 | 6;
+  id?: string;
+}
+
+const { topic, title, href, linkLabel, keyNumber, keyNote, lede, links, period, periodLabel, quality, span = 2, id } = Astro.props;
+const headingId = id ? `${id}-titulo` : uid('tema');
+---
+
+<article class:list={['topic-card', `span-${span}`]} id={id} aria-labelledby={headingId}>
+  <p class="topic">{topic}</p>
+  <h2 id={headingId}>{title}</h2>
+  {
+    keyNumber && (
+      <p class="key">
+        <span class="big">{keyNumber}</span>
+        {keyNote && <span class="key-note">{keyNote}</span>}
+      </p>
+    )
+  }
+  {lede && <p class="lede">{lede}</p>}
+  <div class="chart"><slot /></div>
+  <div class="notes"><slot name="note" /></div>
+  <div class="foot">
+    {links && links.length > 0 && <SourceLine links={links} period={period} periodLabel={periodLabel} />}
+    <div class="actions">
+      <a class="drill" href={href}>{linkLabel} →</a>
+      {quality && <span class:list={['quality', quality.tone ?? 'ok']}>{quality.label}</span>}
+    </div>
+  </div>
+</article>
+
+<style>
+  .topic-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--ink);
+    border-radius: var(--radius-sm);
+    padding: 18px 20px 14px;
+  }
+
+  .span-2 {
+    grid-column: span 2;
+  }
+
+  .span-3 {
+    grid-column: span 3;
+  }
+
+  .span-4 {
+    grid-column: span 4;
+  }
+
+  .span-6 {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 960px) {
+    .span-2,
+    .span-3 {
+      grid-column: span 1;
+    }
+
+    .span-4 {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .topic-card {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .topic {
+    margin: 0 0 6px;
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  h2 {
+    margin: 0 0 10px;
+    font-size: 22px;
+    line-height: 1.15;
+  }
+
+  .key {
+    margin: 0 0 10px;
+  }
+
+  .big {
+    display: block;
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .key-note {
+    display: block;
+    margin-top: 6px;
+    font-size: var(--text-sm);
+    color: var(--muted);
+  }
+
+  .lede {
+    margin: 0 0 var(--space-3);
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .chart {
+    min-width: 0;
+  }
+
+  .notes:empty {
+    display: none;
+  }
+
+  .foot {
+    margin-top: auto;
+    padding-top: 10px;
+  }
+
+  .foot :global(.source) {
+    border-top: 1px dashed var(--line);
+    padding-top: var(--space-2);
+    margin-top: var(--space-2);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-2) 10px;
+    font-size: var(--text-sm);
+  }
+
+  .drill {
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .drill:hover {
+    text-decoration: underline;
+  }
+
+  .quality {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: var(--text-xs);
+    border-radius: var(--radius-pill);
+    padding: 2px 9px;
+    border: 1px solid var(--quality-line);
+    background: var(--quality-soft);
+    color: var(--quality);
+  }
+
+  .quality::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .quality.warn {
+    border-color: var(--flag-line);
+    background: var(--flag-soft);
+    color: var(--flag);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .topic-card {
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .topic-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-raised);
+    }
+  }
+</style>

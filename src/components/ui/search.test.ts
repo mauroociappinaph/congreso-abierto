@@ -46,3 +46,12 @@ test('matchRanges finds each query word in the original text, accents included',
   assert.deepEqual(matchRanges('Tucumán', 'tucuman'), [[0, 7]]);
   assert.deepEqual(matchRanges('Tucumán', 'salta'), []);
 });
+
+test('searchEntries also matches hidden keywords such as province aliases, ranked like meta matches', () => {
+  const entries: SearchEntry[] = [
+    { type: 'Provincias', name: 'Ciudad de Buenos Aires', meta: '25 diputados · 3 senadores', href: '/provincias/ciudad-de-buenos-aires/', keywords: 'caba capital federal' },
+    { type: 'Provincias', name: 'Buenos Aires', meta: '70 diputados · 3 senadores', href: '/provincias/buenos-aires/' },
+  ];
+  const groups = searchEntries(entries, 'caba');
+  assert.deepEqual(groups.map(g => g.entries.map(e => e.name)), [['Ciudad de Buenos Aires']]);
+});

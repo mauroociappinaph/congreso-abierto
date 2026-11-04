@@ -11,6 +11,8 @@ export interface SearchEntry {
   href: string;
   // short badge, e.g. initials "PY" or "B"
   badge?: string;
+  // extra words matched but never shown, e.g. province aliases ("caba")
+  keywords?: string;
 }
 
 export interface SearchGroup {
@@ -78,7 +80,7 @@ export function searchEntries(entries: SearchEntry[], query: string, options: Se
 
   const byType = new Map<string, { entry: SearchEntry; rank: number }[]>();
   for (const entry of entries) {
-    const haystack = fold(`${entry.name} ${entry.meta ?? ''}`);
+    const haystack = fold(`${entry.name} ${entry.meta ?? ''} ${entry.keywords ?? ''}`);
     if (!terms.every(t => haystack.includes(t))) continue;
     const list = byType.get(entry.type) ?? [];
     list.push({ entry, rank: rank(entry, terms) });

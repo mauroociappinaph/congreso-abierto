@@ -50,6 +50,9 @@ const step = Astro.props.step ?? Math.max(1, Math.ceil(max / 9));
 const ticks = Array.from({ length: Math.floor(max / step) + 1 }, (_, i) => i * step);
 const H = TOP + rows.length * ROW_H + 20;
 const x = (v: number) => LABEL_W + ((W - LABEL_W - RIGHT) * Math.min(v, max)) / max;
+const STACK = [0, 4, -4, 8, -8, 12, -12];
+// Labels closer than this (px) to the previous one in the row drop below the axis.
+const LABEL_GAP = 110;
 
 const drawn = rows.map((row, i) => {
   const y = TOP + i * ROW_H;
@@ -59,8 +62,9 @@ const drawn = rows.map((row, i) => {
       const key = point.value.toFixed(2);
       const n = (seen.get(key) ?? 0) + 1;
       seen.set(key, n);
-      // stack equal values up and down so every person stays visible
-      const dy = (n - 1) * 4 * (n % 2 ? 1 : -1);
+      // stack equal values up and down inside the row (at most ±12 px), so a crowded value such as 0 never spills
+      // into the next row; dots beyond seven overlap and the fill opacity shows the density
+      const dy = STACK[(n - 1) % STACK.length];
       return { ...point, cx: x(point.value), cy: y + dy };
     })
     // marked dots last, so they sit on top
@@ -106,13 +110,15 @@ const listed = (row: DotRow) =>
           )}
           {row.points
             .filter(p => p.label && (p.highlight || p.flag))
-            .map(p => {
+            .sort((a, b) => a.cx - b.cx)
+            .map((p, i, labelled) => {
               const end = p.cx > W - 180;
+              const below = i % 2 === 1 && p.cx - labelled[i - 1].cx < LABEL_GAP;
               return (
                 <text
                   class:list={['mark-label', { flag: p.flag }]}
                   x={end ? p.cx - 9 : p.cx + 9}
-                  y={row.y - 9}
+                  y={below ? row.y + 20 : row.y - 9}
                   text-anchor={end ? 'end' : 'start'}
                 >
                   {p.label}
@@ -187,6 +193,7 @@ const listed = (row: DotRow) =>
 
   .dot {
     fill: var(--chart-muted);
+    fill-opacity: 0.8;
     stroke: var(--surface);
     stroke-width: 1;
   }

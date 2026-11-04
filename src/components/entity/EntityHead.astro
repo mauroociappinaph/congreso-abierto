@@ -1,0 +1,66 @@
+---
+// Header of a relation page (01, Pantalla 3): breadcrumb, eyebrow, name, optional chamber switch and key facts.
+// Facts go in the default slot as StatTile items; "switch" holds links to the sibling pages.
+import Breadcrumb from '../ui/Breadcrumb.astro';
+
+interface Props {
+  crumbs: { label: string; href?: string }[];
+  eyebrow: string;
+  title: string;
+  lede?: string;
+}
+
+const { crumbs, eyebrow, title, lede } = Astro.props;
+---
+
+<header class="entity-head">
+  <Breadcrumb items={crumbs} />
+  <div class="title-row">
+    <div>
+      <p class="eyebrow">{eyebrow}</p>
+      <h1>{title}</h1>
+      {lede && <p class="lede">{lede}</p>}
+    </div>
+    <slot name="switch" />
+  </div>
+  {Astro.slots.has('default') && <dl class="facts"><slot /></dl>}
+</header>
+
+<style>
+  .entity-head {
+    padding-top: var(--space-7);
+    margin-bottom: var(--space-6);
+  }
+
+  .title-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--space-3) var(--space-6);
+    border-bottom: 3px double var(--line);
+    padding-bottom: 18px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: var(--text-4xl);
+    line-height: var(--leading-tight);
+    overflow-wrap: anywhere;
+  }
+
+  .lede {
+    max-width: 720px;
+    margin: 8px 0 0;
+    color: var(--muted);
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+    gap: var(--space-3) var(--space-5);
+    margin: 0;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+</style>

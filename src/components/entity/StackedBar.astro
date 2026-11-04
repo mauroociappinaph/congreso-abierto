@@ -1,0 +1,86 @@
+---
+// One bar split by bloc (committee bloc mix), with a legend that repeats every count and links to the bloc.
+import { formatNumber, formatShare } from '../../lib/view.ts';
+import type { Segment } from './entity-view.ts';
+import { uid } from '../ui/ids.ts';
+
+interface Props {
+  title: string;
+  segments: Segment[];
+}
+
+const { title, segments } = Astro.props;
+const id = uid('mezcla');
+---
+
+<figure class="stacked">
+  <figcaption id={id} class="visually-hidden">{title}</figcaption>
+  <div class="bar" aria-hidden="true">
+    {segments.map(s => <span style={{ width: `${s.share * 100}%`, background: s.color }} />)}
+  </div>
+  <ul aria-labelledby={id}>
+    {
+      segments.map(s => (
+        <li>
+          <span class="key" style={{ background: s.color }} aria-hidden="true" />
+          {s.url ? <a href={s.url}>{s.label}</a> : <span>{s.label}</span>}
+          <span class="count">{formatNumber(s.count)} · {formatShare(s.share)}</span>
+        </li>
+      ))
+    }
+  </ul>
+</figure>
+
+<style>
+  .stacked {
+    margin: 0;
+  }
+
+  .bar {
+    display: flex;
+    height: 18px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--line-soft);
+  }
+
+  .bar span {
+    display: block;
+    min-width: 2px;
+  }
+
+  .bar span + span {
+    border-left: 1px solid var(--surface);
+  }
+
+  ul {
+    list-style: none;
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    font-size: var(--text-sm);
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: 12px minmax(0, 1fr) auto;
+    gap: var(--space-2);
+    align-items: center;
+    padding: 2px 0;
+  }
+
+  li a,
+  li span {
+    overflow-wrap: anywhere;
+  }
+
+  .key {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+
+  .count {
+    color: var(--muted);
+    white-space: nowrap;
+  }
+</style>

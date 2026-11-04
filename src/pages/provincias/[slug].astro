@@ -1,0 +1,203 @@
+---
+// One page per province: its deputies and senators, blocs per chamber, trips against peers and committees.
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import BarChart from '../../components/ui/BarChart.astro';
+import DataTable from '../../components/ui/DataTable.astro';
+import Section from '../../components/ui/Section.astro';
+import StatTile from '../../components/ui/StatTile.astro';
+import EntityGrid from '../../components/entity/EntityGrid.astro';
+import EntityHead from '../../components/entity/EntityHead.astro';
+import TravelQuality from '../../components/entity/TravelQuality.astro';
+import { committeeTitle, TRAVEL_STATUS } from '../../components/entity/entity-view.ts';
+import { loadBills, loadDeputies, loadEntities, loadSenateVotes, loadSenators, loadTravel } from '../../lib/sources.ts';
+import { DATASETS, formatNumber, formatShare, travelStatus } from '../../lib/view.ts';
+
+export const getStaticPaths = (async () => {
+  const { provinces } = await loadEntities();
+  return provinces.map(province => ({ params: { slug: province.slug }, props: { province } }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { province } = Astro.props as Props;
+const deputies = await loadDeputies();
+const { senators } = await loadSenators();
+const [entities, travelReport, billsData, votesData] = await Promise.all([loadEntities(), loadTravel(deputies), loadBills(deputies, senators), loadSenateVotes(senators)]);
+
+const prov = province.provenance;
+const people = new Map<string, { mandato: string }>([...deputies, ...senators].map(p => [p.id, p]));
+const travelById = new Map(travelReport.analysis.deputies.map(t => [t.deputyId, t]));
+const billsOf = (id: string) => billsData.byLegislator.get(id)?.total ?? 0;
+const blocOf = (id: string) => entities.relations.get(id)?.bloc;
+const bandMedians = travelReport.analysis.bands.filter(b => province.travel.bands.includes(b.band));
+const votesPeriod = entities.blocs.find(b => b.camara === 'senado')?.provenance.votes;
+const billsLabel = entities.blocs[0]?.provenance.bills.label ?? '';
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+---
+
+<SiteLayout title={`${province.nombre} - Provincias`} description={`${province.nombre}: sus diputados y senadores, bloques, viajes y comisiones, con fuente y período.`} current="provincias">
+  <div class="page-wrap">
+    <EntityHead
+      crumbs={[{ label: 'Inicio', href: '/' }, { label: 'Provincias', href: '/provincias/' }, { label: province.nombre }]}
+      eyebrow="Provincia"
+      title={province.nombre}
+    >
+      <StatTile label="Diputados" value={formatNumber(province.deputies.length)} note={`${DATASETS.legisladores.label}, ${prov.members.label}`} />
+      <StatTile label="Senadores" value={formatNumber(province.senators.length)} note={`${DATASETS.senadores.label}, ${prov.members.label}`} />
+      <StatTile
+        label="Mediana de tramos por mes"
+        value={province.travel.medianLegsPerMonth === null ? 'Sin dato' : formatNumber(province.travel.medianLegsPerMonth)}
+        note={`${plural(province.travel.deputies, 'diputado comparado', 'diputados comparados')}${province.travel.bands.length ? ` · grupo ${province.travel.bands.join(', ')}` : ''} · ${prov.travel.label}`}
+      />
+      <StatTile label="Bancas en comisiones" value={formatNumber(province.committees.seats)} note={`en ${plural(province.committees.committees, 'comisión', 'comisiones')} · ${prov.committees.label}`} />
+      <StatTile label="Presidencias de comisión" value={formatNumber(province.committees.chairs.length)} note={`${DATASETS.comisiones.label}, ${prov.committees.label}`} />
+    </EntityHead>
+
+    <EntityGrid asideLabel="Relaciones de la provincia">
+      <Section
+        title="Diputados"
+        id="diputados"
+        tag={formatNumber(province.deputies.length)}
+        links={[DATASETS.legisladores, ...prov.travel.sources, DATASETS.proyectos]}
+        periodLabel={`composición ${prov.members.label}; viajes ${prov.travel.label}; proyectos ${billsLabel}`}
+      >
+        {province.deputies.length > 0 ? (
+          <DataTable caption={`Diputados por ${province.nombre}`} captionHidden dense>
+            <thead>
+              <tr><th scope="col">Diputado/a</th><th scope="col">Bloque</th><th scope="col">Mandato</th><th scope="col" class="num">Tramos/mes</th><th scope="col">Comparación</th><th scope="col" class="num">Proyectos</th></tr>
+            </thead>
+            <tbody>
+              {province.deputies.map(m => {
+                const t = travelById.get(m.id);
+                const status = t ? TRAVEL_STATUS[travelStatus(t)] : null;
+                const bloc = blocOf(m.id);
+                return (
+                  <tr>
+                    <td><a href={m.url}>{m.nombre}</a></td>
+                    <td>{bloc ? <a href={bloc.url}>{bloc.titulo}</a> : '—'}</td>
+                    <td>{people.get(m.id)?.mandato || '—'}</td>
+                    <td class="num">{t ? formatNumber(t.legsPerMonth) : '—'}</td>
+                    <td>{status ? <span class:list={['tag', status.tone]}>{status.label}</span> : <span class="muted">Sin datos de viajes</span>}</td>
+                    <td class="num">{formatNumber(billsOf(m.id))}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </DataTable>
+        ) : (
+          <p>La composición vigente no tiene diputados por esta provincia.</p>
+        )}
+        <p class="note">«Comparación»: tramos por mes frente a la mediana de los diputados a distancia similar de Buenos Aires; es una descripción estadística, no una evaluación. «Proyectos»: como primer firmante, de cualquier tema.</p>
+        <TravelQuality slot="after" report={travelReport} />
+      </Section>
+
+      <Section
+        title="Senadores"
+        id="senadores"
+        tag={formatNumber(province.senators.length)}
+        links={[DATASETS.senadores, DATASETS.actas, DATASETS.proyectos]}
+        periodLabel={`composición ${prov.members.label}; votos ${votesPeriod?.label ?? ''}; proyectos ${billsLabel}`}
+      >
+        {province.senators.length > 0 ? (
+          <DataTable caption={`Senadores por ${province.nombre}`} captionHidden dense>
+            <thead>
+              <tr><th scope="col">Senador/a</th><th scope="col">Bloque</th><th scope="col">Mandato</th><th scope="col" class="num">Asistencia</th><th scope="col" class="num">Proyectos</th></tr>
+            </thead>
+            <tbody>
+              {province.senators.map(m => {
+                const v = votesData.summary.senators.get(m.id);
+                const bloc = blocOf(m.id);
+                return (
+                  <tr>
+                    <td><a href={m.url}>{m.nombre}</a></td>
+                    <td>{bloc ? <a href={bloc.url}>{bloc.titulo}</a> : '—'}</td>
+                    <td>{people.get(m.id)?.mandato || '—'}</td>
+                    <td class="num">{v ? formatShare(v.asistencia) : '—'}</td>
+                    <td class="num">{formatNumber(billsOf(m.id))}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </DataTable>
+        ) : (
+          <p>La composición vigente no tiene senadores por esta provincia.</p>
+        )}
+        <p class="note">«Asistencia»: actas en las que votó sobre las del período. «Proyectos»: iniciados en el Senado como primer firmante, según el registro de la Cámara de Diputados.</p>
+      </Section>
+
+      <Fragment slot="aside">
+        {
+          (['diputados', 'senado'] as const).map(camara => (
+            <Section
+              title={camara === 'diputados' ? 'Bloques en Diputados' : 'Bloques en el Senado'}
+              id={`bloques-${camara}`}
+              tag={plural(province.blocs[camara].length, 'bloque', 'bloques')}
+              links={[camara === 'diputados' ? DATASETS.legisladores : DATASETS.senadores]}
+              periodLabel={`composición ${prov.members.label}`}
+            >
+              {province.blocs[camara].length > 0 ? (
+                <BarChart
+                  title={`Bancas de ${province.nombre} por bloque en ${camara === 'diputados' ? 'Diputados' : 'el Senado'}`}
+                  bars={province.blocs[camara].map(b => ({ label: b.titulo, value: b.seats, href: b.url }))}
+                  labelWidth="160px"
+                />
+              ) : (
+                <p class="note">Sin bancas en la composición vigente.</p>
+              )}
+            </Section>
+          ))
+        }
+
+        <Section title="Viajes frente a sus pares" id="viajes" tag={province.travel.bands.join(', ') || 'Sin grupo'} links={prov.travel.sources} periodLabel={prov.travel.label}>
+          {bandMedians.length > 0 ? (
+            <BarChart
+              title="Mediana de tramos por mes: la provincia frente a todos los diputados de su grupo"
+              titleHidden={false}
+              bars={[
+                ...(province.travel.medianLegsPerMonth === null ? [] : [{ label: province.nombre, value: province.travel.medianLegsPerMonth, detail: plural(province.travel.deputies, 'diputado comparado', 'diputados comparados'), highlight: true }]),
+                ...bandMedians.map(b => ({ label: `Grupo ${b.band}`, value: b.medianLegsPerMonth, detail: `${b.deputies} diputados` })),
+              ]}
+              labelWidth="160px"
+            />
+          ) : (
+            <p class="note">Ningún diputado de la provincia se compara en el período.</p>
+          )}
+          <p class="note">Cada diputado se compara con sus pares a distancia similar de Buenos Aires. Más tramos no implica irregularidad. Ver <a href="/viajes/">todos los viajes</a>.</p>
+        </Section>
+
+        <Section title="Comisiones que presiden" id="comisiones" tag={formatNumber(province.committees.chairs.length)} links={prov.committees.sources} periodLabel={prov.committees.label}>
+          {province.committees.chairs.length > 0 ? (
+            <ul class="chairs">
+              {province.committees.chairs.map(c => <li><a href={c.url}>{committeeTitle(c.comisionId, c.titulo)}</a><span>{c.memberNombre}</span></li>)}
+            </ul>
+          ) : (
+            <p class="note">Ningún diputado de la provincia preside una comisión.</p>
+          )}
+          <p class="note">Sus diputados ocupan {plural(province.committees.seats, 'banca', 'bancas')} en {plural(province.committees.committees, 'comisión', 'comisiones')} de Diputados. Ver <a href="/comisiones/">todas las comisiones</a>.</p>
+        </Section>
+      </Fragment>
+    </EntityGrid>
+  </div>
+</SiteLayout>
+
+<style>
+  .chairs {
+    font-size: var(--text-sm);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .chairs li {
+    padding: 3px 0;
+    border-bottom: 1px solid var(--line-soft);
+    overflow-wrap: anywhere;
+  }
+
+  .chairs li span {
+    display: block;
+    font-size: var(--text-2xs);
+    color: var(--muted);
+  }
+</style>

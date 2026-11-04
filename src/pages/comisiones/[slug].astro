@@ -1,0 +1,191 @@
+---
+// One page per Diputados committee: authorities, members with bloc, province and role, bloc mix, districts and the
+// bills of its members as first signers (any topic: the source does not tie bills to committees).
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import QualityBox from '../../components/QualityBox.astro';
+import BarChart from '../../components/ui/BarChart.astro';
+import DataTable from '../../components/ui/DataTable.astro';
+import Funnel from '../../components/ui/Funnel.astro';
+import Section from '../../components/ui/Section.astro';
+import StatTile from '../../components/ui/StatTile.astro';
+import EntityGrid from '../../components/entity/EntityGrid.astro';
+import EntityHead from '../../components/entity/EntityHead.astro';
+import MemberFilter from '../../components/entity/MemberFilter.astro';
+import StackedBar from '../../components/entity/StackedBar.astro';
+import { blocSegments, committeeTitle, searchText } from '../../components/entity/entity-view.ts';
+import { provinceOf, provinceUrl, titleCase } from '../../lib/entities.ts';
+import { loadBills, loadCommittees, loadDeputies, loadEntities, loadSenators } from '../../lib/sources.ts';
+import { cargoLabel, formatNumber, STAGE_LABELS } from '../../lib/view.ts';
+
+export const getStaticPaths = (async () => {
+  const { committees } = await loadEntities();
+  return committees.map(committee => ({ params: { slug: committee.slug }, props: { committee } }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { committee } = Astro.props as Props;
+const deputies = await loadDeputies();
+const { senators } = await loadSenators();
+const [committeesData, billsData] = await Promise.all([loadCommittees(deputies), loadBills(deputies, senators)]);
+
+const title = committeeTitle(committee.id, committee.titulo);
+const unnamed = title !== committee.titulo;
+const prov = committee.provenance;
+const billsOf = (id: string) => billsData.byLegislator.get(id)?.total ?? 0;
+const membersById = new Map(committee.members.map(m => [m.id, m]));
+const authorities = committee.authorities.map(a => {
+  const linked = a.deputyId ? membersById.get(a.deputyId) : undefined;
+  const province = linked ? null : provinceOf(a.distrito);
+  return {
+    cargo: cargoLabel(a.cargo),
+    nombre: linked?.nombre ?? titleCase(a.nombre),
+    url: a.url,
+    bloc: linked?.bloc ?? null,
+    distrito: linked?.distrito ?? province?.nombre ?? (a.distrito ? titleCase(a.distrito) : ''),
+    provinciaSlug: linked?.provinciaSlug ?? province?.slug ?? null,
+  };
+});
+const segments = blocSegments(committee.blocMix, 5);
+const tipo = committee.tipo === 'permanente' ? 'Comisión permanente' : committee.tipo === 'especial' ? 'Comisión especial' : 'Comisión';
+const bodyId = `integrantes-${committee.slug}`;
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+---
+
+<SiteLayout title={`${title} - Comisiones`} description={`${title}: autoridades, integrantes, bloques y provincias, con fuente y período.`} current="comisiones">
+  <div class="page-wrap">
+    <EntityHead
+      crumbs={[{ label: 'Inicio', href: '/' }, { label: 'Comisiones', href: '/comisiones/' }, { label: title }]}
+      eyebrow={`${tipo} · Cámara de Diputados`}
+      title={title}
+      lede={unnamed ? 'La Cámara publica integrantes con este código de comisión, pero la lista de comisiones no trae su nombre.' : 'Nombre como lo publica la Cámara, sin tildes.'}
+    >
+      <StatTile label="Integrantes" value={formatNumber(committee.integrantes)} note={`publicados · ${prov.members.sources[0].label}, ${prov.members.label}`} />
+      <StatTile label="Bloques" value={formatNumber(committee.blocMix.length)} note={`de ${plural(committee.members.length, 'integrante emparejado', 'integrantes emparejados')}`} />
+      <StatTile label="Distritos" value={formatNumber(committee.districts.length)} note="de 24" />
+      <StatTile label="Proyectos de sus integrantes" value={formatNumber(committee.bills?.total ?? 0)} note={`todos los temas · ${prov.bills.label}`} />
+    </EntityHead>
+
+    <EntityGrid asideLabel="Relaciones de la comisión">
+      <Section title="Autoridades" id="autoridades" tag={plural(authorities.length, 'cargo', 'cargos')} links={prov.members.sources} periodLabel={prov.members.label}>
+        {authorities.length > 0 ? (
+          <DataTable caption={`Autoridades de ${title}`} captionHidden dense>
+            <thead><tr><th scope="col">Cargo</th><th scope="col">Diputado/a</th><th scope="col">Bloque</th><th scope="col">Distrito</th></tr></thead>
+            <tbody>
+              {authorities.map(a => (
+                <tr>
+                  <td>{a.cargo}</td>
+                  <td>{a.url ? <a href={a.url}>{a.nombre}</a> : a.nombre}</td>
+                  <td>{a.bloc ? <a href={a.bloc.url}>{a.bloc.titulo}</a> : '—'}</td>
+                  <td>{a.provinciaSlug ? <a href={provinceUrl(a.provinciaSlug)}>{a.distrito}</a> : a.distrito || '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </DataTable>
+        ) : (
+          <p>La Cámara no publica autoridades para esta comisión.</p>
+        )}
+      </Section>
+
+      <Section
+        title="Integrantes"
+        id="integrantes"
+        tag={formatNumber(committee.members.length)}
+        links={[...prov.members.sources, ...prov.bills.sources]}
+        periodLabel={`composición ${prov.members.label}; proyectos ${prov.bills.label}`}
+      >
+        <MemberFilter
+          target={bodyId}
+          total={committee.members.length}
+          placeholder="nombre, bloque o distrito"
+          sorts={[{ key: 'cargo', label: 'Cargo' }, { key: 'nombre', label: 'Apellido' }, { key: 'proyectos', label: 'Proyectos', numeric: true }]}
+        />
+        <DataTable caption={`Integrantes de ${title}`} captionHidden dense>
+          <thead>
+            <tr><th scope="col">Diputado/a</th><th scope="col">Bloque</th><th scope="col">Distrito</th><th scope="col">Cargo</th><th scope="col" class="num">Proyectos (todos los temas)</th></tr>
+          </thead>
+          <tbody id={bodyId}>
+            {committee.members.map((m, i) => (
+              <tr data-q={searchText(m.nombre, m.bloc.titulo, m.distrito)} data-sort-nombre={m.nombre} data-sort-cargo={String(i).padStart(3, '0')} data-sort-proyectos={billsOf(m.id)}>
+                <td><a href={m.url}>{m.nombre}</a></td>
+                <td><a href={m.bloc.url}>{m.bloc.titulo}</a></td>
+                <td>{m.provinciaSlug ? <a href={provinceUrl(m.provinciaSlug)}>{m.distrito}</a> : m.distrito || 'Sin dato'}</td>
+                <td>{cargoLabel(m.cargo)}</td>
+                <td class="num">{formatNumber(billsOf(m.id))}</td>
+              </tr>
+            ))}
+          </tbody>
+        </DataTable>
+        <p class="note">
+          «Proyectos»: como primer firmante, de todos los temas; la fuente no indica qué proyectos trató esta comisión.
+          {committee.unlinked > 0 && ` ${plural(committee.unlinked, 'integrante publicado no quedó emparejado', 'integrantes publicados no quedaron emparejados')} con un diputado/a en funciones y no ${committee.unlinked === 1 ? 'figura' : 'figuran'} en la tabla.`}
+        </p>
+        <QualityBox
+          slot="after"
+          title="Calidad del emparejamiento de las comisiones"
+          quality={committeesData.quality}
+          period={committeesData.period}
+          rowsLabel="filas de integrantes y autoridades"
+          against="diputados/as en funciones durante el período legislativo actual"
+        />
+      </Section>
+
+      <Section title="Proyectos de sus integrantes, todos los temas" id="proyectos" tag={committee.bills ? `${formatNumber(committee.bills.total)} como primer firmante` : 'Sin proyectos'} links={prov.bills.sources} periodLabel={prov.bills.label}>
+        {committee.bills ? (
+          <Funnel
+            title={committee.bills.label}
+            titleHidden={false}
+            stages={committee.bills.funnel.map(f => ({ label: STAGE_LABELS[f.stage], value: f.alcanzado }))}
+            highlightLast
+            note="Llegaron al menos a esta etapa. «Sancionado» no significa «es ley». Son todos los proyectos de sus integrantes, no solo los que pasaron por esta comisión."
+          />
+        ) : (
+          <p>Ningún integrante figura como primer firmante en el período.</p>
+        )}
+      </Section>
+
+      <Fragment slot="aside">
+        <Section title="Bloques" id="bloques" tag={plural(committee.blocMix.length, 'bloque', 'bloques')} links={prov.members.sources} periodLabel={prov.members.label}>
+          {segments.length > 0 ? (
+            <StackedBar title={`Integrantes de ${title} por bloque`} segments={segments} />
+          ) : (
+            <p class="note">Sin integrantes emparejados.</p>
+          )}
+          {committee.blocMix.length > 5 && (
+            <details class="more">
+              <summary>Ver los {committee.blocMix.length} bloques</summary>
+              <ul class="plain">
+                {committee.blocMix.map(b => <li><a href={b.url}>{b.titulo}</a> <span class="muted">{b.count}</span></li>)}
+              </ul>
+            </details>
+          )}
+        </Section>
+
+        <Section title="Distritos" id="distritos" tag={plural(committee.districts.length, 'distrito', 'distritos')} links={prov.members.sources} periodLabel={prov.members.label}>
+          {committee.districts.length > 0 ? (
+            <BarChart
+              title={`Integrantes de ${title} por distrito`}
+              bars={committee.districts.map(d => ({ label: d.nombre, value: d.count, href: d.slug ? provinceUrl(d.slug) : undefined }))}
+              labelWidth="150px"
+            />
+          ) : (
+            <p class="note">Sin integrantes emparejados.</p>
+          )}
+        </Section>
+      </Fragment>
+    </EntityGrid>
+  </div>
+</SiteLayout>
+
+<style>
+  .more {
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .plain {
+    margin: var(--space-1) 0 0;
+    padding-left: var(--space-5);
+  }
+</style>

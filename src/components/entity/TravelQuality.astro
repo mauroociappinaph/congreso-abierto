@@ -1,0 +1,36 @@
+---
+// Short linkage-quality box for the national trips (the full one lives on /viajes/).
+import type { TravelReport } from '../../lib/travel-report.ts';
+import { formatNumber } from '../../lib/view.ts';
+
+interface Props {
+  report: TravelReport;
+}
+
+const { report } = Astro.props;
+const { quality } = report;
+const pct = (value: number) => `${formatNumber(value)} %`;
+---
+
+<div class="box quality">
+  <h3>Calidad del emparejamiento de los viajes ({report.windowLabel})</h3>
+  <ul>
+    <li>
+      <strong>{pct(quality.overall.percent)}</strong> de los nombres de la fuente quedaron emparejados con un diputado/a en
+      funciones ({quality.overall.matched} emparejados, {quality.overall.doubtful} dudosos, {quality.overall.unmatched} sin
+      emparejar de {quality.overall.total}).
+    </li>
+    <li>
+      {pct(quality.legs.percent)} de los tramos quedaron asignados ({formatNumber(quality.legs.linked)} de
+      {formatNumber(quality.legs.total)}). Los casos dudosos no se asignan.
+    </li>
+  </ul>
+  <p class="note">Los nombres sin emparejar son en su mayoría exdiputados: se compara contra la composición actual de la Cámara.</p>
+</div>
+
+<style>
+  h3 {
+    font-size: var(--text-sm);
+    margin: 0 0 var(--space-2);
+  }
+</style>

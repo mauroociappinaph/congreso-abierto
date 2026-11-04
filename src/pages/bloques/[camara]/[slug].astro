@@ -1,0 +1,419 @@
+---
+// One page per bloc and chamber (01, Pantalla 3): members, trips against their peers, provinces, committees, bills,
+// missions and, for the Senate, cohesion and attendance. Diputados and Senado blocs are separate pages.
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import QualityBox from '../../../components/QualityBox.astro';
+import BarChart from '../../../components/ui/BarChart.astro';
+import DataTable from '../../../components/ui/DataTable.astro';
+import DotPlot from '../../../components/ui/DotPlot.astro';
+import Funnel from '../../../components/ui/Funnel.astro';
+import Section from '../../../components/ui/Section.astro';
+import StatTile from '../../../components/ui/StatTile.astro';
+import ChamberSwitch from '../../../components/entity/ChamberSwitch.astro';
+import EntityGrid from '../../../components/entity/EntityGrid.astro';
+import EntityHead from '../../../components/entity/EntityHead.astro';
+import MemberFilter from '../../../components/entity/MemberFilter.astro';
+import TravelQuality from '../../../components/entity/TravelQuality.astro';
+import { chamberLabel, committeeTitle, flaggedSentence, searchText, TRAVEL_STATUS, travelRows, travelTag } from '../../../components/entity/entity-view.ts';
+import { provinceUrl } from '../../../lib/entities.ts';
+import { loadBills, loadCommittees, loadDeputies, loadEntities, loadMissions, loadSenateVotes, loadSenators, loadTravel } from '../../../lib/sources.ts';
+import { cargoLabel, formatNumber, formatShare, STAGE_LABELS } from '../../../lib/view.ts';
+
+export const getStaticPaths = (async () => {
+  const { blocs } = await loadEntities();
+  return blocs.map(bloc => ({ params: { camara: bloc.camara, slug: bloc.slug }, props: { bloc } }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { bloc } = Astro.props as Props;
+const deputies = await loadDeputies();
+const { senators } = await loadSenators();
+const [entities, travelReport, committeesData, billsData, missionsData, votesData] = await Promise.all([
+  loadEntities(), loadTravel(deputies), loadCommittees(deputies), loadBills(deputies, senators), loadMissions(deputies), loadSenateVotes(senators),
+]);
+
+const isDeputies = bloc.camara === 'diputados';
+const chamber = chamberLabel(bloc.camara);
+const people = new Map<string, { mandato: string }>([...deputies, ...senators].map(p => [p.id, p]));
+const prov = bloc.provenance;
+const twin = entities.blocs.find(b => b.camara !== bloc.camara && b.slug === bloc.slug);
+const otherChamber = isDeputies ? 'senado' : 'diputados';
+const seatsWord = isDeputies ? 'diputados' : 'senadores';
+
+const travelById = new Map((bloc.travel?.points ?? []).map(p => [p.id, p]));
+const plot = bloc.travel ? travelRows(bloc.travel.points, bloc.travel.bands) : null;
+const flagged = (bloc.travel?.points ?? []).filter(p => p.status === 'viaja-mas');
+const max = plot ? Math.max(1, Math.ceil(Math.max(...plot.rows.flatMap(r => [...r.points.map(p => p.value), r.median])))) : 1;
+
+const committeesOf = (id: string) => entities.relations.get(id)?.committees ?? [];
+const billsOf = (id: string) => billsData.byLegislator.get(id)?.total ?? 0;
+const ownMissions = missionsData.deputies
+  .filter(m => m.count > 0 && bloc.members.some(x => x.id === m.deputyId))
+  .map(m => ({ ...m, member: bloc.members.find(x => x.id === m.deputyId)! }))
+  .sort((a, b) => b.count - a.count || a.member.nombre.localeCompare(b.member.nombre, 'es'));
+const votesById = new Map((bloc.votes?.members ?? []).map(v => [v.id, v]));
+const CHAIRS_SHOWN = 12;
+const otherAuthorities = bloc.authorities.filter(a => a.cargo !== 'presidente');
+const bodyId = `integrantes-${bloc.camara}-${bloc.slug}`;
+const ordinal = (n: number) => `${n}.º`;
+---
+
+<SiteLayout title={`${bloc.titulo} (${chamber}) - Bloques`} description={`Bloque ${bloc.titulo} en ${chamber}: integrantes, provincias, comisiones, proyectos y más, con fuente y período.`} current="bloques">
+  <div class="page-wrap">
+    <EntityHead
+      crumbs={[{ label: 'Inicio', href: '/' }, { label: 'Bloques', href: '/bloques/' }, { label: `${bloc.titulo} (${chamber})` }]}
+      eyebrow={`Bloque · ${isDeputies ? 'Cámara de Diputados' : 'Senado'}`}
+      title={bloc.titulo}
+      lede={bloc.nombre !== bloc.titulo ? `Nombre publicado por la fuente: ${bloc.nombre}.` : undefined}
+    >
+      <ChamberSwitch
+        slot="switch"
+        label="Cámara"
+        items={[
+          { label: isDeputies ? `Diputados · ${bloc.seats}` : 'Bloques de Diputados', href: isDeputies ? bloc.url : '/bloques/#diputados', current: isDeputies },
+          { label: isDeputies ? 'Bloques del Senado' : `Senado · ${bloc.seats}`, href: isDeputies ? '/bloques/#senado' : bloc.url, current: !isDeputies },
+        ]}
+      />
+      <StatTile label="Integrantes" value={formatNumber(bloc.seats)} note={`de ${bloc.chamberSeats} ${seatsWord} · ${ordinal(bloc.rank)} bloque · ${prov.members.sources[0].label}, ${prov.members.label}`} />
+      <StatTile label="Distritos representados" value={formatNumber(bloc.districts)} note={`de 24 · ${prov.members.sources[0].label}`} />
+      <StatTile label="Proyectos como primer firmante" value={formatNumber(bloc.bills?.total ?? 0)} note={prov.bills.label} />
+      {
+        isDeputies ? (
+          <>
+            <StatTile label="Misiones oficiales" value={formatNumber(bloc.missions?.count ?? 0)} note={`de ${bloc.missions?.members ?? 0} integrantes · ${prov.missions.label}`} />
+            <StatTile label="Presidencias de comisión" value={formatNumber(bloc.chairs.length)} note={`${prov.committees.sources[0].label}, ${prov.committees.label}`} />
+          </>
+        ) : (
+          <>
+            <StatTile label="Índice de Rice medio" value={bloc.votes?.riceMedio == null ? 'Sin dato' : formatNumber(bloc.votes.riceMedio)} note={`1 = vota todo junto · ${prov.votes.label}`} />
+            <StatTile label="Actas con votos del bloque" value={formatNumber(bloc.votes?.actas ?? 0)} note={prov.votes.sources[0].label} />
+          </>
+        )
+      }
+    </EntityHead>
+
+    <EntityGrid asideLabel="Relaciones del bloque">
+      {
+        bloc.travel && plot && (
+          <Section
+            title="Viajes de sus integrantes frente a sus pares"
+            id="viajes"
+            tag={flagged.length ? `${flagged.length} ${flagged.length === 1 ? 'viaja' : 'viajan'} bastante más que sus pares` : `${bloc.travel.counts['en-linea']} en línea`}
+            tagTone={flagged.length ? 'flag' : 'ok'}
+            links={prov.travel.sources}
+            periodLabel={prov.travel.label}
+          >
+            <p class="counts">{travelTag(bloc.travel.counts)}.</p>
+            {plot.rows.length > 0 ? (
+              // contains the plot's visually hidden table, which is wider than the page (it is absolutely positioned)
+              <div class="plot-wrap"><DotPlot
+                title={`Tramos por mes de los integrantes de ${bloc.titulo}, por distancia estimada a Buenos Aires`}
+                desc={`Cada punto es un integrante y la raya vertical es la mediana de todos los diputados comparados en ese grupo. ${flagged.length ? flagged.map(p => flaggedSentence(p, bloc.travel!.bands)).join(' ') : 'Ningún integrante viaja bastante más que sus pares.'}`}
+                rows={plot.rows}
+                unit="tramos por mes"
+                max={max}
+                medianLabel="mediana de todos los diputados comparados en ese grupo"
+              /></div>
+            ) : (
+              <p>Ningún integrante tiene tramos comparables en el período.</p>
+            )}
+            {flagged.length > 0 && (
+              <ul class="flagged">
+                {flagged.map(p => <li><a href={`/diputados/${p.id}/`}>{p.nombre.split(',')[0]}</a>: {flaggedSentence(p, bloc.travel!.bands).split(': ').slice(1).join(': ')}</li>)}
+              </ul>
+            )}
+            <p class="note">
+              Comparar dentro de cada fila, nunca entre filas: la distancia explica buena parte de la diferencia. Más tramos no implica
+              irregularidad; es una descripción estadística, no una evaluación.
+              {plot.omitted > 0 && ` ${plot.omitted} ${plot.omitted === 1 ? 'integrante no se compara' : 'integrantes no se comparan'} (menos de 3 meses en el cargo o sin distancia estimada) y no ${plot.omitted === 1 ? 'aparece' : 'aparecen'} en el gráfico.`}
+            </p>
+            <TravelQuality slot="after" report={travelReport} />
+          </Section>
+        )
+      }
+
+      <Section title="Integrantes" id="integrantes" tag={formatNumber(bloc.seats)} links={isDeputies ? [prov.members.sources[0], ...prov.travel.sources, ...prov.bills.sources, ...prov.committees.sources] : [prov.members.sources[0], ...prov.bills.sources, ...prov.votes.sources]} periodLabel={isDeputies ? `composición ${prov.members.label}; viajes ${prov.travel.label}; proyectos ${prov.bills.label}; comisiones ${prov.committees.label}` : `composición ${prov.members.label}; proyectos ${prov.bills.label}; votos ${prov.votes.label}`}>
+        <MemberFilter
+          target={bodyId}
+          total={bloc.seats}
+          sorts={isDeputies
+            ? [{ key: 'nombre', label: 'Apellido' }, { key: 'tramos', label: 'Tramos por mes', numeric: true }, { key: 'proyectos', label: 'Proyectos', numeric: true }]
+            : [{ key: 'nombre', label: 'Apellido' }, { key: 'asistencia', label: 'Asistencia', numeric: true }, { key: 'proyectos', label: 'Proyectos', numeric: true }]}
+        />
+        <DataTable caption={`Integrantes de ${bloc.titulo} en ${chamber}`} captionHidden dense>
+          {
+            isDeputies ? (
+              <>
+                <thead>
+                  <tr><th scope="col">Diputado/a</th><th scope="col">Distrito</th><th scope="col">Mandato</th><th scope="col" class="num">Tramos/mes</th><th scope="col">Comparación</th><th scope="col" class="num">Proyectos</th><th scope="col">Comisiones</th></tr>
+                </thead>
+                <tbody id={bodyId}>
+                  {bloc.members.map(m => {
+                    const t = travelById.get(m.id);
+                    const seats = committeesOf(m.id);
+                    const status = t ? TRAVEL_STATUS[t.status] : null;
+                    return (
+                      <tr data-q={searchText(m.nombre, m.distrito)} data-sort-nombre={m.nombre} data-sort-tramos={t?.legsPerMonth ?? -1} data-sort-proyectos={billsOf(m.id)}>
+                        <td><a href={m.url}>{m.nombre}</a></td>
+                        <td>{m.provinciaSlug ? <a href={provinceUrl(m.provinciaSlug)}>{m.distrito}</a> : m.distrito || 'Sin dato'}</td>
+                        <td>{people.get(m.id)?.mandato || '—'}</td>
+                        <td class="num">{t ? formatNumber(t.legsPerMonth) : '—'}</td>
+                        <td>{status ? <span class:list={['tag', status.tone]}>{status.label}</span> : <span class="muted">Sin datos de viajes</span>}</td>
+                        <td class="num">{formatNumber(billsOf(m.id))}</td>
+                        <td class="committees">
+                          {seats.length === 0 ? <span class="muted">—</span> : (
+                            <>
+                              {seats.slice(0, 2).map((s, i) => (
+                                <>{i > 0 && ', '}{s.cargo !== 'integrante' && <b>{cargoLabel(s.cargo)} </b>}<a href={s.url}>{committeeTitle(s.id, s.titulo)}</a></>
+                              ))}
+                              {seats.length > 2 && <span class="muted"> y {seats.length - 2} más</span>}
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </>
+            ) : (
+              <>
+                <thead>
+                  <tr><th scope="col">Senador/a</th><th scope="col">Provincia</th><th scope="col">Mandato</th><th scope="col" class="num">Actas</th><th scope="col" class="num">Asistencia</th><th scope="col" class="num">Votó con su bloque</th><th scope="col" class="num">Proyectos</th></tr>
+                </thead>
+                <tbody id={bodyId}>
+                  {bloc.members.map(m => {
+                    const v = votesById.get(m.id);
+                    return (
+                      <tr data-q={searchText(m.nombre, m.distrito)} data-sort-nombre={m.nombre} data-sort-asistencia={v?.asistencia ?? -1} data-sort-proyectos={billsOf(m.id)}>
+                        <td><a href={m.url}>{m.nombre}</a></td>
+                        <td>{m.provinciaSlug ? <a href={provinceUrl(m.provinciaSlug)}>{m.distrito}</a> : m.distrito || 'Sin dato'}</td>
+                        <td>{people.get(m.id)?.mandato || '—'}</td>
+                        <td class="num">{v ? formatNumber(v.actas) : '—'}</td>
+                        <td class="num">{v ? formatShare(v.asistencia) : '—'}</td>
+                        <td class="num">{v ? formatShare(v.lealtadBloque) : '—'}</td>
+                        <td class="num">{formatNumber(billsOf(m.id))}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </>
+            )
+          }
+        </DataTable>
+        <p class="note">
+          {isDeputies
+            ? '«Proyectos»: como primer firmante, de cualquier tema. «Comparación»: tramos por mes frente a la mediana de los diputados a distancia similar de Buenos Aires.'
+            : '«Asistencia»: actas en las que votó sobre las del período. «Votó con su bloque»: votos iguales a la mayoría de su bloque. «Proyectos»: iniciados en el Senado como primer firmante, según el registro de la Cámara de Diputados.'}
+          {' '}Cada columna usa el período de su fuente.
+        </p>
+      </Section>
+
+      <Section title="Proyectos de sus integrantes" id="proyectos" tag={bloc.bills ? `${formatNumber(bloc.bills.total)} como primer firmante` : 'Sin proyectos'} links={prov.bills.sources} periodLabel={prov.bills.label}>
+        {bloc.bills ? (
+          <>
+            <Funnel
+              title={`Proyectos de los integrantes de ${bloc.titulo} que llegaron al menos a cada etapa`}
+              stages={bloc.bills.funnel.map(f => ({ label: STAGE_LABELS[f.stage], value: f.alcanzado }))}
+              highlightLast
+              note={`Llegaron al menos a esta etapa. «Sancionado» no significa «es ley». Cuenta proyectos de cualquier tema en los que el integrante es primer firmante${isDeputies ? '' : '; en el Senado, solo los iniciados allí que figuran en el registro de la Cámara de Diputados'}.`}
+            />
+            <p class="note">{bloc.bills.authors} de {bloc.seats} integrantes presentaron al menos un proyecto como primer firmante.</p>
+          </>
+        ) : (
+          <p>Ningún integrante figura como primer firmante en el período.</p>
+        )}
+        <QualityBox
+          slot="after"
+          title="Calidad del emparejamiento de autores"
+          quality={isDeputies ? billsData.quality.diputados : billsData.quality.senado}
+          period={billsData.period}
+          rowsLabel={isDeputies ? 'proyectos iniciados en Diputados' : 'proyectos iniciados en el Senado'}
+          against={isDeputies ? 'diputados/as en funciones durante el período (actuales y anteriores)' : 'senadores en funciones hoy y los que figuran en las actas del período'}
+        />
+      </Section>
+
+      {
+        isDeputies && (
+          <Section title="Misiones oficiales al exterior" id="misiones" tag={`${formatNumber(bloc.missions?.count ?? 0)} misiones · ${bloc.missions?.members ?? 0} integrantes`} links={prov.missions.sources} periodLabel={prov.missions.label}>
+            {ownMissions.length > 0 ? (
+              <DataTable caption={`Integrantes de ${bloc.titulo} con misiones oficiales`} captionHidden dense>
+                <thead><tr><th scope="col">Diputado/a</th><th scope="col" class="num">Misiones</th><th scope="col">Lugares</th></tr></thead>
+                <tbody>
+                  {ownMissions.map(m => (
+                    <tr>
+                      <td><a href={`${m.member.url}#misiones`}>{m.member.nombre}</a></td>
+                      <td class="num">{m.count}</td>
+                      <td>{m.lugares.slice(0, 3).join('; ')}{m.lugares.length > 3 && ` y ${m.lugares.length - 3} más`}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </DataTable>
+            ) : (
+              <p>Ningún integrante figura en las misiones oficiales del período.</p>
+            )}
+            <QualityBox
+              slot="after"
+              title="Calidad del emparejamiento de las misiones"
+              quality={missionsData.quality}
+              period={missionsData.period}
+              rowsLabel="registros de participación"
+              against="diputados/as en funciones durante el período (actuales y anteriores)"
+            />
+          </Section>
+        )
+      }
+
+      <Fragment slot="aside">
+        <Section title="Por provincia" id="provincias" tag={`${bloc.districts} ${bloc.districts === 1 ? 'distrito' : 'distritos'}`} links={[prov.members.sources[0]]} periodLabel={`composición ${prov.members.label}`}>
+          <BarChart
+            title={`Integrantes de ${bloc.titulo} por provincia`}
+            bars={bloc.byDistrict.map(d => ({ label: d.nombre, value: d.count, href: d.slug ? provinceUrl(d.slug) : undefined }))}
+            labelWidth="150px"
+          />
+        </Section>
+
+        {
+          isDeputies ? (
+            <Section title="Comisiones que preside" id="comisiones" tag={formatNumber(bloc.chairs.length)} links={prov.committees.sources} periodLabel={prov.committees.label}>
+              {bloc.chairs.length > 0 ? (
+                <ul class="chairs">
+                  {bloc.chairs.slice(0, CHAIRS_SHOWN).map(c => (
+                    <li><a href={c.url}>{committeeTitle(c.comisionId, c.titulo)}</a><span>{c.memberNombre}</span></li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Ningún integrante preside una comisión.</p>
+              )}
+              {bloc.chairs.length > CHAIRS_SHOWN && (
+                <details class="more">
+                  <summary>Ver las otras {bloc.chairs.length - CHAIRS_SHOWN}</summary>
+                  <ul class="chairs">
+                    {bloc.chairs.slice(CHAIRS_SHOWN).map(c => (
+                      <li><a href={c.url}>{committeeTitle(c.comisionId, c.titulo)}</a><span>{c.memberNombre}</span></li>
+                    ))}
+                  </ul>
+                </details>
+              )}
+              {otherAuthorities.length > 0 && (
+                <details class="more">
+                  <summary>Otras autoridades de comisión ({otherAuthorities.length})</summary>
+                  <ul class="chairs">
+                    {otherAuthorities.map(c => (
+                      <li><a href={c.url}>{committeeTitle(c.comisionId, c.titulo)}</a><span>{cargoLabel(c.cargo)}: {c.memberNombre}</span></li>
+                    ))}
+                  </ul>
+                </details>
+              )}
+              <p class="note">
+                Asignación de integrantes y autoridades: {formatNumber(committeesData.quality.rows.linkedPercent)} %
+                ({formatNumber(committeesData.quality.rows.matchedCurrent + committeesData.quality.rows.matchedFormer)} de {formatNumber(committeesData.quality.rows.total)} filas).
+                Ver <a href="/comisiones/">todas las comisiones</a>.
+              </p>
+            </Section>
+          ) : (
+            <Section title="Comisiones" id="comisiones" tag="Solo Diputados">
+              <p class="note">Este sitio carga las comisiones de la Cámara de Diputados; las del Senado no están incluidas.</p>
+            </Section>
+          )
+        }
+
+        <Section title="Cohesión al votar" id="cohesion" tag="Solo Senado" links={prov.votes.sources} periodLabel={prov.votes.label}>
+          {isDeputies ? (
+            <p class="note">Este sitio no incluye votaciones nominales de Diputados, así que este bloque no tiene índice de cohesión.</p>
+          ) : bloc.votes ? (
+            <>
+              <dl class="stat-grid">
+                <StatTile label="Índice de Rice medio" value={bloc.votes.riceMedio == null ? 'Sin dato' : formatNumber(bloc.votes.riceMedio)} size="md" note="1 = vota todo junto" />
+                <StatTile label="Actas" value={formatNumber(bloc.votes.actas)} size="md" note="con votos del bloque" />
+                <StatTile label="Senadores" value={formatNumber(bloc.votes.senators)} size="md" note="votaron por el bloque en el período" />
+              </dl>
+              <p class="note">Con uno o dos senadores el índice dice poco. «Senadores» cuenta a quienes votaron por el bloque en el período, actuales o anteriores.</p>
+            </>
+          ) : (
+            <p class="note">El bloque no figura en las actas de votación del período.</p>
+          )}
+          <p class="xlink">
+            {twin && <a href={twin.url}>Bloque {twin.titulo} ({chamberLabel(otherChamber)})</a>}
+            <a href="/bloques/#senado">Todos los bloques del Senado</a>
+            {isDeputies && <a href="/bloques/#diputados">Todos los bloques de Diputados</a>}
+          </p>
+          {!isDeputies && (
+            <QualityBox
+              slot="after"
+              title="Calidad del emparejamiento de las actas"
+              quality={votesData.quality}
+              period={votesData.period}
+              rowsLabel="votos registrados"
+              against="senadores en funciones hoy y los que figuran en las actas del período"
+            />
+          )}
+        </Section>
+      </Fragment>
+    </EntityGrid>
+  </div>
+</SiteLayout>
+
+<style>
+  .plot-wrap {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .counts {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--muted);
+  }
+
+  .flagged {
+    margin: var(--space-3) 0 0;
+    padding-left: var(--space-5);
+    font-size: var(--text-sm);
+  }
+
+  .committees {
+    font-size: var(--text-xs);
+    min-width: 180px;
+  }
+
+  .chairs {
+    columns: 2 180px;
+    column-gap: var(--space-5);
+    font-size: var(--text-sm);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .chairs li {
+    break-inside: avoid;
+    padding: 3px 0;
+    border-bottom: 1px solid var(--line-soft);
+    overflow-wrap: anywhere;
+  }
+
+  .chairs li span {
+    display: block;
+    font-size: var(--text-2xs);
+    color: var(--muted);
+  }
+
+  .more {
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .xlink {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    font-size: var(--text-sm);
+    margin: 10px 0 0;
+  }
+
+  .xlink a::after {
+    content: ' →' / '';
+  }
+</style>

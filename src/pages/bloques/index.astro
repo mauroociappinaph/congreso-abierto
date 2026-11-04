@@ -1,0 +1,78 @@
+---
+// Every bloc of both chambers, by seats. Diputados and Senado blocs are separate entities (S2).
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import DataTable from '../../components/ui/DataTable.astro';
+import Section from '../../components/ui/Section.astro';
+import StatTile from '../../components/ui/StatTile.astro';
+import EntityHead from '../../components/entity/EntityHead.astro';
+import { chamberLabel } from '../../components/entity/entity-view.ts';
+import { loadEntities } from '../../lib/sources.ts';
+import { formatNumber, formatShare } from '../../lib/view.ts';
+
+const { blocs } = await loadEntities();
+const chambers = (['diputados', 'senado'] as const).map(camara => {
+  const list = blocs.filter(b => b.camara === camara);
+  return { camara, list, seats: list[0]?.chamberSeats ?? 0, provenance: list[0]?.provenance };
+});
+---
+
+<SiteLayout title="Bloques de Diputados y del Senado" description="Todos los bloques de la Cámara de Diputados y del Senado, con integrantes, provincias y cohesión al votar." current="bloques">
+  <div class="page-wrap">
+    <EntityHead
+      crumbs={[{ label: 'Inicio', href: '/' }, { label: 'Bloques' }]}
+      eyebrow="Bloques"
+      title="Bloques de Diputados y del Senado"
+      lede="Cada cámara tiene sus propios bloques, aunque compartan nombre: cada uno tiene su página, con sus integrantes, provincias, comisiones y proyectos."
+    >
+      {chambers.map(c => <StatTile label={`Bloques en ${chamberLabel(c.camara)}`} value={formatNumber(c.list.length)} note={`${c.seats} ${c.camara === 'diputados' ? 'diputados' : 'senadores'} en funciones`} />)}
+    </EntityHead>
+
+    {
+      chambers.map(({ camara, list, seats, provenance }) => (
+        <Section
+          title={camara === 'diputados' ? 'Cámara de Diputados' : 'Senado'}
+          id={camara}
+          tag={`${list.length} bloques · ${seats} bancas`}
+          links={provenance && (camara === 'diputados'
+            ? [...provenance.members.sources, ...provenance.committees.sources, ...provenance.bills.sources]
+            : [...provenance.members.sources, ...provenance.votes.sources, ...provenance.bills.sources])}
+          periodLabel={camara === 'diputados' ? `composición ${provenance?.members.label}` : `composición ${provenance?.members.label}; votos ${provenance?.votes.label}`}
+        >
+          <DataTable caption={`Bloques de ${chamberLabel(camara)} por cantidad de integrantes`} captionHidden dense>
+            <thead>
+              <tr>
+                <th scope="col">Bloque</th>
+                <th scope="col" class="num">Integrantes</th>
+                <th scope="col" class="num">Parte de la cámara</th>
+                <th scope="col" class="num">Distritos</th>
+                {camara === 'diputados' ? <th scope="col" class="num">Presidencias de comisión</th> : <th scope="col" class="num">Rice medio</th>}
+                <th scope="col" class="num">Proyectos como primer firmante</th>
+              </tr>
+            </thead>
+            <tbody>
+              {list.map(b => (
+                <tr>
+                  <td><a href={b.url}>{b.titulo}</a></td>
+                  <td class="num">{formatNumber(b.seats)}</td>
+                  <td class="num">{formatShare(b.seats / b.chamberSeats)}</td>
+                  <td class="num">{formatNumber(b.districts)}</td>
+                  {camara === 'diputados' ? (
+                    <td class="num">{formatNumber(b.chairs.length)}</td>
+                  ) : (
+                    <td class="num">{b.votes?.riceMedio == null ? '—' : formatNumber(b.votes.riceMedio)}</td>
+                  )}
+                  <td class="num">{formatNumber(b.bills?.total ?? 0)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </DataTable>
+          <p class="note">
+            {camara === 'diputados'
+              ? `Comisiones: ${provenance?.committees.sources[0].label}, ${provenance?.committees.label}. Proyectos: ${provenance?.bills.label}.`
+              : `Índice de Rice medio: 1 = el bloque vota todo junto; «—» si no figura en las actas. Proyectos: ${provenance?.bills.label}.`}
+          </p>
+        </Section>
+      ))
+    }
+  </div>
+</SiteLayout>

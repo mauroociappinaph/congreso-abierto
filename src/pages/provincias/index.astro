@@ -1,0 +1,61 @@
+---
+// The 24 districts with their deputies and senators, trips median and committee chairs.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import DataTable from '../../components/ui/DataTable.astro';
+import Section from '../../components/ui/Section.astro';
+import EntityHead from '../../components/entity/EntityHead.astro';
+import { loadEntities } from '../../lib/sources.ts';
+import { DATASETS, formatNumber } from '../../lib/view.ts';
+
+const { provinces } = await loadEntities();
+const prov = provinces[0].provenance;
+---
+
+<SiteLayout title="Provincias" description="Las 24 provincias con sus diputados, senadores, bloques, viajes y comisiones." current="provincias">
+  <div class="page-wrap">
+    <EntityHead
+      crumbs={[{ label: 'Inicio', href: '/' }, { label: 'Provincias' }]}
+      eyebrow="Provincias"
+      title="Diputados y senadores por provincia"
+      lede="Las 24 provincias, cada una con su página: quiénes la representan en cada cámara, qué bloques tienen bancas, cuánto viajan sus diputados frente a sus pares y qué comisiones presiden."
+    />
+
+    <Section
+      title="Las 24 provincias"
+      id="provincias"
+      tag="24 distritos"
+      links={[DATASETS.legisladores, DATASETS.senadores, ...prov.travel.sources, ...prov.committees.sources]}
+      periodLabel={`composición ${prov.members.label}; viajes ${prov.travel.label}; comisiones ${prov.committees.label}`}
+    >
+      <DataTable caption="Provincias con su cantidad de diputados y senadores" captionHidden dense>
+        <thead>
+          <tr>
+            <th scope="col">Provincia</th>
+            <th scope="col" class="num">Diputados</th>
+            <th scope="col" class="num">Senadores</th>
+            <th scope="col" class="num">Mediana de tramos por mes</th>
+            <th scope="col">Grupo por distancia</th>
+            <th scope="col" class="num">Presidencias de comisión</th>
+          </tr>
+        </thead>
+        <tbody>
+          {provinces.map(p => (
+            <tr>
+              <td><a href={p.url}>{p.nombre}</a></td>
+              <td class="num">{p.deputies.length}</td>
+              <td class="num">{p.senators.length}</td>
+              <td class="num">{p.travel.medianLegsPerMonth === null ? '—' : formatNumber(p.travel.medianLegsPerMonth)}</td>
+              <td>{p.travel.bands.join(', ') || '—'}</td>
+              <td class="num">{p.committees.chairs.length}</td>
+            </tr>
+          ))}
+        </tbody>
+      </DataTable>
+      <p class="note">
+        Mediana de tramos por mes de los diputados comparados de cada provincia (3 meses o más en el cargo). El grupo por
+        distancia estimada a Buenos Aires explica buena parte de la diferencia entre provincias; más tramos no implica
+        irregularidad.
+      </p>
+    </Section>
+  </div>
+</SiteLayout>

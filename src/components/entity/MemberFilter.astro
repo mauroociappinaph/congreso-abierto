@@ -1,0 +1,102 @@
+---
+// Filter and sort controls for a member table. Rows of the target <tbody> carry data-q (folded text to match)
+// and data-sort-<key> per sort option; numeric keys sort high to low, the rest alphabetically.
+// Without JavaScript the full table stays visible.
+import { uid } from '../ui/ids.ts';
+
+interface Props {
+  // id of the <tbody> to filter
+  target: string;
+  total: number;
+  placeholder?: string;
+  sorts: { key: string; label: string; numeric?: boolean }[];
+}
+
+const { target, total, placeholder = 'nombre o distrito', sorts } = Astro.props;
+const id = uid('filtro');
+---
+
+<div class="filters" data-member-filter data-target={target} data-total={total} hidden>
+  <label for={`${id}-q`}>Filtrar</label>
+  <input id={`${id}-q`} type="search" placeholder={placeholder} autocomplete="off" />
+  <label for={`${id}-s`}>Ordenar por</label>
+  <select id={`${id}-s`}>
+    {sorts.map(s => <option value={s.key} data-numeric={s.numeric ? '' : undefined}>{s.label}</option>)}
+  </select>
+  <p class="count" aria-live="polite">Mostrando {total} de {total}</p>
+</div>
+
+<script>
+  const fold = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+
+  for (const box of document.querySelectorAll<HTMLElement>('[data-member-filter]')) {
+    const body = document.getElementById(box.dataset.target ?? '');
+    if (!body) continue;
+    box.hidden = false;
+    const input = box.querySelector('input')!;
+    const select = box.querySelector('select')!;
+    const count = box.querySelector('.count')!;
+    const rows = [...body.querySelectorAll<HTMLTableRowElement>('tr')];
+    const total = rows.length;
+
+    const filter = () => {
+      const words = fold(input.value).split(' ').filter(Boolean);
+      let shown = 0;
+      for (const row of rows) {
+        const text = row.dataset.q ?? '';
+        row.hidden = !words.every(w => text.includes(w));
+        if (!row.hidden) shown++;
+      }
+      count.textContent = `Mostrando ${shown} de ${total}`;
+    };
+
+    const sort = () => {
+      const option = select.selectedOptions[0];
+      const key = `sort${option.value.charAt(0).toUpperCase()}${option.value.slice(1)}`;
+      const numeric = option.hasAttribute('data-numeric');
+      const sorted = [...rows].sort((a, b) => {
+        const x = a.dataset[key] ?? '';
+        const y = b.dataset[key] ?? '';
+        const byName = (a.dataset.sortNombre ?? '').localeCompare(b.dataset.sortNombre ?? '', 'es');
+        return (numeric ? Number(y) - Number(x) : x.localeCompare(y, 'es')) || byName;
+      });
+      body.append(...sorted);
+    };
+
+    input.addEventListener('input', filter);
+    select.addEventListener('change', sort);
+  }
+</script>
+
+<style>
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: center;
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .filters[hidden] {
+    display: none;
+  }
+
+  input,
+  select {
+    font: inherit;
+    font-size: var(--text-sm);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 4px 8px;
+    background: var(--surface);
+    color: var(--ink);
+    max-width: 100%;
+  }
+
+  .count {
+    margin: 0 0 0 auto;
+    font-size: var(--text-xs);
+    color: var(--muted);
+  }
+</style>

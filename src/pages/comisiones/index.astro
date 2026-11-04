@@ -1,0 +1,67 @@
+---
+// Every Diputados committee with members, largest first.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import QualityBox from '../../components/QualityBox.astro';
+import DataTable from '../../components/ui/DataTable.astro';
+import Section from '../../components/ui/Section.astro';
+import EntityHead from '../../components/entity/EntityHead.astro';
+import { committeeTitle } from '../../components/entity/entity-view.ts';
+import { titleCase } from '../../lib/entities.ts';
+import { loadCommittees, loadDeputies, loadEntities } from '../../lib/sources.ts';
+import { formatNumber } from '../../lib/view.ts';
+
+const deputies = await loadDeputies();
+const [{ committees }, committeesData] = await Promise.all([loadEntities(), loadCommittees(deputies)]);
+const list = [...committees].sort((a, b) => b.integrantes - a.integrantes || committeeTitle(a.id, a.titulo).localeCompare(committeeTitle(b.id, b.titulo), 'es'));
+const prov = committees[0]?.provenance.members;
+const TIPO = { permanente: 'Permanente', especial: 'Especial' } as const;
+const president = (c: (typeof list)[number]) => {
+  const a = c.authorities.find(x => x.cargo === 'presidente');
+  if (!a) return null;
+  const linked = c.members.find(m => m.id === a.deputyId);
+  return { nombre: linked?.nombre ?? titleCase(a.nombre), url: a.url, bloc: linked?.bloc ?? null };
+};
+---
+
+<SiteLayout title="Comisiones de Diputados" description="Las comisiones de la Cámara de Diputados con sus integrantes, autoridades, bloques y provincias." current="comisiones">
+  <div class="page-wrap">
+    <EntityHead
+      crumbs={[{ label: 'Inicio', href: '/' }, { label: 'Comisiones' }]}
+      eyebrow="Comisiones · Cámara de Diputados"
+      title="Comisiones de Diputados"
+      lede="Cada comisión tiene su página con autoridades, integrantes, bloques y provincias. Los nombres se muestran como los publica la Cámara, que los escribe sin tildes."
+    />
+
+    <Section title="Comisiones por cantidad de integrantes" id="comisiones" tag={`${list.length} comisiones`} links={prov?.sources} periodLabel={prov?.label}>
+      <DataTable caption="Comisiones de Diputados por cantidad de integrantes" captionHidden dense>
+        <thead>
+          <tr><th scope="col">Comisión</th><th scope="col">Tipo</th><th scope="col" class="num">Integrantes</th><th scope="col">Preside</th><th scope="col" class="num">Bloques</th><th scope="col" class="num">Distritos</th></tr>
+        </thead>
+        <tbody>
+          {list.map(c => {
+            const p = president(c);
+            return (
+              <tr>
+                <td><a href={c.url}>{committeeTitle(c.id, c.titulo)}</a></td>
+                <td>{c.tipo ? TIPO[c.tipo] : '—'}</td>
+                <td class="num">{formatNumber(c.integrantes)}</td>
+                <td>{p ? (p.url ? <a href={p.url}>{p.nombre}</a> : p.nombre) : <span class="muted">Sin dato</span>}{p?.bloc && <span class="muted"> · <a href={p.bloc.url}>{p.bloc.titulo}</a></span>}</td>
+                <td class="num">{c.blocMix.length}</td>
+                <td class="num">{c.districts.length}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </DataTable>
+      <p class="note">«Integrantes»: los publicados por la Cámara. «Bloques» y «Distritos»: de los integrantes emparejados con un diputado/a en funciones.</p>
+      <QualityBox
+        slot="after"
+        title="Calidad del emparejamiento de las comisiones"
+        quality={committeesData.quality}
+        period={committeesData.period}
+        rowsLabel="filas de integrantes y autoridades"
+        against="diputados/as en funciones durante el período legislativo actual"
+      />
+    </Section>
+  </div>
+</SiteLayout>

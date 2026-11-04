@@ -1,0 +1,40 @@
+---
+// Two-way switch between the Diputados and Senado lists of the same kind (blocs are separate entities per chamber).
+interface Props {
+  label: string;
+  items: { label: string; href: string; current?: boolean }[];
+}
+
+const { label, items } = Astro.props;
+---
+
+<nav class="switch" aria-label={label}>
+  {items.map(item => <a href={item.href} aria-current={item.current ? 'page' : undefined}>{item.label}</a>)}
+</nav>
+
+<style>
+  .switch {
+    display: inline-flex;
+    flex-wrap: wrap;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    font-size: var(--text-sm);
+  }
+
+  a {
+    padding: 5px 12px;
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--surface);
+  }
+
+  a + a {
+    border-left: 1px solid var(--line);
+  }
+
+  a[aria-current] {
+    background: var(--ink);
+    color: var(--surface);
+  }
+</style>

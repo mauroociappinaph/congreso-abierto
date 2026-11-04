@@ -3,12 +3,13 @@
   "chosen": "01-ficha-central.html",
   "handoffs": {
     "01-ficha-central.html": {
-      "status": "sent",
+      "status": "in_progress",
       "queued": false,
       "sentAt": "2026-11-03T23:25:52.321Z",
-      "startedAt": null,
+      "startedAt": "2026-11-03T23:27:18.029Z",
       "implementedAt": null,
-      "feature": "odd/tasks/ui-rediseno.md"
+      "feature": "odd/tasks/ui-rediseno.md",
+      "note": "In progress: U1 entity data and U2 visual system running in parallel; entity pages, home and profiles follow."
     }
   }
 }

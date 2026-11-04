@@ -24,6 +24,7 @@ import { normalizeMissionRows, summarizeMissions, type DeputyMissions, type Miss
 import { billsByAuthor, furthestStages, parseBills, type AuthorBills } from './proyectos.ts';
 import { mapCurrentToHistoric, parseRoster, type RosterPerson } from './roster.ts';
 import { buildEntities, type Entities } from './entities.ts';
+import { describeFetchError, withRetries } from './http.ts';
 import {
   actaDetailUrl,
   actaIndexRequest,
@@ -65,10 +66,20 @@ function periodStart(day: string): string {
   return day >= `${year}-12-10` ? `${year}-12-10` : `${year - 1}-12-10`;
 }
 
-async function fetchText(url: string, init: RequestInit = {}, timeoutMs = 30_000): Promise<string> {
-  const response = await fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) });
-  if (!response.ok) throw new Error(`${response.status} ${response.statusText} - ${url}`);
-  return response.text();
+// Official sites drop connections now and then: retry twice, and name the real network cause when it still fails.
+async function fetchText(url: string, init: RequestInit = {}, timeoutMs = 30_000, retries = 2): Promise<string> {
+  try {
+    return await withRetries(
+      async () => {
+        const response = await fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) });
+        if (!response.ok) throw new Error(`${response.status} ${response.statusText} - ${url}`);
+        return response.text();
+      },
+      { retries, baseDelayMs: 2000 },
+    );
+  } catch (error) {
+    throw new Error(describeFetchError(error));
+  }
 }
 
 async function csvResourceList(packageId: string): Promise<{ name: string; url: string }[]> {
@@ -352,7 +363,8 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 async function fetchSenate(url: string, init: RequestInit = {}): Promise<string> {
   for (let attempt = 0; ; attempt++) {
     try {
-      return await fetchText(url, init, 30_000);
+      // This loop has its own Senate backoff, so fetchText does not retry again.
+      return await fetchText(url, init, 30_000, 0);
     } catch (error) {
       if (attempt >= SENATE_RETRIES) throw error;
       await sleep(1000 * 2 ** attempt);

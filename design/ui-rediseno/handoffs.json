@@ -3,13 +3,14 @@
   "chosen": "01-ficha-central.html",
   "handoffs": {
     "01-ficha-central.html": {
-      "status": "in_progress",
+      "status": "implemented",
       "queued": false,
       "sentAt": "2026-11-03T23:25:52.321Z",
       "startedAt": "2026-11-03T23:27:18.029Z",
-      "implementedAt": null,
+      "implementedAt": "2026-11-04T00:12:50.472Z",
       "feature": "odd/tasks/ui-rediseno.md",
-      "note": "In progress: U1 entity data and U2 visual system running in parallel; entity pages, home and profiles follow."
+      "note": "Implemented: home (search + 02 topic cards), legislator hubs with relation strip, bloc/province/committee pages, topic pages. 442 pages, no overflow at 1440/375.",
+      "previewUrl": "http://localhost:4321/diputados/dip-yedlin-pablo-raul-tucuman/"
     }
   }
 }

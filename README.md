@@ -2,6 +2,8 @@
 
 Live site: https://congreso-abierto-iota.vercel.app (deployed by Vercel on every push to `main`).
 
+Analytics: Vercel Web Analytics (cookieless, page views only on the Hobby plan). Para ver las estadísticas: vercel.com → proyecto congreso-abierto → Analytics.
+
 Astro static site that lists Argentina's national legislators and the monthly pay the Chamber of Deputies publishes.
 
 Data is fetched at build time, in Node, so the Senate API's missing CORS headers do not matter. Rebuild to refresh the data.

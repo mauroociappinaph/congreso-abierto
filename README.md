@@ -1,5 +1,7 @@
 # Congreso Abierto
 
+Live site: https://congreso-abierto-iota.vercel.app (deployed by Vercel on every push to `main`).
+
 Astro static site that lists Argentina's national legislators and the monthly pay the Chamber of Deputies publishes.
 
 Data is fetched at build time, in Node, so the Senate API's missing CORS headers do not matter. Rebuild to refresh the data.
@@ -69,6 +71,7 @@ The refresh runs on the owner's Mac, which reaches the official sites; GitHub on
 Notes:
 
 - The push uses the Mac's git credentials (here `gh auth git-credential`); the commit author is the Mac's git identity.
+- Deploy: Vercel builds every push to `main` from the snapshot (`vercel.json`: `npm ci`, `npm run build`, `dist/`), so each weekly data push publishes. `SITE_URL` (Vercel environment variable) sets absolute Open Graph URLs.
 - GitHub disables scheduled workflows in public repositories after 60 days without activity; the weekly refresh commits keep it active.
 - `scripts/weekly-refresh.test.ts` checks the senators-date rule under `set -euo pipefail`; `scripts/snapshot-age.test.ts` checks the freshness rule. Both run with `npm test`.
 

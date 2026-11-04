@@ -1,6 +1,6 @@
 ---
-// Home: search first (01, Pantalla 1) with entry chips by bloc, province and committee, then one card per topic
-// (02, Pantalla 1), each with its key finding, a small chart, its source and period, and a link to its page.
+// Home: search first (01, Pantalla 1) with entry chips by bloc, province and committee, then the per-person viáticos
+// and trips (S6), then one card per topic (02, Pantalla 1), each with its key finding, a small chart, its source and period, and a link to its page.
 import SiteLayout from '../layouts/SiteLayout.astro';
 import Chip from '../components/ui/Chip.astro';
 import SearchBox from '../components/ui/SearchBox.astro';
@@ -9,6 +9,7 @@ import TopicCard from '../components/ui/TopicCard.astro';
 import BarChart from '../components/ui/BarChart.astro';
 import Funnel from '../components/ui/Funnel.astro';
 import SourceLine from '../components/SourceLine.astro';
+import SpendingSection from '../components/home/SpendingSection.astro';
 import { formatArs } from '../lib/legislators.ts';
 import { jsonLdScript, siteJsonLd } from '../lib/seo.ts';
 import {
@@ -161,6 +162,8 @@ const missionRows = missions.deputies
         </aside>
       </div>
     </section>
+
+    <SpendingSection deputies={deputies} relations={relations} missions={missions} travel={travel} />
 
     <h2 class="topics-title">Hallazgos por tema</h2>
     <p class="topics-lede">Cada tarjeta indica su fuente y su período, y lleva a la página del tema; de ahí, a la ficha de cada legislador.</p>

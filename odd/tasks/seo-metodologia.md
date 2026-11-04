@@ -24,11 +24,11 @@ Read until `## Log`. Technical artifacts in English; UI copy in Spanish (Argenti
 
 | ID | Specs | Route | Status | Commit |
 | --- | --- | --- | --- | --- |
-| E1 | S1, S2 | worker | in progress | |
-| E2 | S3 | worker | in progress | |
+| E1 | S1, S2 | worker | done | 4b823b0 |
+| E2 | S3 | worker + parent | done | feat(ui): add the methodology page |
 | E3 | S4 | worker | done | 7c3c27a |
 | E4 | S5 (Senate linkage) | worker + parent | done | 951ffdb + fix(bills): never credit Executive bills |
-| E5 | S5 (analytics) | parent, after E1 | pending | |
+| E5 | S5 (analytics) | parent | done, needs owner to enable in Vercel | feat(analytics) |
 | E6 | S6, S7 | worker, after E1 and E3 | pending | |
 
 ## Log
@@ -39,3 +39,4 @@ Read until `## Log`. Technical artifacts in English; UI copy in Spanish (Argenti
 - L4 (parent): no official per-deputy spending exists: dieta/representación are the same for all; desarraigo/movilidad are generic amounts without recipients; domestic trips have no cost. Per-deputy money exists only as official-mission viáticos (USD, many "-"). User chose S7. Wording rule: "viáticos otorgados/consumidos", never "gasta de más"; show missions without published viáticos as "sin monto publicado", not zero.
 - L5 (evidence, E4): no real Senate linkage misses: 24/24 person authors linked; the 29 unlinked bills are Milei (14, PE), Santilli (2, PE) and Asuntos Constitucionales (13, OV) → institutional, Senate rows 31/31. Parent extended it to Diputados: 85 PE/JGM/OV bills (Milei, Francos, Adorni, Santilli, Posse, Petri, Presti, committee) now institutional; Santilli no longer credited, Petri keeps only his 2 -D- 2026 bills. Diputados rows linked 99.7 %.
 - L6 (evidence, E3): official accented names for 45 committees from hcdn.gob.ar page titles; test fails on a new committee. Blocs "Coalicion Civica" and "Produccion y Trabajo" stay unaccented: no official accented spelling found.
+- L7 (evidence, live): sitemap 442 URLs (443 with /metodologia/), robots, per-page descriptions, JSON-LD, 329 share PNGs (57–72 KB) live; /metodologia/ live. Parent changes to E2: the regional-method table shows district instead of names (the regional flag was a method error); description shortened to 141 characters. Analytics script ships only in Vercel builds; /_vercel/insights/script.js returns 404 until Web Analytics is enabled in the Vercel project (owner action).

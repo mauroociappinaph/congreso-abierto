@@ -1,0 +1,302 @@
+---
+// Home, right after the search: the per-person money and trips the Cámara publishes (S6, S7). Left, viáticos of
+// official missions abroad with each deputy's missions one click away; right, national trip legs, which have no
+// published cost. Descriptive wording only: viáticos otorgados and consumidos, as published.
+import Section from '../ui/Section.astro';
+import DataTable from '../ui/DataTable.astro';
+import type { LegislatorRelations } from '../../lib/entities.ts';
+import type { Deputy } from '../../lib/legislators.ts';
+import type { MissionsData } from '../../lib/sources.ts';
+import type { TravelReport } from '../../lib/travel-report.ts';
+import { DATASETS, formatNumber } from '../../lib/view.ts';
+import { missionSpending, personRefs, travelRanking, TRAVEL_COST_NOTE } from './spending.ts';
+
+interface Props {
+  deputies: Deputy[];
+  relations: Map<string, LegislatorRelations>;
+  missions: MissionsData;
+  travel: TravelReport;
+}
+
+const { deputies, relations, missions, travel } = Astro.props;
+const people = personRefs(deputies, relations);
+const spending = missionSpending(missions.deputies, people);
+const trips = travelRanking(travel.analysis.deputies, people);
+const { totals } = spending;
+const usd = (amount: number) => `USD ${formatNumber(amount)}`;
+const pct = (value: number) => `${formatNumber(value)} %`;
+const plural = (count: number, one: string, many: string) => `${formatNumber(count)} ${count === 1 ? one : many}`;
+---
+
+<section class="spending" aria-labelledby="fondos-titulo">
+  <h2 id="fondos-titulo">¿En qué usan fondos los diputados? Lo que la Cámara publica por persona</h2>
+  <p class="lede">
+    Dieta y gastos de representación son iguales para los {deputies.length} (<a href="#tema-remuneracion">ver abajo</a>). Lo que varía por persona y la Cámara
+    publica: viáticos de misiones al exterior y tramos de viaje.
+  </p>
+
+  <div class="columns">
+    <Section
+      title="Viáticos de misiones oficiales al exterior"
+      id="fondos-misiones"
+      level={3}
+      tag={`${usd(totals.usdOtorgado)} otorgados · ${plural(totals.missions, 'misión', 'misiones')}`}
+      links={[DATASETS.misiones]}
+      period={missions.period}
+    >
+      <p class="note">
+        Diputados/as en funciones con más viáticos otorgados en dólares. {plural(totals.deputies, 'diputado/a registra', 'diputados/as registran')}
+        {plural(totals.missions, 'misión', 'misiones')}: {usd(totals.usdOtorgado)} otorgados y {usd(totals.usdConsumido)} consumidos.
+        {plural(totals.sinMonto, 'misión no tiene', 'misiones no tienen')} monto publicado: cuentan como misión y no suman.
+      </p>
+      <DataTable caption="Diputados/as en funciones con más viáticos otorgados en misiones oficiales" captionHidden dense class="ranking">
+        <thead>
+          <tr>
+            <th scope="col">Nombre</th><th scope="col" class="num">Misiones</th><th scope="col" class="num">USD otorgado</th>
+            <th scope="col" class="num">USD consumido</th>
+          </tr>
+        </thead>
+        {
+          spending.top.map((d, i) => (
+            <tbody>
+              <tr class="main">
+                <td>
+                  <span class="rank">{i + 1}.</span> <a href={d.url}>{d.nombre}</a>
+                  <span class="sub">
+                    {d.bloque.url ? <a href={d.bloque.url}>{d.bloque.titulo}</a> : d.bloque.titulo} ·{' '}
+                    {d.provincia.url ? <a href={d.provincia.url}>{d.provincia.nombre}</a> : d.provincia.nombre}
+                  </span>
+                </td>
+                <td class="num" data-label="Misiones">{formatNumber(d.missions)}</td>
+                <td class="num" data-label="USD otorgado">{formatNumber(d.usdOtorgado)}</td>
+                <td class="num" data-label="USD consumido">{formatNumber(d.usdConsumido)}</td>
+              </tr>
+              <tr class="breakdown">
+                <td colspan="4">
+                  <details>
+                    <summary>
+                      Ver {d.missions === 1 ? 'la misión' : `las ${d.missions} misiones`}
+                      {d.sinMonto > 0 && ` (${d.sinMonto} sin monto publicado)`}
+                    </summary>
+                    <ol>
+                      {d.rows.map(m => (
+                        <li>
+                          <span class="when">{m.desde === m.hasta ? m.desde : `${m.desde} – ${m.hasta}`}</span> · <strong>{m.lugar || 'Lugar no publicado'}</strong>
+                          {m.motivo && <span class="what">{m.motivo}</span>}
+                          {m.institucion && <span class="what">Invita: {m.institucion}</span>}
+                          <span class="money">Días: {m.dias} · Otorgado: {m.otorgado} · Consumido: {m.consumido}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </details>
+                </td>
+              </tr>
+            </tbody>
+          ))
+        }
+      </DataTable>
+      {
+        spending.otherCurrencies.length > 0 && (
+          <p class="note">
+            En otras monedas (no se convierten):{' '}
+            {spending.otherCurrencies.map((o, i) => (
+              <>
+                {i > 0 && '; '}
+                <a href={o.url}>{o.nombre}</a>: {o.currency} {formatNumber(o.otorgado)} otorgados, {o.currency} {formatNumber(o.consumido)} consumidos
+              </>
+            ))}
+            .
+          </p>
+        )
+      }
+      <p class="note">
+        Los viáticos se suman por moneda tal como los publica la Cámara. Una misión oficial es una actividad institucional; más viáticos
+        no implica irregularidad. <a href="/viajes/#misiones">Ver todas las misiones</a>
+      </p>
+      <p slot="after" class="quality-line">
+        <strong>Calidad:</strong> {pct(missions.quality.rows.linkedPercent)} de los registros de participación asignados a una persona;
+        {plural(missions.quality.names.doubtful, 'nombre dudoso no se asigna', 'nombres dudosos no se asignan')}.
+      </p>
+    </Section>
+
+    <Section
+      title="Viajes nacionales (tramos)"
+      id="fondos-viajes"
+      level={3}
+      tag="Sin costo publicado"
+      links={[DATASETS.viajes]}
+      periodLabel={travel.windowLabel}
+    >
+      <p class="note">Diputados/as en funciones con más tramos de viaje (cada vuelo o pasaje terrestre). {TRAVEL_COST_NOTE}</p>
+      <DataTable caption="Diputados/as en funciones con más tramos de viaje nacionales" captionHidden dense class="ranking">
+        <thead>
+          <tr>
+            <th scope="col">Nombre</th><th scope="col" class="num">Tramos</th><th scope="col" class="num">Por mes</th>
+            <th scope="col">Distancia</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            trips.map((t, i) => (
+              <tr class="main">
+                <td>
+                  <span class="rank">{i + 1}.</span> <a href={t.url}>{t.nombre}</a>
+                  <span class="sub">
+                    {t.bloque.url ? <a href={t.bloque.url}>{t.bloque.titulo}</a> : t.bloque.titulo} ·{' '}
+                    {t.provincia.url ? <a href={t.provincia.url}>{t.provincia.nombre}</a> : t.provincia.nombre}
+                  </span>
+                  <span class="sub">Ruta más frecuente: {t.route}</span>
+                  {t.flag && <span class="flag">{t.flag}</span>}
+                </td>
+                <td class="num" data-label="Tramos">{formatNumber(t.legs)}</td>
+                <td class="num" data-label="Por mes">{formatNumber(t.legsPerMonth)}</td>
+                <td data-label="Distancia">{t.band ?? 'Sin estimar'}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </DataTable>
+      <p class="note">
+        Más tramos no implica irregularidad: depende de la distancia, la agenda y los traslados a la provincia.
+        <a href="/viajes/">Ver la comparación por distancia</a>
+      </p>
+      <p slot="after" class="quality-line">
+        <strong>Calidad:</strong> {pct(travel.quality.legs.percent)} de los tramos asignados a una persona.
+      </p>
+    </Section>
+  </div>
+</section>
+
+<style>
+  .spending {
+    margin-bottom: var(--space-8);
+  }
+
+  h2 {
+    margin: 0;
+    font-size: var(--text-2xl);
+  }
+
+  .lede {
+    margin: var(--space-1) 0 var(--space-4);
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0 var(--space-5);
+    align-items: start;
+  }
+
+  @media (min-width: 960px) {
+    .columns {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .rank {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sub,
+  .flag {
+    display: block;
+    font-size: var(--text-xs);
+    color: var(--muted);
+  }
+
+  .flag {
+    color: var(--flag);
+  }
+
+  .columns :global(.ranking td) {
+    vertical-align: top;
+    overflow-wrap: anywhere;
+  }
+
+  .columns :global(.ranking tr.breakdown td) {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  /* narrow screens: each deputy is a block, the name on top and the numbers below with their labels */
+  @media (max-width: 599px) {
+    .columns :global(.ranking thead) {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+    }
+
+    .columns :global(.ranking),
+    .columns :global(.ranking tbody),
+    .columns :global(.ranking tr.breakdown),
+    .columns :global(.ranking tr.breakdown td) {
+      display: block;
+    }
+
+    .columns :global(.ranking tr.main) {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .columns :global(.ranking tr.main td:first-child) {
+      grid-column: 1 / -1;
+    }
+
+    .columns :global(.ranking tr.main td[data-label]) {
+      text-align: left;
+      border-top: 0;
+    }
+
+    .columns :global(.ranking tr.main td[data-label])::before {
+      content: attr(data-label);
+      display: block;
+      font-size: var(--text-xs);
+      color: var(--muted);
+    }
+  }
+
+  summary {
+    color: var(--accent);
+    font-size: var(--text-xs);
+    cursor: pointer;
+  }
+
+  ol {
+    margin: var(--space-2) 0 var(--space-1);
+    padding-left: 18px;
+    font-size: var(--text-xs);
+  }
+
+  li + li {
+    margin-top: var(--space-2);
+  }
+
+  .what,
+  .money {
+    display: block;
+  }
+
+  .when,
+  .money {
+    color: var(--muted);
+  }
+
+  .quality-line {
+    margin: 0;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--quality-line);
+    background: var(--quality-soft);
+    border-radius: var(--radius);
+    font-size: var(--text-xs);
+  }
+
+  .quality-line strong {
+    color: var(--quality);
+  }
+</style>

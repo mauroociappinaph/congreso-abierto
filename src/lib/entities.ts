@@ -2,6 +2,7 @@
 // the client search index and the home topic cards. Everything is built from already-loaded sources and
 // every metric carries its source and period (S3).
 import { cargoRank, type CommitteeSummary, type CommitteeType, type DeputyCommittee } from './comisiones.ts';
+import { committeeName } from './committee-names.ts';
 import { billsProfile, type BillsProfile } from './legislator-profile.ts';
 import { normalizeText, type Deputy, type PaySummary, type Senator } from './legislators.ts';
 import type { DeputyMissions } from './misiones.ts';
@@ -420,7 +421,8 @@ export function buildEntities(sources: EntitySources): Entities {
     const slug = committeeSlugs.get(id) ?? slugify(id);
     // HCDN publishes members of some committees whose id is missing from the committee list.
     const named = summary?.nombre && normalizeText(summary.nombre) !== normalizeText(id);
-    return { slug, titulo: named ? titleCase(summary.nombre) : `Comisión sin nombre publicado (${id})`, url: committeeUrl(slug) };
+    const titulo = named ? committeeName(id, summary.nombre) ?? titleCase(summary.nombre) : `Comisión sin nombre publicado (${id})`;
+    return { slug, titulo, url: committeeUrl(slug) };
   };
   const deputyById = new Map(deputies.map(d => [d.id, d]));
   const roleOf = (deputyId: string, seat: DeputyCommittee): CommitteeRole => {

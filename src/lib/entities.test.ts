@@ -215,7 +215,7 @@ test('a Diputados bloc page has members, districts, chairs, bills, travel points
     { slug: 'la-rioja', nombre: 'La Rioja', count: 1 },
   ]);
   assert.equal(uxp.districts, 3);
-  const chair = { comisionId: C1, slug: 'accion-social-y-salud-publica', titulo: 'Accion Social y Salud Publica', url: '/comisiones/accion-social-y-salud-publica/', cargo: 'presidente', memberId: 'd-yedlin', memberNombre: 'Yedlin, Pablo Raúl' };
+  const chair = { comisionId: C1, slug: 'accion-social-y-salud-publica', titulo: 'Acción Social y Salud Pública', url: '/comisiones/accion-social-y-salud-publica/', cargo: 'presidente', memberId: 'd-yedlin', memberNombre: 'Yedlin, Pablo Raúl' };
   assert.deepEqual(uxp.chairs, [chair]);
   assert.deepEqual(uxp.authorities, [chair]);
   const lla = bloc('diputados', 'la-libertad-avanza');
@@ -289,7 +289,7 @@ test('every one of the 24 provinces gets a page; Tucumán lists its legislators,
     seats: 5,
     committees: 2,
     chairs: [
-      { comisionId: C1, slug: 'accion-social-y-salud-publica', titulo: 'Accion Social y Salud Publica', url: '/comisiones/accion-social-y-salud-publica/', cargo: 'presidente', memberId: 'd-yedlin', memberNombre: 'Yedlin, Pablo Raúl' },
+      { comisionId: C1, slug: 'accion-social-y-salud-publica', titulo: 'Acción Social y Salud Pública', url: '/comisiones/accion-social-y-salud-publica/', cargo: 'presidente', memberId: 'd-yedlin', memberNombre: 'Yedlin, Pablo Raúl' },
       { comisionId: C2, slug: 'presupuesto-y-hacienda', titulo: 'Presupuesto y Hacienda', url: '/comisiones/presupuesto-y-hacienda/', cargo: 'presidente', memberId: 'd-campero', memberNombre: 'Campero, Mariano' },
     ],
   });
@@ -340,7 +340,7 @@ test('relations give each legislator the links of the relation strip', () => {
     url: '/diputados/d-yedlin/',
     bloc: { slug: 'union-por-la-patria', nombre: UXP, titulo: 'Unión por la Patria', url: '/bloques/diputados/union-por-la-patria/', seats: 4, chamberSeats: 8 },
     province: { slug: 'tucuman', nombre: 'Tucumán', url: '/provincias/tucuman/', deputies: 3, senators: 2 },
-    committees: [{ id: C1, slug: 'accion-social-y-salud-publica', titulo: 'Accion Social y Salud Publica', cargo: 'presidente', url: '/comisiones/accion-social-y-salud-publica/' }],
+    committees: [{ id: C1, slug: 'accion-social-y-salud-publica', titulo: 'Acción Social y Salud Pública', cargo: 'presidente', url: '/comisiones/accion-social-y-salud-publica/' }],
     counts: { bills: 69, sancionados: 6, legs: 185, missions: 4, votes: null },
   });
   assert.deepEqual(entities.relations.get('s-manzur'), {
@@ -372,7 +372,7 @@ test('the search index has one short entry per legislator, bloc, province and co
     keywords: 'ciudad de buenos aires caba capital federal autonoma',
   });
   assert.deepEqual(search.find(e => e.url === '/comisiones/accion-social-y-salud-publica/'), {
-    type: 'comision', label: 'Accion Social y Salud Publica', sub: 'Diputados · 5 integrantes · preside Yedlin, Pablo Raúl',
+    type: 'comision', label: 'Acción Social y Salud Pública', sub: 'Diputados · 5 integrantes · preside Yedlin, Pablo Raúl',
     url: '/comisiones/accion-social-y-salud-publica/', keywords: 'accion social y salud publica comision diputados',
   });
   for (const entry of search) {
@@ -444,4 +444,13 @@ test('a committee published without a name gets an explicit title, also in searc
   const page = result.committees.find(c => c.id === unnamed)!;
   assert.equal(page.titulo, 'Comisión sin nombre publicado (HCDN00064)');
   assert.ok(result.search.some(s => s.type === 'comision' && s.label === 'Comisión sin nombre publicado (HCDN00064)'));
+});
+
+test('a committee missing from the official names table keeps its title-cased published name', () => {
+  const nueva = 'HCDN09999';
+  const result = buildEntities({
+    ...sources,
+    committees: { ...committees, committees: new Map([...committees.committees, [nueva, committee(nueva, 'COMISION NUEVA DE PRUEBA', 1)]]) },
+  });
+  assert.equal(result.committees.find(c => c.id === nueva)!.titulo, 'Comision Nueva de Prueba');
 });

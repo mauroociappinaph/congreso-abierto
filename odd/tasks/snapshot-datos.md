@@ -16,10 +16,11 @@ Read until `## Log`. Technical artifacts in English. Branch: main (pushed to git
 | ID | Specs | Route | Status | Commit |
 | --- | --- | --- | --- | --- |
 | N1 | S2, S3 | worker | done | feat(data): build from a committed snapshot |
-| N2 | S4, S5 | after N1 | pending | |
+| N2 | S4, S5 | inline | done | ci: refresh data weekly from the Mac |
 
 ## Log
 
 - L1 (evidence): CI on GitHub failed three times: "HCDN: could not load dataset … fetch failed (ETIMEDOUT: )" for `legisladores` and `dietas-y-gastos-de-representacion-legisladores-as`; locally the same fetches succeed.
 - L2 (user choice, verbatim): "Snapshot + tarea semanal en mi Mac (Recomendado)". Self-hosted GitHub runner rejected: on a public repo, PRs from forks could run code on the owner's machine.
 - L3 (evidence, N1): offline build with fetch/http/https/net blocked: 442 pages, dist byte-identical to the refresh build and to the earlier live build. Snapshot 728 KB (117 KB gz). Two refreshes in a row differ only in meta.generatedAt. Missing entry fails with "Data snapshot missing: travel — run npm run refresh-data". npm test 242/242.
+- L4 (evidence, N2 end to end): launchd agent `ar.congreso-abierto.weekly-refresh` installed (Mondays 06:00); first run via kickstart: worktree on origin/main, npm ci, update-senators, refresh-data (27 s), tests 245/245, build, pushed 24b78ca (only meta.json changed, same day), exit 0, worktree removed. GitHub: CI green on 24b78ca; "Weekly snapshot freshness" (workflow_dispatch) green: "Snapshot generated 2026-11-04 (0 days ago)". Note: CI on GitHub was red three times before the snapshot (ETIMEDOUT), green since 9237f9d.

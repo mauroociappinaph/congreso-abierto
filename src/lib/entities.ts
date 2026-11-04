@@ -418,7 +418,9 @@ export function buildEntities(sources: EntitySources): Entities {
   const committeeRef = (id: string) => {
     const summary = committees.committees.get(id);
     const slug = committeeSlugs.get(id) ?? slugify(id);
-    return { slug, titulo: titleCase(summary?.nombre ?? id), url: committeeUrl(slug) };
+    // HCDN publishes members of some committees whose id is missing from the committee list.
+    const named = summary?.nombre && normalizeText(summary.nombre) !== normalizeText(id);
+    return { slug, titulo: named ? titleCase(summary.nombre) : `Comisión sin nombre publicado (${id})`, url: committeeUrl(slug) };
   };
   const deputyById = new Map(deputies.map(d => [d.id, d]));
   const roleOf = (deputyId: string, seat: DeputyCommittee): CommitteeRole => {

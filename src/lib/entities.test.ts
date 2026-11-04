@@ -429,3 +429,19 @@ test('topic summaries give the home cards their numbers, each with source and pe
     [C3, 1, '/comisiones/accion-social-y-salud-publica-2/'],
   ]);
 });
+
+test('a committee published without a name gets an explicit title, also in search', () => {
+  const unnamed = 'HCDN00064';
+  const withUnnamed: EntitySources = {
+    ...sources,
+    committees: {
+      ...committees,
+      committees: new Map([...committees.committees, [unnamed, committee(unnamed, unnamed, 1)]]),
+      byDeputy: new Map([...committees.byDeputy, ['d-leone', [seat(C2, PRESUPUESTO, 'integrante'), seat(unnamed, unnamed, 'integrante')]]]),
+    },
+  };
+  const result = buildEntities(withUnnamed);
+  const page = result.committees.find(c => c.id === unnamed)!;
+  assert.equal(page.titulo, 'Comisión sin nombre publicado (HCDN00064)');
+  assert.ok(result.search.some(s => s.type === 'comision' && s.label === 'Comisión sin nombre publicado (HCDN00064)'));
+});

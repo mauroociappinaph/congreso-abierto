@@ -191,6 +191,7 @@ details > summary {
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+  display: block;
   border: 0;
 }
 
@@ -212,6 +213,7 @@ details > summary {
   color: var(--muted);
   background: var(--surface);
   white-space: nowrap;
+  display: block;
 }
 
 .tag.flag {

@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "chosen": "03-sello.html",
+  "handoffs": {
+    "02-trazo.html": {
+      "status": "sent",
+      "queued": false,
+      "sentAt": "2026-11-04T01:34:34.654Z",
+      "startedAt": null,
+      "implementedAt": null
+    },
+    "03-sello.html": {
+      "status": "in_progress",
+      "queued": false,
+      "sentAt": "2026-11-04T01:37:28.574Z",
+      "startedAt": "2026-11-04T01:37:37.299Z",
+      "implementedAt": null,
+      "note": "User switched to the monochrome seal variants (screenshot). Header: simple seal; favicon: simple seal; og: horizontal mono lockup on ink; watercolor stays as home hero."
+    }
+  }
+}

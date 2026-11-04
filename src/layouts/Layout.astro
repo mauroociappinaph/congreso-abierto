@@ -3,7 +3,10 @@
 import '../styles/tokens.css';
 import '../styles/shared.css';
 
+const SITE_NAME = 'Congreso Abierto';
+
 interface Props {
+  // page name; the site name is appended unless the title already carries it
   title: string;
   description?: string;
   // keeps temporary pages (the style guide) out of search engines
@@ -12,9 +15,16 @@ interface Props {
 
 const {
   title,
-  description = 'Gastos y trabajo legislativo de diputados y senadores de Argentina, con fuentes oficiales y período en cada dato.',
+  description = 'Congreso Abierto: gastos y trabajo legislativo de diputados y senadores de Argentina, con fuentes oficiales y período en cada dato.',
   noindex = false,
 } = Astro.props;
+
+const fullTitle = title.includes(SITE_NAME) ? title : `${title} · ${SITE_NAME}`;
+// Open Graph wants absolute URLs: they need `site` (SITE_URL at build time); without it the paths stay root-relative.
+const site = Astro.site ? new URL(Astro.site.href.endsWith('/') ? Astro.site.href : `${Astro.site.href}/`) : null;
+const absolute = (path: string) => (site ? new URL(path.replace(/^\//, ''), site).href : path);
+const ogImage = absolute('/og.png');
+const pageUrl = site ? absolute(Astro.url.pathname) : null;
 ---
 
 <!doctype html>
@@ -24,9 +34,24 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
-    <title>{title}</title>
+    <title>{fullTitle}</title>
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    {pageUrl && <meta property="og:url" content={pageUrl} />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Logo de Congreso Abierto junto a una acuarela celeste del Palacio del Congreso de la Nación" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
   </head>
   <body>
     <slot />

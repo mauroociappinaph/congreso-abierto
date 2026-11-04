@@ -3,6 +3,7 @@
 // The header search loads /search-index.json on first focus; a page can replace it through the "search" slot.
 import Layout from './Layout.astro';
 import SearchBox from '../components/ui/SearchBox.astro';
+import Brand from '../components/ui/Brand.astro';
 import { DATASETS } from '../lib/view.ts';
 
 const SEARCH_INDEX_URL = '/search-index.json';
@@ -42,10 +43,7 @@ const sources = Object.values(DATASETS);
   <a class="skip" href="#contenido">Saltar al contenido</a>
   <header class="site-header">
     <div class="site-bar">
-      <a class="brand" href="/">
-        Gastos y trabajo legislativo
-        <small>Diputados y Senado de la Nación · datos oficiales</small>
-      </a>
+      <Brand tagline="Datos abiertos del Congreso argentino" />
       <div class="site-search">
         {
           Astro.slots.has('search') ? (
@@ -80,13 +78,16 @@ const sources = Object.values(DATASETS);
   </main>
 
   <footer class="site-footer">
-    <div class="page-wrap">
-      <slot name="footer" />
-      <p>Datos actualizados al {builtAt}. Cada sección indica su fuente oficial y su período.</p>
-      <p>
-        Fuentes:
-        {sources.map((source, i) => <>{i > 0 && ' · '}<a href={source.href} target="_blank" rel="noopener">{source.label}</a></>)}.
-      </p>
+    <div class="page-wrap footer-grid">
+      <svg class="seal" viewBox="0 0 200 200" width="96" height="96" aria-hidden="true" focusable="false"><defs><mask id="footer-seal-m" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200"><g fill="#fff"><rect x="50" y="121" width="100" height="17"/><rect x="48" y="118.5" width="104" height="3"/><rect x="50" y="114" width="12" height="24"/><rect x="138" y="114" width="12" height="24"/><path d="M49.5 114.5C50.5 106 61.5 106 62.5 114.5Z"/><path d="M137.5 114.5C138.5 106 149.5 106 150.5 114.5Z"/><rect x="55.3" y="104.5" width="1.4" height="4"/><rect x="143.3" y="104.5" width="1.4" height="4"/><rect x="76" y="112" width="48" height="26"/><path d="M75 112.5L100 101.5L125 112.5Z"/><rect x="80" y="96" width="40" height="9"/><rect x="79" y="94.5" width="42" height="2"/><rect x="85" y="80" width="30" height="15"/><rect x="83.5" y="78" width="33" height="2.5"/><path d="M86.5 78.5C86.5 62 93 54 100 50C107 54 113.5 62 113.5 78.5Z"/><rect x="97" y="43" width="6" height="8"/><path d="M96 43.5Q100 38.5 104 43.5Z"/><rect x="99.4" y="34" width="1.2" height="6"/><rect x="72" y="136" width="56" height="2.6"/></g><g fill="none" stroke="#000" stroke-linecap="round"><path d="M82.5 114V135.5M89.5 114V135.5M96.5 114V135.5M103.5 114V135.5M110.5 114V135.5M117.5 114V135.5" stroke-width="1.7"/><path d="M88 81V95M92 81V95M96 81V95M100 81V95M104 81V95M108 81V95M112 81V95" stroke-width="1.1"/><path d="M100 51V78.5M93.5 55Q90 64 91.5 78.5M106.5 55Q110 64 108.5 78.5" stroke-width="0.9"/><path d="M50 121.6H150M80 97H120" stroke-width="0.7"/><path d="M83 111.6L100 104L117 111.6" stroke-width="0.7"/><path d="M46 138.6H154" stroke-width="1.2"/></g><g fill="#000"><rect x="65" y="125.5" width="2.5" height="5"/><rect x="70.5" y="125.5" width="2.5" height="5"/><rect x="127" y="125.5" width="2.5" height="5"/><rect x="132.5" y="125.5" width="2.5" height="5"/><rect x="54.8" y="124" width="2.4" height="7"/><rect x="142.8" y="124" width="2.4" height="7"/><rect x="98.6" y="128" width="2.8" height="8"/></g></mask></defs><g fill="none" stroke="var(--ink)"><circle cx="100" cy="100" r="96" stroke-width="2.6"/><circle cx="100" cy="100" r="91.5" stroke-width="0.8"/><circle cx="100" cy="100" r="70" stroke-width="1.8"/></g><path id="footer-seal-top" d="M24 100A76 76 0 0 1 176 100" fill="none"/><path id="footer-seal-bot" d="M12 100A88 88 0 0 0 188 100" fill="none"/><g fill="var(--ink)" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" text-anchor="middle"><text font-size="13.5" letter-spacing="1.8"><textPath href="#footer-seal-top" startOffset="50%">CONGRESO ABIERTO</textPath></text><text font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-weight="600" font-size="9" letter-spacing="1.5"><textPath href="#footer-seal-bot" startOffset="50%">DATOS ABIERTOS · ARGENTINA</textPath></text></g><g fill="var(--ink)"><circle cx="18.5" cy="100" r="2.3"/><circle cx="181.5" cy="100" r="2.3"/></g><rect x="30" y="30" width="140" height="140" fill="var(--ink)" mask="url(#footer-seal-m)"/></svg>
+      <div>
+        <slot name="footer" />
+        <p>Congreso Abierto: datos abiertos del Congreso argentino. Datos actualizados al {builtAt}. Cada sección indica su fuente oficial y su período.</p>
+        <p>
+          Fuentes:
+          {sources.map((source, i) => <>{i > 0 && ' · '}<a href={source.href} target="_blank" rel="noopener">{source.label}</a></>)}.
+        </p>
+      </div>
     </div>
   </footer>
 </Layout>
@@ -121,24 +122,6 @@ const sources = Object.values(DATASETS);
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-3) var(--space-6);
-  }
-
-  .brand {
-    font-family: var(--serif);
-    font-weight: 700;
-    font-size: 18px;
-    line-height: 1.2;
-    color: var(--ink);
-    text-decoration: none;
-  }
-
-  .brand small {
-    display: block;
-    font-family: var(--sans);
-    font-weight: 400;
-    font-size: var(--text-2xs);
-    color: var(--muted);
-    letter-spacing: 0.04em;
   }
 
   .site-search {
@@ -199,6 +182,24 @@ const sources = Object.values(DATASETS);
     padding: var(--space-5) 0 var(--space-7);
     font-size: var(--text-xs);
     color: var(--muted);
+  }
+
+  /* full monochrome seal of design/logo-congreso-abierto/03-sello.html; its ring text needs at least 96px */
+  .footer-grid {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+  }
+
+  .seal {
+    flex: none;
+  }
+
+  @media (max-width: 520px) {
+    .footer-grid {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 
   .site-footer p {

@@ -30,6 +30,13 @@
   --chart: #1f4e79;
   --chart-muted: #7a94ad;
 
+  /* Celeste brand family (design/logo-congreso-abierto/02-trazo.html): fills only. --celeste on --paper is 2.3:1, so
+     never text or strokes on paper; text on celeste uses --ink (7.1:1) or --accent-ink (4.9:1). */
+  --celeste-50: #eaf3fb; /* soft wash, hero band */
+  --celeste-200: #b9d7f1; /* sky and blooms of the illustration */
+  --celeste: #74acdf; /* flag celeste: logo wash, favicon background */
+  --celeste-700: #2f6796; /* illustration line and shadows; the only celeste that holds text on paper (5.75:1) */
+
   /* Bloc palette: white text passes AA on each */
   --bloc-1: #1e3a8a;
   --bloc-2: #0f766e;

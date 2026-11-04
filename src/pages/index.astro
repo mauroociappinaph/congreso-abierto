@@ -79,7 +79,7 @@ const missionRows = missions.deputies
 
 ---
 
-<SiteLayout title="Gastos y trabajo legislativo - Diputados y Senado de Argentina" current="inicio">
+<SiteLayout title="Congreso Abierto — datos abiertos del Congreso argentino" current="inicio">
   <script is:inline>
     // Old tab links (/#viajes) now have their own pages.
     (function () {
@@ -129,21 +129,31 @@ const missionRows = missions.deputies
         </div>
       </div>
 
-      <aside class="facts" aria-labelledby="iguales-titulo">
-        <h2 id="iguales-titulo" class="eyebrow">Lo que es igual para todos</h2>
-        <dl>
-          <StatTile label="Dieta mensual de cada diputado/a" value={formatArs(pay.dieta)} size="md" note={`Monto único publicado por la Cámara; no es un gasto individual. HCDN, ${pay.provenance.label}.`} />
-          <StatTile label="Gastos de representación" value={formatArs(pay.gastosRepresentacion)} size="md" note={`Mismo monto para los ${numbers.diputados.value}. HCDN, ${pay.provenance.label}.`} />
-          <StatTile label="Actas de votación del Senado" value={formatNumber(numbers.actas.value)} size="md" note={`Votaciones nominales del ${formatDate(votes.period.desde)} al ${formatDate(votes.period.hasta)}.`} />
-        </dl>
-        <SourceLine links={[DATASETS.dietas, DATASETS.actas]} />
-        <p class="note">El Senado no publica dietas ni gastos en sus datos abiertos.</p>
-        <p class="quality-line">
-          <strong>Calidad de los cruces de datos:</strong> comisiones {pct(committees.quality.rows.linkedPercent)} · misiones
-          {pct(missions.quality.rows.linkedPercent)} · proyectos {pct(bills.quality.diputados.rows.linkedPercent)} · votos del
-          Senado {pct(votes.quality.rows.linkedPercent)} asignados a una persona. Los nombres dudosos se informan y no se asignan.
-        </p>
-      </aside>
+      <div class="hero-side">
+        <img
+          class="hero-art"
+          src="/congreso-acuarela.svg"
+          alt="Ilustración en acuarela celeste del Palacio del Congreso de la Nación"
+          width="1200"
+          height="760"
+          decoding="async"
+        />
+        <aside class="facts" aria-labelledby="iguales-titulo">
+          <h2 id="iguales-titulo" class="eyebrow">Lo que es igual para todos</h2>
+          <dl>
+            <StatTile label="Dieta mensual de cada diputado/a" value={formatArs(pay.dieta)} size="md" note={`Monto único publicado por la Cámara; no es un gasto individual. HCDN, ${pay.provenance.label}.`} />
+            <StatTile label="Gastos de representación" value={formatArs(pay.gastosRepresentacion)} size="md" note={`Mismo monto para los ${numbers.diputados.value}. HCDN, ${pay.provenance.label}.`} />
+            <StatTile label="Actas de votación del Senado" value={formatNumber(numbers.actas.value)} size="md" note={`Votaciones nominales del ${formatDate(votes.period.desde)} al ${formatDate(votes.period.hasta)}.`} />
+          </dl>
+          <SourceLine links={[DATASETS.dietas, DATASETS.actas]} />
+          <p class="note">El Senado no publica dietas ni gastos en sus datos abiertos.</p>
+          <p class="quality-line">
+            <strong>Calidad de los cruces de datos:</strong> comisiones {pct(committees.quality.rows.linkedPercent)} · misiones
+            {pct(missions.quality.rows.linkedPercent)} · proyectos {pct(bills.quality.diputados.rows.linkedPercent)} · votos del
+            Senado {pct(votes.quality.rows.linkedPercent)} asignados a una persona. Los nombres dudosos se informan y no se asignan.
+          </p>
+        </aside>
+      </div>
     </section>
 
     <h2 class="topics-title">Hallazgos por tema</h2>
@@ -337,6 +347,21 @@ const missionRows = missions.deputies
     font-family: var(--sans);
     font-size: var(--text-sm);
     margin: 0 0 var(--space-2);
+  }
+
+  .hero-side {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  /* watercolor of design/logo-congreso-abierto/03-sello.html; it keeps its own paper */
+  .hero-art {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--paper);
   }
 
   .facts {

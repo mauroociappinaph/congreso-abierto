@@ -1,4 +1,4 @@
-# Gastos de Diputados y Senadores
+# Congreso Abierto
 
 Astro static site that lists Argentina's national legislators and the monthly pay the Chamber of Deputies publishes.
 

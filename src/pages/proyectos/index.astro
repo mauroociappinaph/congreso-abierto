@@ -9,7 +9,7 @@ const [deputies, { senators }] = await Promise.all([loadDeputies(), loadSenators
 const [entities, bills] = await Promise.all([loadEntities(), loadBills(deputies, senators)]);
 ---
 
-<SiteLayout title="Proyectos - Gastos y trabajo legislativo">
+<SiteLayout title="Proyectos">
   <div class="page-wrap topic-page">
     <PageHead
       title="Proyectos"

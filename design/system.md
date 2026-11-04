@@ -1,4 +1,4 @@
-# Design system: Gastos y trabajo legislativo
+# Design system: Congreso Abierto
 
 Synced from the project source (read only). Every value below appears in the named file; nothing is invented.
 Tokens live in `:root` of `src/styles/tokens.css`. The theme is light only (`color-scheme: light`).
@@ -57,6 +57,17 @@ Source for every token: `src/styles/tokens.css`. Usage is where the sources appl
 | `--chart` | `#1f4e79` | Primary series: BarChart bar, Funnel bar, focused bar |
 | `--chart-muted` | `#7a94ad` | Secondary series: muted bars, DotPlot dots (fill-opacity 0.8). Darkened from `#9db3c8` to pass 3:1 as non-text |
 
+### Celeste (brand)
+
+Approved from `design/logo-congreso-abierto/02-trazo.html` (section 2). Fills only: `--celeste` on `--paper` is 2.31:1, so it is never text or a stroke on paper. Text on celeste uses `--ink` (7.14:1) or `--accent-ink` (4.85:1); white on celeste fails (2.41:1).
+
+| Token | Value | Usage |
+| --- | --- | --- |
+| `--celeste-50` | `#eaf3fb` | Soft wash, hero band |
+| `--celeste-200` | `#b9d7f1` | Sky and blooms of the watercolor; tagline on `--ink` (11.52:1) |
+| `--celeste` | `#74acdf` | Flag celeste: watercolor washes. Fill only |
+| `--celeste-700` | `#2f6796` | Watercolor line and shadows; the only celeste that holds text on paper (5.75:1) |
+
 ### Bloc palette
 
 White text passes AA on each (`src/styles/tokens.css` comment).
@@ -98,7 +109,7 @@ Source: `src/styles/tokens.css`.
 | `--text-3xl` | `32px` | StatTile `lg` value |
 | `--text-4xl` | `38px` | Declared; no use in the read sources |
 
-Literal sizes outside the scale: TopicCard `h2` `22px` / 1.15 and `.big` `36px` / 1 weight 700, TopicCard `.lede` `14px` (`src/components/ui/TopicCard.astro`); brand `18px` weight 700 (`src/layouts/SiteLayout.astro`).
+Literal sizes outside the scale: TopicCard `h2` `22px` / 1.15 and `.big` `36px` / 1 weight 700, TopicCard `.lede` `14px` (`src/components/ui/TopicCard.astro`); brand name `--text-xl` in `--serif`, “Congreso” 700 and “Abierto” 400 (`src/components/ui/Brand.astro`).
 
 ### Line height and tracking
 
@@ -190,4 +201,6 @@ Source: `src/styles/tokens.css`.
 - **Breadcrumb** (`src/components/ui/Breadcrumb.astro`): `crumbs` = `ol` at `--text-xs` `--muted`, `/` separators, last item `aria-current="page"`; `inverse` uses `--surface` text. `path` = steps at `--text-sm` on `--badge` with `--radius-md`, `→` separators; current step `--ink` fill, `--surface` text, weight 600.
 - **SearchBox** (`src/components/ui/SearchBox.astro`): ARIA combobox with grouped listbox. Compact box: `--surface`, 1px `--placeholder` border, `--radius`, padding `6px 10px`, search icon stroked `--muted` 2.4, input `--text-sm`, optional `/` `kbd`. Hero: 2px `--ink` border, `--radius-lg`, padding `--space-3 --space-4`, input `--text-xl`. Focus ring on the box. Results popover: `--surface`, 1px `--line`, `--radius-lg`, `--shadow-popover`; group titles like `.eyebrow`; selected option `--accent-soft` with 3px `--accent` left bar; 28px round badge `--accent-soft`/`--accent-ink`.
 - **Pager** (`src/components/ui/Pager.astro`): `nav` "Paginación de …", hidden until JS runs. Status `--text-xs` `--muted` live region. Buttons min 32×32, padding `4px 8px`, 1px `--line`, `--radius-md`, `--surface`, `--text-sm`; hover `--accent` border and `--accent-soft`; current page `--ink` fill, `--surface` text, weight 600; disabled `--placeholder` text, `--line-soft` border. "Por página" select 25/50/100/Todos with the same border and radius.
-- **SiteLayout** (`src/layouts/SiteLayout.astro`): skip link "Saltar al contenido"; header `--surface` with bottom `--line`; brand `--serif` 18px 700 with `--text-2xs` subtitle; header search max 360px; nav links `--text-sm`, padding `6px 10px`, `--radius-md`, hover `--accent-soft`, current weight 600 with 2px `--accent` underline shadow; footer `--surface`, top `--line`, `--text-xs` `--muted`, margin-top `--space-8`.
+- **Brand** (`src/components/ui/Brand.astro`): link to `/` with the simple monochrome seal of `design/logo-congreso-abierto/03-sello.html` (building cut out of a solid `--ink` circle, 40px, `aria-hidden`) and the name as HTML text (`--serif` `--text-xl`, “Congreso” 700, “Abierto” 400), optional tagline `--sans` `--text-2xs` `--muted` `0.04em`. The full seal with ring text is used only at 96px or more (footer); its ring text is unreadable below that.
+- **Brand assets** (`public/`): `favicon.svg` = simple monochrome seal, `--ink` on transparent, `--paper` under `prefers-color-scheme: dark`; `apple-touch-icon.png` 180×180 = same seal on `--paper`; `congreso-acuarela.svg` = home hero watercolor (03-sello.html); `og.png` 1200×630 = horizontal monochrome lockup on `--ink` beside the watercolor.
+- **SiteLayout** (`src/layouts/SiteLayout.astro`): skip link "Saltar al contenido"; header `--surface` with bottom `--line`; Brand with the tagline “Datos abiertos del Congreso argentino”; header search max 360px; nav links `--text-sm`, padding `6px 10px`, `--radius-md`, hover `--accent-soft`, current weight 600 with 2px `--accent` underline shadow; footer `--surface`, top `--line`, `--text-xs` `--muted`, margin-top `--space-8`, full monochrome seal at 96px beside the text. Titles follow “<page> · Congreso Abierto” (`src/layouts/Layout.astro`), which also sets the Open Graph and Twitter meta.

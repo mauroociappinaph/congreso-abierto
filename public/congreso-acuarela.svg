@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" width="1200" height="760"><title>Palacio del Congreso de la Nación Argentina pintado en acuarela celeste: cúpula sobre tambor con columnas, linterna, pórtico con frontón y alas laterales</title><defs><filter id="hero-wash" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.0183" numOctaves="3" seed="4" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="14.40" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="5.40" result="b"/>
+<feComposite in="d" in2="b" operator="out" result="edge"/>
+<feComponentTransfer in="edge" result="pool"><feFuncR type="linear" slope="0.62"/><feFuncG type="linear" slope="0.7"/><feFuncB type="linear" slope="0.84"/><feFuncA type="linear" slope="2.4"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.0117" numOctaves="4" seed="9" result="m"/>
+<feColorMatrix in="m" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.5 0 0 0 0.05" result="ma"/>
+<feComposite in="d" in2="ma" operator="in" result="dm"/>
+<feMerge><feMergeNode in="dm"/><feMergeNode in="pool"/></feMerge>
+</filter>
+<filter id="hero-bloom" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.0083" numOctaves="3" seed="2" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="48.00" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="15.60" result="b"/>
+<feTurbulence type="fractalNoise" baseFrequency="0.0067" numOctaves="4" seed="21" result="m"/>
+<feColorMatrix in="m" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.6 0 0 0 -0.1" result="ma"/>
+<feComposite in="b" in2="ma" operator="in"/>
+</filter>
+<filter id="hero-ink" x="-5%" y="-5%" width="110%" height="110%">
+<feTurbulence type="fractalNoise" baseFrequency="0.0333" numOctaves="2" seed="5" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="6.60" xChannelSelector="R" yChannelSelector="G"/>
+</filter>
+<filter id="hero-grain" x="0" y="0" width="100%" height="100%">
+<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" seed="11" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0.16  0 0 0 0 0.42  0 0 0 0 0.66  2.2 0 0 0 -1.05"/>
+</filter></defs><rect width="1200" height="760" fill="#fbfaf7"/><g transform="translate(0 84)"><ellipse cx="600" cy="300" rx="540" ry="300" fill="#e6f1fa" filter="url(#hero-bloom)"/><ellipse cx="800" cy="150" rx="300" ry="120" fill="#b4d5f0" opacity="0.5" filter="url(#hero-bloom)"/><ellipse cx="300" cy="230" rx="200" ry="70" fill="#b4d5f0" opacity="0.3" filter="url(#hero-bloom)"/><ellipse cx="600" cy="612" rx="560" ry="26" fill="#b4d5f0" opacity="0.5" filter="url(#hero-bloom)"/><g fill="#b4d5f0" opacity="0.85" filter="url(#hero-wash)" style="mix-blend-mode:multiply"><rect x="140" y="440" width="920" height="160"/><rect x="128" y="428" width="944" height="14"/><rect x="140" y="414" width="920" height="16"/>
+<rect x="140" y="392" width="120" height="208"/><rect x="940" y="392" width="120" height="208"/>
+<rect x="132" y="382" width="136" height="12"/><rect x="932" y="382" width="136" height="12"/>
+<path d="M146 384C150 336 250 336 254 384Z"/><path d="M946 384C950 336 1050 336 1054 384Z"/>
+<rect x="193" y="322" width="14" height="20"/><path d="M189 324Q200 310 211 324Z"/><rect x="993" y="322" width="14" height="20"/><path d="M989 324Q1000 310 1011 324Z"/>
+<rect x="420" y="396" width="360" height="204"/><rect x="436" y="402" width="328" height="26"/>
+<path d="M428 404L600 338L772 404Z"/>
+<path d="M574 344L578 326L589 319L596 328L606 317L619 323L626 344Z"/>
+<rect x="466" y="300" width="268" height="100"/><rect x="456" y="292" width="288" height="12"/>
+<rect x="500" y="196" width="200" height="100"/><rect x="490" y="186" width="220" height="12"/><rect x="506" y="170" width="188" height="18"/>
+<path d="M512 172C512 92 556 52 600 36C644 52 688 92 688 172Z"/>
+<rect x="584" y="10" width="32" height="28"/><path d="M578 12Q600 -14 622 12Z"/><rect x="598" y="-34" width="4" height="26"/><circle cx="600" cy="-37" r="5"/>
+<rect x="430" y="584" width="340" height="8"/><rect x="410" y="592" width="380" height="10"/></g><g fill="#74acdf" opacity="0.6" filter="url(#hero-wash)" style="mix-blend-mode:multiply"><path d="M600 36C644 52 688 92 688 172L630 172C632 110 622 64 600 36Z"/>
+<rect x="640" y="196" width="60" height="100"/><rect x="500" y="198" width="200" height="8"/><rect x="668" y="304" width="66" height="96"/>
+<rect x="446" y="428" width="308" height="156"/><path d="M470 400L600 352L730 400Z"/>
+<rect x="140" y="442" width="920" height="10"/><rect x="220" y="392" width="40" height="208"/><rect x="1020" y="392" width="40" height="208"/>
+<path d="M204 341C232 344 250 362 254 384L214 384Z"/><path d="M1004 341C1032 344 1050 362 1054 384L1014 384Z"/>
+<rect x="602" y="10" width="14" height="28"/></g><g fill="#e6f1fa" opacity="0.95" filter="url(#hero-wash)"><rect x="448.0" y="430" width="16" height="154"/><rect x="445.0" y="426" width="22" height="6"/><rect x="489.1" y="430" width="16" height="154"/><rect x="486.1" y="426" width="22" height="6"/><rect x="530.3" y="430" width="16" height="154"/><rect x="527.3" y="426" width="22" height="6"/><rect x="571.4" y="430" width="16" height="154"/><rect x="568.4" y="426" width="22" height="6"/><rect x="612.6" y="430" width="16" height="154"/><rect x="609.6" y="426" width="22" height="6"/><rect x="653.7" y="430" width="16" height="154"/><rect x="650.7" y="426" width="22" height="6"/><rect x="694.8" y="430" width="16" height="154"/><rect x="691.8" y="426" width="22" height="6"/><rect x="736.0" y="430" width="16" height="154"/><rect x="733.0" y="426" width="22" height="6"/></g><g fill="#2a6aa8" opacity="0.55" filter="url(#hero-wash)" style="mix-blend-mode:multiply"><path d="M519 270V232A4 4 0 0 1 527 232V270Z"/><path d="M541 270V232A4 4 0 0 1 549 232V270Z"/><path d="M563 270V232A4 4 0 0 1 571 232V270Z"/><path d="M585 270V232A4 4 0 0 1 593 232V270Z"/><path d="M607 270V232A4 4 0 0 1 615 232V270Z"/><path d="M629 270V232A4 4 0 0 1 637 232V270Z"/><path d="M651 270V232A4 4 0 0 1 659 232V270Z"/><path d="M673 270V232A4 4 0 0 1 681 232V270Z"/><path d="M276 552V522A8 8 0 0 1 292 522V552Z"/><rect x="276" y="458" width="16" height="26"/><path d="M316 552V522A8 8 0 0 1 332 522V552Z"/><rect x="316" y="458" width="16" height="26"/><path d="M356 552V522A8 8 0 0 1 372 522V552Z"/><rect x="356" y="458" width="16" height="26"/><path d="M396 552V522A8 8 0 0 1 412 522V552Z"/><rect x="396" y="458" width="16" height="26"/><path d="M788 552V522A8 8 0 0 1 804 522V552Z"/><rect x="788" y="458" width="16" height="26"/><path d="M828 552V522A8 8 0 0 1 844 522V552Z"/><rect x="828" y="458" width="16" height="26"/><path d="M868 552V522A8 8 0 0 1 884 522V552Z"/><rect x="868" y="458" width="16" height="26"/><path d="M908 552V522A8 8 0 0 1 924 522V552Z"/><rect x="908" y="458" width="16" height="26"/><path d="M186 552V492A14 14 0 0 1 214 492V552Z"/><path d="M986 552V492A14 14 0 0 1 1014 492V552Z"/><rect x="186" y="452" width="28" height="22"/><rect x="986" y="452" width="28" height="22"/><rect x="586" y="512" width="28" height="72"/><rect x="590" y="16" width="6" height="16"/><rect x="604" y="16" width="6" height="16"/><ellipse cx="556" cy="134" rx="6" ry="9"/><ellipse cx="600" cy="126" rx="6" ry="9"/><ellipse cx="644" cy="134" rx="6" ry="9"/></g><g fill="none" stroke="#2a6aa8" stroke-linecap="round" opacity="0.8" filter="url(#hero-ink)"><path d="M448.0 432V584M464.0 432V584M489.1 432V584M505.1 432V584M530.3 432V584M546.3 432V584M571.4 432V584M587.4 432V584M612.6 432V584M628.6 432V584M653.7 432V584M669.7 432V584M694.8 432V584M710.8 432V584M736.0 432V584M752.0 432V584" stroke-width="1.6"/><path d="M512 200V294M534 200V294M556 200V294M578 200V294M600 200V294M622 200V294M644 200V294M666 200V294M688 200V294" stroke-width="3.2"/><path d="M600 38V172M572 50C550 80 542 120 544 172M628 50C650 80 658 120 656 172M552 72C534 100 528 140 529 172M648 72C666 100 672 140 671 172" stroke-width="2"/><path d="M128 442H1072M456 304H744M490 198H710M436 428H764" stroke-width="2"/><path d="M428 404L600 338L772 404" stroke-width="2.4"/><path d="M466 400L600 350L734 400" stroke-width="1.4"/><path d="M140 414V600M1060 414V600M260 394V600M940 394V600" stroke-width="1.6"/><path d="M40 602Q600 612 1160 602" stroke-width="2.4"/></g></g><rect width="1200" height="760" filter="url(#hero-grain)" opacity="0.35" style="mix-blend-mode:multiply"/></svg>

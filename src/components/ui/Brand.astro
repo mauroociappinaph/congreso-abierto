@@ -1,0 +1,56 @@
+---
+// Congreso Abierto lockup: the simple monochrome seal of design/logo-congreso-abierto/03-sello.html (the building cut
+// out of a solid --ink circle; the ring text of the full seal is unreadable below 96px) plus the name as HTML text, so
+// it scales with the type and reads with a screen reader. Links to the home page.
+interface Props {
+  tagline?: string;
+}
+
+const { tagline } = Astro.props;
+---
+
+<a class="brand" href="/">
+  <svg class="mark" viewBox="0 0 200 200" width="40" height="40" aria-hidden="true" focusable="false"><defs><clipPath id="brand-seal-c"><circle cx="100" cy="100" r="83"/></clipPath><mask id="brand-seal-m" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200"><circle cx="100" cy="100" r="96" fill="#fff"/><circle cx="100" cy="100" r="86" fill="none" stroke="#000" stroke-width="3"/><g clip-path="url(#brand-seal-c)"><g transform="translate(100 100) scale(1.1) translate(-100 -86)"><g fill="#000"><rect x="50" y="121" width="100" height="17"/><rect x="48" y="118.5" width="104" height="3"/><rect x="50" y="114" width="12" height="24"/><rect x="138" y="114" width="12" height="24"/><path d="M49.5 114.5C50.5 106 61.5 106 62.5 114.5Z"/><path d="M137.5 114.5C138.5 106 149.5 106 150.5 114.5Z"/><rect x="55.3" y="104.5" width="1.4" height="4"/><rect x="143.3" y="104.5" width="1.4" height="4"/><rect x="76" y="112" width="48" height="26"/><path d="M75 112.5L100 101.5L125 112.5Z"/><rect x="80" y="96" width="40" height="9"/><rect x="79" y="94.5" width="42" height="2"/><rect x="85" y="80" width="30" height="15"/><rect x="83.5" y="78" width="33" height="2.5"/><path d="M86.5 78.5C86.5 62 93 54 100 50C107 54 113.5 62 113.5 78.5Z"/><rect x="97" y="43" width="6" height="8"/><path d="M96 43.5Q100 38.5 104 43.5Z"/><rect x="99.4" y="34" width="1.2" height="6"/><rect x="72" y="136" width="56" height="2.6"/></g><g fill="none" stroke="#fff" stroke-linecap="round"><path d="M82.5 114V135.5M89.5 114V135.5M96.5 114V135.5M103.5 114V135.5M110.5 114V135.5M117.5 114V135.5" stroke-width="2.38"/><path d="M88 81V95M92 81V95M96 81V95M100 81V95M104 81V95M108 81V95M112 81V95" stroke-width="1.54"/><path d="M100 51V78.5M93.5 55Q90 64 91.5 78.5M106.5 55Q110 64 108.5 78.5" stroke-width="1.26"/><path d="M50 121.6H150M80 97H120" stroke-width="0.98"/><path d="M83 111.6L100 104L117 111.6" stroke-width="0.98"/><path d="M46 138.6H154" stroke-width="1.68"/></g><g fill="#fff"><rect x="65" y="125.5" width="2.5" height="5"/><rect x="70.5" y="125.5" width="2.5" height="5"/><rect x="127" y="125.5" width="2.5" height="5"/><rect x="132.5" y="125.5" width="2.5" height="5"/><rect x="54.8" y="124" width="2.4" height="7"/><rect x="142.8" y="124" width="2.4" height="7"/><rect x="98.6" y="128" width="2.8" height="8"/></g></g></g></mask></defs><rect width="200" height="200" fill="var(--ink)" mask="url(#brand-seal-m)"/></svg>
+  <span class="text">
+    <span class="name"><b>Congreso</b> Abierto</span>
+    {tagline && <small>{tagline}</small>}
+  </span>
+</a>
+
+<style>
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .brand:hover {
+    color: var(--ink);
+  }
+
+  .mark {
+    flex: none;
+  }
+
+  .name {
+    display: block;
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: var(--text-xl);
+    line-height: 1.2;
+  }
+
+  .name b {
+    font-weight: 700;
+  }
+
+  small {
+    display: block;
+    font-family: var(--sans);
+    font-size: var(--text-2xs);
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+</style>

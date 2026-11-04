@@ -41,12 +41,24 @@ export interface LinkQuality {
   rows: PolicyCounts & { linkedPercent: number };
   doubtful: { nombre: string; lugar: string; candidates: PolicyCandidate[] }[];
   unmatched: { nombre: string; lugar: string }[];
+  // authors that are not people (the Executive, committees, official bodies): left out of `names` and `rows`;
+  // present only when the source has any
+  institutional?: InstitutionalAuthors;
+}
+
+export interface InstitutionalAuthors {
+  // distinct names and every row recorded as institutional
+  names: number;
+  rows: number;
+  authors: { nombre: string; origen: string; rows: number }[];
 }
 
 export interface PolicyLinker {
   link: (rawName: string, lugar?: string) => PolicyLink;
   // The same link in the shape the pure source modules expect: only current legislators carry an id.
   linkFn: (rawName: string, lugar?: string) => LinkResult;
+  // Records an institutional author (see institutionalOrigin) without linking it: never a legislator.
+  linkInstitutional: (rawName: string, origen: string) => LinkResult;
   quality: () => LinkQuality;
 }
 
@@ -67,6 +79,19 @@ export interface Period {
 export function policyStatus(link: PolicyLink): PolicyStatus {
   if (link.status !== 'matched') return link.status;
   return link.current ? 'matched-current' : 'matched-former';
+}
+
+// Origin code of a bill's expediente ("0223-PE-2026") when it was filed by the Executive or an official body,
+// whose AUTOR is the signing official (President, minister) or the committee it went to, not a legislator.
+const INSTITUTIONAL_ORIGINS: Record<string, string> = {
+  PE: 'Poder Ejecutivo',
+  JGM: 'Jefatura de Gabinete de Ministros',
+  OV: 'Oficiales varios',
+};
+
+export function institutionalOrigin(expediente: string): string | null {
+  const code = expediente.trim().match(/^\d+-([A-Z]+)-\d{4}$/)?.[1];
+  return (code && INSTITUTIONAL_ORIGINS[code]) || null;
 }
 
 // "DIP. TAIANA JORGE", "DIPUTADA NACIONAL ...", "SEN. ...", "SENADORA ..."
@@ -93,6 +118,7 @@ export function createPolicyLinker(entries: PolicyEntry[], idOf?: (rawName: stri
   const linker = createLinker(entries.map(e => ({ id: e.personId, nombre: e.nombre, lugar: e.lugar })));
   const names = new Map<string, { nombre: string; lugar: string; link: PolicyLink }>();
   const rows = zero();
+  const institutional = new Map<string, { nombre: string; origen: string; rows: number }>();
 
   const resolve = (rawName: string, lugar: string): PolicyLink => {
     const known = idOf?.(rawName, lugar);
@@ -129,11 +155,20 @@ export function createPolicyLinker(entries: PolicyEntry[], idOf?: (rawName: stri
       const { status, deputyId, confidence, candidates } = link(rawName, lugar);
       return { status, deputyId, confidence, candidates: candidates.map(c => ({ id: c.personId, confidence: c.confidence })) };
     },
+    linkInstitutional(rawName, origen) {
+      const nombre = stripPrefix(rawName);
+      const key = `${nameKey(nombre)}|${origen}`;
+      const seen = institutional.get(key);
+      if (seen) seen.rows++;
+      else institutional.set(key, { nombre, origen, rows: 1 });
+      return { status: 'unmatched', deputyId: null, confidence: 0, candidates: [] };
+    },
     quality() {
       const counts = zero();
       for (const { link: l } of names.values()) counts[COUNT_KEY[policyStatus(l)]]++;
       counts.total = names.size;
       const outcomes = [...names.values()];
+      const authors = [...institutional.values()].sort((a, b) => byNombre(a, b) || a.origen.localeCompare(b.origen, 'es'));
       return {
         names: counts,
         rows: { ...rows, linkedPercent: percent(rows.matchedCurrent + rows.matchedFormer, rows.total) },
@@ -142,6 +177,13 @@ export function createPolicyLinker(entries: PolicyEntry[], idOf?: (rawName: stri
           .map(o => ({ nombre: o.nombre, lugar: o.lugar, candidates: o.link.candidates }))
           .sort(byNombre),
         unmatched: outcomes.filter(o => o.link.status === 'unmatched').map(o => ({ nombre: o.nombre, lugar: o.lugar })).sort(byNombre),
+        ...(authors.length > 0 && {
+          institutional: {
+            names: new Set(authors.map(a => nameKey(a.nombre))).size,
+            rows: authors.reduce((sum, a) => sum + a.rows, 0),
+            authors,
+          },
+        }),
       };
     },
   };

@@ -249,7 +249,7 @@
   ]},
   "quality": {
     "diputados": {"names":{"matchedCurrent":232,"matchedFormer":118,"doubtful":0,"unmatched":10,"total":360},"rows":{"matchedCurrent":8836,"matchedFormer":5687,"doubtful":0,"unmatched":128,"total":14651,"linkedPercent":99.1},"doubtful":[],"unmatched":[{"nombre":"ADORNI, MANUEL","lugar":""},{"nombre":"ASUNTOS CONSTITUCIONALES","lugar":""},{"nombre":"BICAMERAL DEL DEFENSOR DE LOS DERECHOS DE LAS NIÑAS, NIÑOS Y ADOLESCENTES (LEY 26.061)","lugar":""},{"nombre":"BICAMERAL PERMANENTE DE TRAMITE LEGISLATIVO - LEY 26122","lugar":""},{"nombre":"FRANCOS, GUILLERMO ALBERTO","lugar":""},{"nombre":"H CAMARA DE DIPUTADOS","lugar":""},{"nombre":"MILEI, JAVIER GERARDO","lugar":""},{"nombre":"PARLAMENTARIA MIXTA REVISORA DE CUENTAS","lugar":""},{"nombre":"POSSE, NICOLAS JOSE","lugar":""},{"nombre":"PRESTI, ALBERTO","lugar":""}]},
-    "senado": {"names":{"matchedCurrent":17,"matchedFormer":7,"doubtful":0,"unmatched":3,"total":27},"rows":{"matchedCurrent":23,"matchedFormer":8,"doubtful":0,"unmatched":29,"total":60,"linkedPercent":51.7},"doubtful":[],"unmatched":[{"nombre":"ASUNTOS CONSTITUCIONALES","lugar":""},{"nombre":"MILEI, JAVIER GERARDO","lugar":""},{"nombre":"SANTILLI, DIEGO","lugar":""}]}
+    "senado": {"names":{"matchedCurrent":17,"matchedFormer":7,"doubtful":0,"unmatched":0,"total":24},"rows":{"matchedCurrent":23,"matchedFormer":8,"doubtful":0,"unmatched":0,"total":31,"linkedPercent":100},"doubtful":[],"unmatched":[],"institutional":{"names":3,"rows":29,"authors":[{"nombre":"ASUNTOS CONSTITUCIONALES","origen":"Oficiales varios","rows":13},{"nombre":"MILEI, JAVIER GERARDO","origen":"Poder Ejecutivo","rows":14},{"nombre":"SANTILLI, DIEGO","origen":"Poder Ejecutivo","rows":2}]}}
   },
   "bills": {
     "linked": 8859,

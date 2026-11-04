@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-04T01:34:03.430Z",
+  "generatedAt": "2026-11-04T02:11:00.109Z",
   "sources": {
     "bills": {
-      "fetchedAt": "2026-11-04T01:15:40.160Z",
-      "contentHash": "sha256:10731d5ab764a564a8302025e8337268aec402d2276e791984f450c8a707e6db",
+      "fetchedAt": "2026-11-04T02:11:00.109Z",
+      "contentHash": "sha256:cc9a2a2bd17bee88d22144638bc8cada94a8229a42618e9096d0ffbae42be89b",
       "items": 14711,
       "period": {
         "desde": "2024-01-03",

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createDeputyPolicy, createSenatePolicy, policyStatus, senateIdentities } from './link-policy.ts';
+import { createDeputyPolicy, createSenatePolicy, institutionalOrigin, policyStatus, senateIdentities } from './link-policy.ts';
 import { parseRoster } from './roster.ts';
 
 // Trimmed real roster rows (diputados2.1.csv); PEREZ rows are synthetic, two people with one name.
@@ -150,4 +150,71 @@ test('senateIdentities: official ids, then name and province for former senators
   assert.equal(policyStatus(policy.link('ABAD, MAXIMILIANO DANIEL', 'BUENOS AIRES')), 'matched-current');
   // a bill author without province still reaches the former senator by name
   assert.equal(policyStatus(policy.link('LOUSTEAU, MARTIN')), 'matched-former');
+});
+
+test('institutionalOrigin: bills filed by the Executive or official bodies, by the expediente origin code', () => {
+  // real Senate-origin bills (proyectos_parlamentarios2.6.csv, since 2024-01-01)
+  assert.equal(institutionalOrigin('0223-PE-2026'), 'Poder Ejecutivo');
+  assert.equal(institutionalOrigin('0244-PE-2026'), 'Poder Ejecutivo');
+  assert.equal(institutionalOrigin('0031-OV-2026'), 'Oficiales varios');
+  assert.equal(institutionalOrigin('0012-JGM-2025'), 'Jefatura de Gabinete de Ministros');
+  for (const expediente of ['0320-S-2026', '5242-D-2026', '0010-CD-2025', '', 'PE']) assert.equal(institutionalOrigin(expediente), null);
+});
+
+test('senate bill authors: every senator links; the Executive and committees are institutional, outside the denominator', () => {
+  const current = [
+    { id: 'sen-540', nombre: 'MENDOZA, SANDRA MARIELA', lugar: 'TUCUMÁN' },
+    { id: 'sen-546', nombre: 'ABAD, MAXIMILIANO', lugar: 'BUENOS AIRES' },
+  ];
+  const votes = [{ nombre: 'BLANCO, PABLO DANIEL', senadorId: null, provincia: 'TIERRA DEL FUEGO, ANTÁRTIDA E ISLAS DEL ATLÁNTICO SUR' }];
+  const policy = createSenatePolicy(current, senateIdentities(votes, current).former);
+  // real AUTOR and expediente pairs of Senate-origin bills
+  const bills = [
+    ['MENDOZA, SANDRA MARIELA', '0320-S-2026'],
+    ['MENDOZA, SANDRA MARIELA', '0252-S-2026'],
+    ['ABAD, MAXIMILIANO', '0096-S-2026'],
+    ['BLANCO, PABLO DANIEL', '1720-S-2025'],
+    ['MILEI, JAVIER GERARDO', '0223-PE-2026'],
+    ['MILEI, JAVIER GERARDO', '0159-PE-2025'],
+    ['SANTILLI, DIEGO', '0244-PE-2026'],
+    ['ASUNTOS CONSTITUCIONALES', '0031-OV-2026'],
+  ];
+  const results = bills.map(([autor, expediente]) => {
+    const origen = institutionalOrigin(expediente);
+    return origen ? policy.linkInstitutional(autor, origen) : policy.linkFn(autor);
+  });
+  assert.deepEqual(results.map(r => [r.status, r.deputyId]), [
+    ['matched', 'sen-540'],
+    ['matched', 'sen-540'],
+    ['matched', 'sen-546'],
+    ['matched', null],
+    ['unmatched', null],
+    ['unmatched', null],
+    ['unmatched', null],
+    ['unmatched', null],
+  ]);
+  assert.deepEqual(policy.quality(), {
+    names: { matchedCurrent: 2, matchedFormer: 1, doubtful: 0, unmatched: 0, total: 3 },
+    rows: { matchedCurrent: 3, matchedFormer: 1, doubtful: 0, unmatched: 0, total: 4, linkedPercent: 100 },
+    doubtful: [],
+    unmatched: [],
+    institutional: {
+      names: 3,
+      rows: 4,
+      authors: [
+        { nombre: 'ASUNTOS CONSTITUCIONALES', origen: 'Oficiales varios', rows: 1 },
+        { nombre: 'MILEI, JAVIER GERARDO', origen: 'Poder Ejecutivo', rows: 2 },
+        { nombre: 'SANTILLI, DIEGO', origen: 'Poder Ejecutivo', rows: 1 },
+      ],
+    },
+  });
+});
+
+test('an institutional author is never linked to a legislator with the same name', () => {
+  const current = [{ id: 'sen-900', nombre: 'SANTILLI, DIEGO', lugar: 'BUENOS AIRES' }];
+  const policy = createSenatePolicy(current, []);
+  assert.deepEqual(policy.linkInstitutional('SANTILLI, DIEGO', 'Poder Ejecutivo'), { status: 'unmatched', deputyId: null, confidence: 0, candidates: [] });
+  assert.equal(policyStatus(policy.link('SANTILLI, DIEGO')), 'matched-current');
+  const quality = policy.quality();
+  assert.deepEqual([quality.rows.total, quality.names.total, quality.institutional?.rows], [1, 1, 1]);
 });

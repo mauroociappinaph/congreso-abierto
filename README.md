@@ -37,6 +37,26 @@ Requires Node 22.12 or newer.
 
 The full build downloads every source once (loaders are memoized) and peaks at about 1.5 GB of memory, mostly parsing the 32 MB bills CSV; give Node that much on CI.
 
+## Data updates
+
+The site is static: every build fetches the official sources, so the data is as fresh as the last build.
+
+| Workflow | When | What it does |
+| --- | --- | --- |
+| `.github/workflows/ci.yml` | Every push and pull request | `npm ci`, `npm test`, `npm run check`, `npm run build` with live data |
+| `.github/workflows/weekly-data.yml` | Mondays 09:00 UTC (06:00 in Argentina), or manually from the Actions tab | Runs the tests, refreshes the Senate snapshot, builds with live data, uploads `dist/` as the `site` artifact (14 days), and commits `src/data/senado-actas.json` / `src/data/senadores.json` when their content changed |
+
+Notes:
+
+- GitHub runs scheduled workflows only on the default branch, and only once the repository is on GitHub.
+- The weekly job pushes with the built-in `GITHUB_TOKEN`; protected branches must allow `github-actions[bot]` to push, or the commit step fails.
+- A red weekly run means `npm ci` or the tests failed, an HCDN source was down (the build fails loudly), or the push was rejected (including a rebase conflict with a commit pushed during the run); a Senate outage falls back to the committed cache, and the run summary reports whether the snapshot refresh failed.
+- GitHub disables scheduled workflows in public repositories after 60 days without activity; re-enable it from the Actions tab.
+- The weekly job keeps `src/data/senadores.json` only when the senators changed, not just its date; `scripts/weekly-workflow.test.ts` (part of `npm test`) runs that rule under `bash -eo pipefail` as GitHub does.
+- Deploying the built site is not wired yet: pick a host (GitHub Pages, Vercel, Netlify) and add its deploy step after the build.
+
+Observed publishing rhythm of the sources: Senate votes after every session; bills and movements frequently; committees and blocs when they change; pay when the amounts change; domestic trips and official missions once per semester, about two months after it ends.
+
 ## Algorithms
 
 - **Record linkage** (`src/lib/linkage.ts`): trip files name deputies as `APELLIDO NOMBRES` with full given names; the composition uses `Apellido, Nombres` with short ones. Names are accent-stripped, tokenized and compared word by word with Jaro-Winkler: every surname token must match one of the first trip tokens, and given names (or initials) must match distinct remaining tokens. The confidence score mixes the share of matched tokens and their average similarity. A row is assigned only when the best candidate scores at least 0.9 and beats the runner-up by 0.05; ties and low scores are reported as doubtful and never assigned. The Viajes tab shows the match rate and the doubtful list.

@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Sistema de diseño · Gastos y trabajo legislativo</title>
+<style>
+  /* Tokens copied from src/styles/tokens.css */
+  :root {
+    color-scheme: light;
+    --ink: #1c1b19;
+    --muted: #55524b;
+    --placeholder: #76726a;
+    --paper: #fbfaf7;
+    --surface: #ffffff;
+    --canvas: #e9e6df;
+    --line: #d9d5cc;
+    --line-soft: #ebe8e1;
+    --accent: #1f4e79;
+    --accent-ink: #163a5c;
+    --accent-soft: #e8eef5;
+    --focus: #1f4e79;
+    --flag: #8a3b12;
+    --flag-soft: #f7ebe3;
+    --flag-line: #e2c3ae;
+    --quality: #2f6b3a;
+    --quality-soft: #e7f1e8;
+    --quality-line: #bfd8c3;
+    --highlight: #fde9a8;
+    --row-current: #f3f6fa;
+    --badge: #f1efe9;
+    --chart: #1f4e79;
+    --chart-muted: #7a94ad;
+    --bloc-1: #1e3a8a;
+    --bloc-2: #0f766e;
+    --bloc-3: #6d28d9;
+    --bloc-4: #be123c;
+    --bloc-5: #b45309;
+    --bloc-other: #55524b;
+    --serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --text-2xs: 11px;
+    --text-xs: 12px;
+    --text-sm: 13px;
+    --text-md: 15px;
+    --text-lg: 16px;
+    --text-xl: 20px;
+    --text-2xl: 24px;
+    --text-3xl: 32px;
+    --text-4xl: 38px;
+    --leading: 1.45;
+    --leading-tight: 1.1;
+    --tracking-caps: 0.08em;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 28px;
+    --space-8: 40px;
+    --page-max: 1200px;
+    --radius-sm: 3px;
+    --radius-md: 4px;
+    --radius: 6px;
+    --radius-lg: 8px;
+    --radius-pill: 999px;
+    --shadow-card: 0 1px 2px rgba(28, 27, 25, 0.06);
+    --shadow-raised: 0 6px 18px rgba(28, 27, 25, 0.1);
+    --shadow-popover: 0 10px 30px rgba(28, 27, 25, 0.1);
+    --focus-ring: 3px solid var(--focus);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { background: var(--paper); }
+  body {
+    margin: 0;
+    width: 1440px;
+    font-family: var(--sans);
+    font-size: var(--text-md);
+    line-height: var(--leading);
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; line-height: 1.2; }
+  a { color: var(--accent); text-underline-offset: 2px; }
+  a:hover { color: var(--accent-ink); }
+  :focus-visible { outline: var(--focus-ring); outline-offset: 2px; border-radius: var(--radius-sm); }
+  kbd {
+    font-family: var(--mono); font-size: var(--text-2xs);
+    border: 1px solid var(--line); border-bottom-width: 2px; border-radius: var(--radius-sm);
+    padding: 0 4px; color: var(--muted); background: var(--surface);
+  }
+  mark { background: var(--highlight); color: inherit; padding: 0 1px; }
+  table { border-collapse: collapse; width: 100%; font-size: var(--text-sm); }
+  th, td { padding: 7px 8px; border-bottom: 1px solid var(--line-soft); text-align: left; vertical-align: top; }
+  th {
+    font-size: var(--text-2xs); letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600; border-bottom-color: var(--line);
+  }
+  caption { text-align: left; font-size: var(--text-xs); color: var(--muted); padding-bottom: var(--space-1); }
+  button, select, input { font: inherit; color: inherit; }
+  .eyebrow {
+    font-size: var(--text-2xs); letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600; margin: 0 0 var(--space-1);
+  }
+  .tag {
+    display: inline-block; font-size: var(--text-2xs); padding: 1px 7px; border-radius: var(--radius-pill);
+    border: 1px solid var(--line); color: var(--muted); background: var(--surface); white-space: nowrap;
+  }
+  .tag.flag { border-color: var(--flag-line); background: var(--flag-soft); color: var(--flag); }
+  .tag.ok { border-color: var(--quality-line); background: var(--quality-soft); color: var(--quality); }
+
+  /* Artboard frame */
+  .wrap { max-width: var(--page-max); margin: 0 auto; padding: var(--space-8) 0; }
+  .board-head { margin-bottom: var(--space-8); }
+  .board-head h1 { font-size: var(--text-4xl); margin: 0 0 var(--space-2); }
+  .board-head p { margin: 0; color: var(--muted); }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px 20px; margin-bottom: var(--space-5);
+  }
+  .card > h2 { font-size: var(--text-xl); margin: 0 0 10px; }
+  .src { font-size: var(--text-xs); color: var(--muted); margin: var(--space-3) 0 0; }
+  code { font-family: var(--mono); font-size: var(--text-xs); }
+
+  /* Swatches */
+  .group-title { margin: var(--space-4) 0 var(--space-2); }
+  .swatches { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--space-3); }
+  .swatch { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+  .swatch .chip-color { height: 56px; border-bottom: 1px solid var(--line-soft); }
+  .swatch .meta { padding: var(--space-2); font-size: var(--text-xs); }
+  .swatch .meta code { display: block; color: var(--ink); }
+  .swatch .meta span { color: var(--muted); }
+
+  /* Type */
+  .type-row { display: grid; grid-template-columns: 180px 1fr; gap: var(--space-4); align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--line-soft); }
+  .type-row:last-child { border-bottom: 0; }
+  .type-row code { color: var(--muted); }
+  .stacks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); margin-bottom: var(--space-4); }
+  .stack { border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-3) var(--space-4); }
+  .stack .sample { font-size: var(--text-2xl); margin: var(--space-1) 0; }
+
+  /* Space, radius, shadow */
+  .three { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: var(--space-5); }
+  .space-row { display: grid; grid-template-columns: 90px 50px 1fr; gap: var(--space-3); align-items: center; font-size: var(--text-xs); padding: 3px 0; }
+  .space-bar { height: 12px; background: var(--chart); }
+  .radius-grid, .shadow-grid { display: grid; gap: var(--space-4); }
+  .radius-grid { grid-template-columns: repeat(3, 1fr); }
+  .radius-box { height: 64px; border: 2px solid var(--ink); background: var(--accent-soft); }
+  .label-sm { font-size: var(--text-xs); color: var(--muted); margin-top: var(--space-1); }
+  .shadow-box { height: 64px; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--line-soft); }
+
+  /* Components: Chip (src/components/ui/Chip.astro) */
+  .chip-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .chip {
+    display: inline-flex; align-items: baseline; gap: 6px; max-width: 100%;
+    padding: 5px 10px; border: 1px solid var(--line); border-radius: var(--radius-pill);
+    background: var(--surface); color: var(--ink); text-decoration: none; font-size: var(--text-sm); line-height: 1.3;
+  }
+  .chip.sm { padding: 1px 7px; font-size: var(--text-xs); background: var(--paper); }
+  a.chip:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-ink); }
+  .chip.current { border-color: var(--ink); font-weight: 600; }
+  .chip .type { font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+  .chip .cmeta { color: var(--muted); font-size: var(--text-xs); }
+
+  /* StatTile (src/components/ui/StatTile.astro) */
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-4) var(--space-6); margin: var(--space-1) 0 var(--space-3); }
+  .stat dt { font-size: var(--text-xs); color: var(--muted); }
+  .stat dd { margin: 2px 0 0; }
+  .stat .value { font-family: var(--serif); font-weight: 600; line-height: var(--leading-tight); }
+  .stat.lg .value { font-size: var(--text-3xl); }
+  .stat.md .value { font-size: var(--text-xl); }
+  .stat.flag .value { color: var(--flag); }
+  .stat.ok .value { color: var(--quality); }
+  .stat .unit { font-size: var(--text-sm); color: var(--muted); }
+  .stat small { display: block; margin-top: 3px; font-size: var(--text-2xs); color: var(--muted); }
+
+  /* Quality box (src/styles/shared.css) */
+  .box {
+    border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius);
+    padding: var(--space-3) var(--space-4); margin-bottom: var(--space-5); font-size: var(--text-sm);
+  }
+  .box.quality { border-color: var(--quality-line); background: var(--quality-soft); }
+  .box p { margin: 0 0 var(--space-2); }
+  .box ul { margin: 0 0 var(--space-2); padding-left: var(--space-5); }
+
+  /* SearchBox (src/components/ui/SearchBox.astro) */
+  .search label { display: block; font-size: var(--text-xs); font-weight: 600; margin-bottom: 6px; }
+  .search .sbox {
+    display: flex; align-items: center; gap: 10px; background: var(--surface);
+    border: 1px solid var(--placeholder); border-radius: var(--radius); padding: 6px 10px;
+  }
+  .search.hero .sbox { border: 2px solid var(--ink); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); }
+  .search .sbox:focus-within { outline: var(--focus-ring); outline-offset: 2px; }
+  .search svg { flex: none; }
+  .search svg circle, .search svg path { fill: none; stroke: var(--muted); stroke-width: 2.4; stroke-linecap: round; }
+  .search.hero svg circle, .search.hero svg path { stroke: var(--ink); stroke-width: 2; }
+  .search input { flex: 1; min-width: 0; border: 0; background: transparent; font-size: var(--text-sm); color: var(--ink); }
+  .search.hero input { font-size: var(--text-xl); }
+  .search input:focus-visible { outline: none; }
+  .search input::placeholder { color: var(--placeholder); opacity: 1; }
+  .search .hint { font-size: var(--text-xs); color: var(--muted); margin: 6px 0 0; }
+  .results {
+    margin-top: var(--space-2); background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); box-shadow: var(--shadow-popover); overflow: hidden;
+  }
+  .results .rgroup {
+    font-size: var(--text-2xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+    font-weight: 600; padding: 10px var(--space-4) var(--space-1); margin: 0;
+  }
+  .results ul { list-style: none; margin: 0; padding: 0; }
+  .results .option { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; padding: 7px var(--space-4); }
+  .results .option[aria-selected='true'] { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+  .results .badge {
+    width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+    font-size: var(--text-2xs); font-weight: 700; background: var(--accent-soft); color: var(--accent-ink);
+  }
+  .results .name, .results .rmeta { display: block; }
+  .results .rmeta, .results .right { font-size: var(--text-xs); color: var(--muted); }
+  .results .foot { margin: 0; border-top: 1px solid var(--line-soft); padding: var(--space-2) var(--space-4); font-size: var(--text-xs); color: var(--muted); }
+
+  /* DataTable row (src/components/ui/DataTable.astro) */
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  tr.current td { background: var(--row-current); }
+  tr.current td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+
+  /* Pager (src/components/ui/Pager.astro) */
+  .pager { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); align-items: center; margin: var(--space-3) 0 0; font-size: var(--text-sm); }
+  .pager .status { margin: 0; font-size: var(--text-xs); color: var(--muted); flex: 1 1 100%; }
+  .pager .pages { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .pager button {
+    min-width: 32px; min-height: 32px; padding: 4px 8px; border: 1px solid var(--line);
+    border-radius: var(--radius-md); background: var(--surface); color: var(--ink); font-size: var(--text-sm); cursor: pointer;
+  }
+  .pager button:hover { border-color: var(--accent); background: var(--accent-soft); }
+  .pager button[aria-current='page'] { border-color: var(--ink); background: var(--ink); color: var(--surface); font-weight: 600; }
+  .pager button[aria-disabled='true'] { color: var(--placeholder); border-color: var(--line-soft); background: var(--surface); cursor: default; }
+  .pager .gap { padding: 0 2px; color: var(--muted); }
+  .pager .size { display: flex; gap: 6px; align-items: center; font-size: var(--text-xs); }
+  .pager select { font-size: var(--text-sm); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 4px 8px; background: var(--surface); color: var(--ink); }
+
+  .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+  .comp-grid .card { margin-bottom: 0; }
+  .stack-v > * + * { margin-top: var(--space-4); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    a.chip { transition: background-color 0.12s ease, border-color 0.12s ease; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="board-head">
+    <p class="eyebrow">Sistema de diseño · sincronizado desde el código</p>
+    <h1>Gastos y trabajo legislativo</h1>
+    <p>Tokens de <code>src/styles/tokens.css</code> y <code>src/styles/shared.css</code>; componentes de <code>src/components/ui/</code>.</p>
+  </header>
+
+  <section class="card" aria-labelledby="t-color">
+    <h2 id="t-color">Color</h2>
+    <h3 class="eyebrow group-title">Base</h3>
+    <div class="swatches">
+      <div class="swatch"><div class="chip-color" style="background:var(--ink)"></div><div class="meta"><code>--ink</code><span>#1c1b19</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--muted)"></div><div class="meta"><code>--muted</code><span>#55524b</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--placeholder)"></div><div class="meta"><code>--placeholder</code><span>#76726a</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--paper)"></div><div class="meta"><code>--paper</code><span>#fbfaf7</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--surface)"></div><div class="meta"><code>--surface</code><span>#ffffff</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--canvas)"></div><div class="meta"><code>--canvas</code><span>#e9e6df</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--line)"></div><div class="meta"><code>--line</code><span>#d9d5cc</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--line-soft)"></div><div class="meta"><code>--line-soft</code><span>#ebe8e1</span></div></div>
+    </div>
+    <h3 class="eyebrow group-title">Acento y foco</h3>
+    <div class="swatches">
+      <div class="swatch"><div class="chip-color" style="background:var(--accent)"></div><div class="meta"><code>--accent</code><span>#1f4e79</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--accent-ink)"></div><div class="meta"><code>--accent-ink</code><span>#163a5c</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--accent-soft)"></div><div class="meta"><code>--accent-soft</code><span>#e8eef5</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--focus)"></div><div class="meta"><code>--focus</code><span>#1f4e79</span></div></div>
+    </div>
+    <h3 class="eyebrow group-title">Estado</h3>
+    <div class="swatches">
+      <div class="swatch"><div class="chip-color" style="background:var(--flag)"></div><div class="meta"><code>--flag</code><span>#8a3b12</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--flag-soft)"></div><div class="meta"><code>--flag-soft</code><span>#f7ebe3</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--flag-line)"></div><div class="meta"><code>--flag-line</code><span>#e2c3ae</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--quality)"></div><div class="meta"><code>--quality</code><span>#2f6b3a</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--quality-soft)"></div><div class="meta"><code>--quality-soft</code><span>#e7f1e8</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--quality-line)"></div><div class="meta"><code>--quality-line</code><span>#bfd8c3</span></div></div>
+    </div>
+    <h3 class="eyebrow group-title">Superficies de estado y gráficos</h3>
+    <div class="swatches">
+      <div class="swatch"><div class="chip-color" style="background:var(--highlight)"></div><div class="meta"><code>--highlight</code><span>#fde9a8</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--row-current)"></div><div class="meta"><code>--row-current</code><span>#f3f6fa</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--badge)"></div><div class="meta"><code>--badge</code><span>#f1efe9</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--chart)"></div><div class="meta"><code>--chart</code><span>#1f4e79</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--chart-muted)"></div><div class="meta"><code>--chart-muted</code><span>#7a94ad</span></div></div>
+    </div>
+    <h3 class="eyebrow group-title">Bloques</h3>
+    <div class="swatches">
+      <div class="swatch"><div class="chip-color" style="background:var(--bloc-1)"></div><div class="meta"><code>--bloc-1</code><span>#1e3a8a</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--bloc-2)"></div><div class="meta"><code>--bloc-2</code><span>#0f766e</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--bloc-3)"></div><div class="meta"><code>--bloc-3</code><span>#6d28d9</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--bloc-4)"></div><div class="meta"><code>--bloc-4</code><span>#be123c</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--bloc-5)"></div><div class="meta"><code>--bloc-5</code><span>#b45309</span></div></div>
+      <div class="swatch"><div class="chip-color" style="background:var(--bloc-other)"></div><div class="meta"><code>--bloc-other</code><span>#55524b</span></div></div>
+    </div>
+    <p class="src">Fuente: src/styles/tokens.css</p>
+  </section>
+
+  <section class="card" aria-labelledby="t-type">
+    <h2 id="t-type">Tipografía</h2>
+    <div class="stacks">
+      <div class="stack"><p class="eyebrow">--serif · títulos y cifras</p><p class="sample" style="font-family:var(--serif);font-weight:600">Diputados y Senado</p><code>ui-serif, Georgia, Cambria…</code></div>
+      <div class="stack"><p class="eyebrow">--sans · texto</p><p class="sample" style="font-family:var(--sans)">Datos oficiales</p><code>system-ui, -apple-system, "Segoe UI"…</code></div>
+      <div class="stack"><p class="eyebrow">--mono · kbd</p><p class="sample" style="font-family:var(--mono)">HCDN 2026</p><code>ui-monospace, SFMono-Regular, Menlo…</code></div>
+    </div>
+    <div class="type-row"><code>--text-4xl · 38px</code><span style="font-size:var(--text-4xl);font-family:var(--serif);font-weight:600;line-height:1.2">Gastos y trabajo legislativo</span></div>
+    <div class="type-row"><code>--text-3xl · 32px</code><span style="font-size:var(--text-3xl);font-family:var(--serif);font-weight:600;line-height:var(--leading-tight)">257 diputados</span></div>
+    <div class="type-row"><code>--text-2xl · 24px</code><span style="font-size:var(--text-2xl)">Viajes nacionales por grupo de distancia</span></div>
+    <div class="type-row"><code>--text-xl · 20px</code><span style="font-size:var(--text-xl);font-family:var(--serif);font-weight:600">Proyectos presentados</span></div>
+    <div class="type-row"><code>--text-lg · 16px</code><span style="font-size:var(--text-lg)">Unión por la Patria, Tucumán</span></div>
+    <div class="type-row"><code>--text-md · 15px</code><span style="font-size:var(--text-md)">Cada sección indica su fuente oficial y su período.</span></div>
+    <div class="type-row"><code>--text-sm · 13px</code><span style="font-size:var(--text-sm)">Comisión de Presupuesto y Hacienda</span></div>
+    <div class="type-row"><code>--text-xs · 12px</code><span style="font-size:var(--text-xs);color:var(--muted)">de 257 diputados · HCDN, vigente</span></div>
+    <div class="type-row"><code>--text-2xs · 11px</code><span class="eyebrow" style="margin:0">Bloque · eyebrow 0.1em</span></div>
+    <p class="src">Fuente: src/styles/tokens.css · leading 1.45, tight 1.1, tracking-caps 0.08em</p>
+  </section>
+
+  <div class="three">
+    <section class="card" aria-labelledby="t-space">
+      <h2 id="t-space">Espaciado</h2>
+      <div class="space-row"><code>--space-1</code><span>4px</span><span class="space-bar" style="width:4px"></span></div>
+      <div class="space-row"><code>--space-2</code><span>8px</span><span class="space-bar" style="width:8px"></span></div>
+      <div class="space-row"><code>--space-3</code><span>12px</span><span class="space-bar" style="width:12px"></span></div>
+      <div class="space-row"><code>--space-4</code><span>16px</span><span class="space-bar" style="width:16px"></span></div>
+      <div class="space-row"><code>--space-5</code><span>20px</span><span class="space-bar" style="width:20px"></span></div>
+      <div class="space-row"><code>--space-6</code><span>24px</span><span class="space-bar" style="width:24px"></span></div>
+      <div class="space-row"><code>--space-7</code><span>28px</span><span class="space-bar" style="width:28px"></span></div>
+      <div class="space-row"><code>--space-8</code><span>40px</span><span class="space-bar" style="width:40px"></span></div>
+      <p class="src">--page-max 1200px · --page-pad clamp(16px, 3vw, 40px) · src/styles/tokens.css</p>
+    </section>
+    <section class="card" aria-labelledby="t-radius">
+      <h2 id="t-radius">Radio</h2>
+      <div class="radius-grid">
+        <div><div class="radius-box" style="border-radius:var(--radius-sm)"></div><p class="label-sm"><code>--radius-sm</code> 3px</p></div>
+        <div><div class="radius-box" style="border-radius:var(--radius-md)"></div><p class="label-sm"><code>--radius-md</code> 4px</p></div>
+        <div><div class="radius-box" style="border-radius:var(--radius)"></div><p class="label-sm"><code>--radius</code> 6px</p></div>
+        <div><div class="radius-box" style="border-radius:var(--radius-lg)"></div><p class="label-sm"><code>--radius-lg</code> 8px</p></div>
+        <div><div class="radius-box" style="border-radius:var(--radius-pill)"></div><p class="label-sm"><code>--radius-pill</code> 999px</p></div>
+      </div>
+      <p class="src">Fuente: src/styles/tokens.css</p>
+    </section>
+    <section class="card" aria-labelledby="t-shadow">
+      <h2 id="t-shadow">Sombras y foco</h2>
+      <div class="shadow-grid">
+        <div><div class="shadow-box" style="box-shadow:var(--shadow-card)"></div><p class="label-sm"><code>--shadow-card</code> 0 1px 2px / 0.06</p></div>
+        <div><div class="shadow-box" style="box-shadow:var(--shadow-raised)"></div><p class="label-sm"><code>--shadow-raised</code> 0 6px 18px / 0.1</p></div>
+        <div><div class="shadow-box" style="box-shadow:var(--shadow-popover)"></div><p class="label-sm"><code>--shadow-popover</code> 0 10px 30px / 0.1</p></div>
+        <div><div class="shadow-box" style="outline:var(--focus-ring);outline-offset:2px;border-radius:var(--radius-sm)"></div><p class="label-sm"><code>--focus-ring</code> 3px solid --focus, offset 2px</p></div>
+      </div>
+      <p class="src">Fuente: src/styles/tokens.css</p>
+    </section>
+  </div>
+
+  <h2 style="font-size:var(--text-2xl);margin:var(--space-8) 0 var(--space-4)">Componentes</h2>
+  <div class="comp-grid">
+    <div class="stack-v">
+      <section class="card" aria-labelledby="c-chip">
+        <h2 id="c-chip">Chip</h2>
+        <ul class="chip-list">
+          <li><a class="chip" href="#c-chip"><span class="type">Bloque</span><span>Unión por la Patria</span><span class="cmeta">92 dip.</span></a></li>
+          <li><a class="chip" href="#c-chip"><span class="type">Provincia</span><span>Tucumán</span></a></li>
+          <li><span class="chip current" aria-current="page"><span class="type">Diputado/a</span><span>Yedlin, Pablo Raúl</span></span></li>
+          <li><a class="chip sm" href="#c-chip"><span>Acción Social y Salud Pública</span><span class="cmeta">Preside</span></a></li>
+        </ul>
+        <p style="margin:var(--space-3) 0 0"><span class="tag">4 misiones</span> <span class="tag ok">Emparejado</span> <span class="tag flag">Sin rendición</span></p>
+        <p class="src">src/components/ui/Chip.astro · .tag en src/styles/tokens.css</p>
+      </section>
+
+      <section class="card" aria-labelledby="c-stat">
+        <h2 id="c-stat">StatTile</h2>
+        <dl class="stat-grid">
+          <div class="stat lg"><dt>Proyectos como primer firmante</dt><dd><span class="value">69</span><small>HCDN, período vigente</small></dd></div>
+          <div class="stat lg flag"><dt>Viajes sin rendición</dt><dd><span class="value">3</span><small>de 12 viajes · HCDN</small></dd></div>
+          <div class="stat md ok"><dt>Emparejado</dt><dd><span class="value">99,1</span><span class="unit"> %</span><small>proyectos con su autor</small></dd></div>
+        </dl>
+        <p class="src">src/components/ui/StatTile.astro · .stat-grid en src/styles/shared.css</p>
+      </section>
+
+      <section class="card" aria-labelledby="c-quality">
+        <h2 id="c-quality">Quality box</h2>
+        <div class="box quality">
+          <p><strong>Calidad del emparejamiento.</strong> 99,1 % de los proyectos se vincularon con su autor por nombre y período.</p>
+          <ul><li>Los nombres se comparan sin tildes.</li><li>Los casos sin coincidencia quedan fuera del ranking.</li></ul>
+        </div>
+        <div class="box" style="margin-bottom:0"><p style="margin:0"><strong>Método.</strong> Se cuentan los proyectos que llegaron al menos a cada etapa.</p></div>
+        <p class="src">.box y .box.quality en src/styles/shared.css</p>
+      </section>
+    </div>
+
+    <div class="stack-v">
+      <section class="card" aria-labelledby="c-search">
+        <h2 id="c-search">SearchBox</h2>
+        <div class="search" role="search">
+          <label for="q1">Compacto</label>
+          <div class="sbox">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+            <input id="q1" type="search" placeholder="Buscar persona, bloque, provincia o comisión" autocomplete="off">
+            <kbd aria-hidden="true">/</kbd>
+          </div>
+        </div>
+        <div class="search hero" role="search" style="margin-top:var(--space-4)">
+          <label for="q2">Hero</label>
+          <div class="sbox">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+            <input id="q2" type="search" value="yedlin" autocomplete="off">
+          </div>
+          <div class="results">
+            <p class="rgroup">Diputados</p>
+            <ul role="listbox" aria-label="Resultados: diputados">
+              <li class="option" role="option" aria-selected="true"><span class="badge" aria-hidden="true">PY</span><span><span class="name"><mark>Yedlin</mark>, Pablo Raúl</span><span class="rmeta">Unión por la Patria · Tucumán</span></span><span class="right">Diputado/a</span></li>
+            </ul>
+            <p class="foot">↑ ↓ mover · Enter abrir · Esc cerrar</p>
+          </div>
+        </div>
+        <p class="src">src/components/ui/SearchBox.astro</p>
+      </section>
+
+      <section class="card" aria-labelledby="c-table">
+        <h2 id="c-table">DataTable y Pager</h2>
+        <table>
+          <caption>Proyectos de Yedlin, Pablo Raúl por etapa (cifras ilustrativas)</caption>
+          <thead><tr><th>Etapa</th><th>Rol</th><th class="num">Proyectos</th><th class="num">Del total</th></tr></thead>
+          <tbody>
+            <tr><td>Presentado</td><td>Cofirmante</td><td class="num">112</td><td class="num">100 %</td></tr>
+            <tr class="current"><td><strong>Presentado</strong></td><td>Primer firmante</td><td class="num">69</td><td class="num">100 %</td></tr>
+            <tr><td>Con dictamen</td><td>Primer firmante</td><td class="num">9</td><td class="num">13,0 %</td></tr>
+          </tbody>
+        </table>
+        <nav class="pager" aria-label="Paginación de diputados">
+          <p class="status" aria-live="polite">Mostrando 26–50 de 257 diputados</p>
+          <div class="pages">
+            <button type="button">Anterior</button>
+            <button type="button">1</button>
+            <button type="button" aria-current="page">2</button>
+            <button type="button">3</button>
+            <span class="gap">…</span>
+            <button type="button">11</button>
+            <button type="button">Siguiente</button>
+          </div>
+          <label class="size">Por página
+            <select><option>25</option><option>50</option><option>100</option><option value="0">Todos</option></select>
+          </label>
+        </nav>
+        <p class="src">src/components/ui/DataTable.astro · src/components/ui/Pager.astro</p>
+      </section>
+    </div>
+  </div>
+</main>
+</body>
+</html>

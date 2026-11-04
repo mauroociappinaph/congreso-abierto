@@ -1,0 +1,1451 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Congreso Abierto · Logo 01 · Acuarela: la cúpula pintada</title>
+<style>
+:root {
+  --ink: #1c1b19; --muted: #55524b; --placeholder: #76726a; --paper: #fbfaf7; --surface: #ffffff;
+  --line: #d9d5cc; --line-soft: #ebe8e1; --accent: #1f4e79; --accent-ink: #163a5c; --accent-soft: #e8eef5; --focus: #1f4e79;
+  --flag: #8a3b12; --flag-soft: #f7ebe3; --flag-line: #e2c3ae; --quality: #2f6b3a; --quality-soft: #e7f1e8; --quality-line: #bfd8c3;
+  /* PROPUESTA: familia celeste de marca, todavía no está en design/system.md */
+  --celeste-soft: #e4f0fa; --celeste-light: #b5d4f0; --celeste: #74acdf; --celeste-deep: #3876b0;
+  --serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --text-2xs: 11px; --text-xs: 12px; --text-sm: 13px; --text-md: 15px; --text-xl: 20px; --text-2xl: 24px; --text-4xl: 38px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-7: 28px; --space-8: 40px;
+  --radius-sm: 3px; --radius-md: 4px; --radius: 6px; --radius-lg: 8px; --radius-pill: 999px;
+  --shadow-popover: 0 10px 30px rgba(28, 27, 25, 0.1);
+  --focus-ring: 3px solid var(--focus);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--paper); color: var(--ink); }
+body { font-family: var(--sans); font-size: var(--text-md); line-height: 1.45; font-variant-numeric: tabular-nums; }
+h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; line-height: 1.2; margin: 0; }
+a { color: var(--accent); }
+:focus-visible { outline: var(--focus-ring); outline-offset: 2px; border-radius: var(--radius-sm); }
+.wrap { width: 1440px; margin: 0 auto; padding: var(--space-8) 120px; }
+.eyebrow { font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; color: var(--muted); margin: 0 0 var(--space-2); }
+.lede { max-width: 760px; color: var(--muted); margin: var(--space-3) 0 0; }
+.note { font-size: var(--text-xs); color: var(--muted); margin: var(--space-2) 0 0; }
+.tag { display: inline-block; border-radius: var(--radius-pill); font-size: var(--text-2xs); padding: 1px 7px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); }
+.tag.flag { color: var(--flag); background: var(--flag-soft); border-color: var(--flag-line); }
+.tag.ok { color: var(--quality); background: var(--quality-soft); border-color: var(--quality-line); }
+.top { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-6); margin-bottom: var(--space-8); }
+.top h1 { font-size: var(--text-4xl); }
+section.block { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px 24px; margin-bottom: var(--space-8); }
+section.block > h2 { font-size: var(--text-xl); margin-bottom: var(--space-1); }
+section.block > .head { display: flex; align-items: baseline; gap: var(--space-3); }
+.num { font-family: var(--serif); font-weight: 700; color: var(--accent); }
+.hero-fig { margin: var(--space-5) 0 0; }
+.hero-fig svg { display: block; width: 100%; height: auto; border-radius: var(--radius); }
+figcaption { font-size: var(--text-xs); color: var(--muted); margin-top: var(--space-2); }
+.swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); margin-top: var(--space-5); }
+.sw { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.sw .chip { height: 92px; display: flex; align-items: flex-end; padding: var(--space-3); font-weight: 600; font-size: var(--text-sm); }
+.sw dl { margin: 0; padding: var(--space-3); font-size: var(--text-xs); display: grid; grid-template-columns: auto 1fr; gap: 2px var(--space-3); }
+.sw dt { color: var(--muted); } .sw dd { margin: 0; }
+code { font-family: var(--mono); font-size: var(--text-xs); }
+table { border-collapse: collapse; width: 100%; font-size: var(--text-sm); margin-top: var(--space-5); }
+caption { text-align: left; font-size: var(--text-xs); color: var(--muted); padding-bottom: var(--space-2); }
+th, td { padding: 7px 8px; border-bottom: 1px solid var(--line-soft); text-align: left; }
+th { text-transform: uppercase; font-size: var(--text-2xs); letter-spacing: 0.06em; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--line); }
+td.r { text-align: right; white-space: nowrap; }
+.sample { display: inline-block; padding: 2px 8px; border-radius: var(--radius-md); font-weight: 600; }
+h3.group { font-size: var(--text-xl); margin: var(--space-7) 0 var(--space-1); }
+.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-5); margin-top: var(--space-4); }
+.grid.three { grid-template-columns: repeat(3, 1fr); }
+.variant { border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-4); background: var(--surface); min-width: 0; }
+.variant h4 { font-size: var(--text-md); margin-bottom: var(--space-3); }
+.stage { border-radius: var(--radius); padding: var(--space-6); display: flex; align-items: center; justify-content: center; min-height: 230px; border: 1px solid var(--line); }
+.stage.paper { background: var(--paper); }
+.stage.ink { background: var(--ink); border-color: var(--ink); }
+.stage svg { max-width: 100%; height: auto; }
+.copy-row { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-3); }
+.btn { font: inherit; font-size: var(--text-sm); padding: 5px 12px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); color: var(--ink); cursor: pointer; }
+.btn:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-ink); }
+.copied { font-size: var(--text-xs); color: var(--quality); font-weight: 600; }
+details { margin-top: var(--space-2); font-size: var(--text-sm); }
+summary { cursor: pointer; color: var(--accent); }
+textarea { width: 100%; height: 160px; margin-top: var(--space-2); font-family: var(--mono); font-size: var(--text-2xs); line-height: 1.4; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-md); padding: var(--space-2); resize: vertical; }
+.fav-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-5); margin-top: var(--space-4); }
+.fav-sizes { display: flex; align-items: flex-end; gap: var(--space-6); flex-wrap: wrap; }
+.fav-sizes figure { margin: 0; text-align: center; }
+.fav-sizes figcaption { margin-top: var(--space-2); }
+.tabs { display: flex; gap: var(--space-4); margin-top: var(--space-4); }
+.tab { display: flex; align-items: center; gap: var(--space-2); padding: 8px 14px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; font-size: var(--text-xs); min-width: 220px; }
+.tab.light { background: var(--surface); border: 1px solid var(--line); border-bottom: 0; color: var(--ink); }
+.tab.dark { background: var(--ink); color: var(--line); }
+.tab-bar { padding: var(--space-3) var(--space-3) 0; border-radius: var(--radius); }
+.tab-bar.light { background: var(--line-soft); } .tab-bar.dark { background: var(--muted); }
+/* site header, as in src/layouts/SiteLayout.astro */
+.mock { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; margin-top: var(--space-4); background: var(--paper); }
+.mock-label { font-size: var(--text-xs); color: var(--muted); margin: var(--space-5) 0 0; }
+.site-header { background: var(--surface); border-bottom: 1px solid var(--line); }
+.site-bar { max-width: 1200px; margin: 0 auto; padding: 14px 40px 6px; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-6); }
+.brand { font-family: var(--serif); font-weight: 700; font-size: 18px; line-height: 1.2; color: var(--ink); text-decoration: none; }
+.brand small { display: block; font-family: var(--sans); font-weight: 400; font-size: var(--text-2xs); color: var(--muted); letter-spacing: 0.04em; }
+.brand.logo { display: inline-flex; align-items: center; gap: 10px; }
+.brand.logo svg { flex: none; }
+.site-search { margin-left: auto; width: min(100%, 360px); }
+.sbox { display: flex; align-items: center; gap: var(--space-2); border: 1px solid var(--placeholder); border-radius: var(--radius); padding: 6px 10px; background: var(--surface); font-size: var(--text-sm); }
+.sbox .ph { color: var(--placeholder); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+kbd { font-family: var(--mono); font-size: var(--text-2xs); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: var(--radius-sm); background: var(--surface); padding: 0 5px; color: var(--muted); }
+.site-nav { max-width: 1200px; margin: 0 auto; padding: 0 40px var(--space-2); overflow-x: auto; }
+.site-nav ul { display: flex; gap: var(--space-1); list-style: none; margin: 0 0 0 -10px; padding: 0; }
+.site-nav a { display: block; padding: 6px 10px; font-size: var(--text-sm); color: var(--ink); text-decoration: none; border-radius: var(--radius-md); white-space: nowrap; }
+.site-nav a:hover { background: var(--accent-soft); }
+.site-nav a[aria-current='page'] { font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
+.mock-body { padding: var(--space-6) 40px var(--space-7); max-width: 1200px; margin: 0 auto; }
+.mock-body p { margin: var(--space-2) 0 0; color: var(--muted); font-size: var(--text-sm); }
+.phone { width: 390px; }
+.phone .site-bar { padding: 12px 16px 6px; }
+.phone .site-search { width: 100%; }
+.phone .site-nav { padding: 0 16px var(--space-2); }
+.mock-row { display: grid; grid-template-columns: 1fr; gap: var(--space-5); justify-items: start; }
+.mock-row > .mock:first-child { width: 100%; }
+/* usage */
+.usage { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin-top: var(--space-5); }
+.usage h3 { font-size: var(--text-md); margin-bottom: var(--space-2); }
+.usage ul { margin: 0; padding-left: 18px; font-size: var(--text-sm); }
+.usage li { margin-bottom: var(--space-1); }
+.minsizes { display: flex; align-items: flex-end; gap: var(--space-6); margin-top: var(--space-3); flex-wrap: wrap; }
+.minsizes figure { margin: 0; }
+.donts { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-4); margin-top: var(--space-4); }
+.dont { border: 1px solid var(--flag-line); border-radius: var(--radius); padding: var(--space-3); background: var(--surface); }
+.dont .x { display: flex; justify-content: center; background: var(--paper); border-radius: var(--radius-md); padding: var(--space-2) 0; }
+.dont p { margin: var(--space-2) 0 0; font-size: var(--text-xs); }
+.dont strong { color: var(--flag); }
+.check { font-size: var(--text-sm); }
+.check ul { margin: var(--space-2) 0 0; padding-left: 18px; }
+.box { border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius); padding: var(--space-3) var(--space-4); font-size: var(--text-sm); }
+@media (prefers-reduced-motion: no-preference) {
+  .btn, .site-nav a { transition: background 0.12s ease, border-color 0.12s ease; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><symbol id="sym-flat" viewBox="0 0 64 64"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#74acdf"/><path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#3876b0"/>
+<rect x="31" y="3" width="2" height="6.4" rx="1" fill="#1f4e79"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/>
+<rect x="12" y="36.5" width="40" height="3" fill="#1f4e79"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/>
+<rect x="8" y="48.5" width="48" height="4" fill="#1f4e79"/><rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#3876b0"/></symbol></svg>
+<main class="wrap">
+  <div class="top">
+    <div>
+      <p class="eyebrow">Logo Congreso Abierto · Dirección 01</p>
+      <h1>Acuarela: la cúpula pintada</h1>
+      <p class="lede">El Palacio del Congreso pintado en aguadas celestes y, a partir de esa pintura, una marca: la cúpula con su linterna y el tambor de columnas, con bordes imperfectos y bordes más oscuros donde se junta el pigmento. La palabra va en la serif del sistema. Es la dirección más cálida y artesanal.</p>
+    </div>
+    <p class="note" style="max-width:360px"><span class="tag flag">Tradeoff</span> El más artesanal y cálido. El ícono simplificado pierde parte del encanto de la acuarela, y los filtros SVG no se ven bien en favicons ni en algunos programas, así que cada variante tiene su versión plana.</p>
+  </div>
+
+  <section class="block" aria-labelledby="s1">
+    <div class="head"><span class="num">1</span><h2 id="s1">La imagen: el Congreso en acuarela celeste</h2></div>
+    <p class="note">Dibujado a mano en SVG, sin calcar fotos. Las aguadas se superponen con transparencia; feTurbulence con feDisplacementMap hace los bordes temblorosos, feGaussianBlur hace las manchas húmedas, un borde erosionado oscurece las orillas y un ruido fino hace el grano del papel.</p>
+    <figure class="hero-fig"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-labelledby="h-t h-d"><title id="h-t">Palacio del Congreso de la Nación Argentina, acuarela en celeste</title><desc id="h-d">Ilustración en acuarela: la gran cúpula sobre su tambor de columnas y la linterna, el pórtico con columnas y frontón en el centro y las dos alas laterales con ventanas en arco.</desc><defs>
+<filter id="h-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="4" seed="3" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="60" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="10" result="s"/>
+<feMorphology in="d" operator="erode" radius="10" result="e"/>
+<feGaussianBlur in="e" stdDeviation="15" result="eb"/>
+<feComposite in="d" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+<feMerge><feMergeNode in="s"/><feMergeNode in="rd"/></feMerge>
+</filter>
+<filter id="h-bl2" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="4" seed="21" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="40" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="6" result="s"/>
+<feMorphology in="d" operator="erode" radius="6" result="e"/>
+<feGaussianBlur in="e" stdDeviation="9" result="eb"/>
+<feComposite in="d" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+<feMerge><feMergeNode in="s"/><feMergeNode in="rd"/></feMerge>
+</filter>
+<filter id="h-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="3" seed="5" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.9" result="s"/>
+<feMorphology in="s" operator="erode" radius="2.5" result="e"/>
+<feGaussianBlur in="e" stdDeviation="2.5" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="2" seed="12" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter>
+<filter id="h-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.026" numOctaves="3" seed="13" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.7" result="s"/>
+<feMorphology in="s" operator="erode" radius="1.8" result="e"/>
+<feGaussianBlur in="e" stdDeviation="1.8" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="2" seed="20" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter>
+<filter id="h-wc" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="31" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.5" result="s"/>
+<feMorphology in="s" operator="erode" radius="1.2" result="e"/>
+<feGaussianBlur in="e" stdDeviation="1.2" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="38" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter>
+<filter id="h-ln" x="-10%" y="-10%" width="120%" height="120%">
+<feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="17" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+</filter>
+<filter id="h-paper" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" seed="2" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0.33 0 0 0 0 0.32 0 0 0 0 0.29 0 0 0 -0.9 0.62"/></filter>
+</defs>
+<rect width="1200" height="660" fill="#fbfaf7"/>
+<g filter="url(#h-bl)" opacity="0.95"><ellipse cx="600" cy="300" rx="470" ry="250" fill="#e4f0fa"/></g>
+<g filter="url(#h-bl2)" opacity="0.45"><ellipse cx="780" cy="190" rx="250" ry="140" fill="#b5d4f0"/><ellipse cx="330" cy="330" rx="200" ry="90" fill="#b5d4f0"/></g>
+<g filter="url(#h-wa)" opacity="0.5"><path d="M40 562Q600 538 1160 566L1172 612Q600 636 28 606Z" fill="#b5d4f0"/></g>
+<g filter="url(#h-wa)" opacity="0.78">
+  <rect x="150" y="414" width="290" height="146" fill="#b5d4f0"/><rect x="760" y="414" width="290" height="146" fill="#b5d4f0"/>
+  <rect x="74" y="392" width="84" height="168" fill="#b5d4f0"/><rect x="1042" y="392" width="84" height="168" fill="#b5d4f0"/>
+  <rect x="430" y="372" width="340" height="188" fill="#b5d4f0"/>
+  <rect x="440" y="344" width="52" height="30" fill="#b5d4f0"/><rect x="708" y="344" width="52" height="30" fill="#b5d4f0"/>
+  <path d="M440 346C440 322 452 309 466 307C480 309 492 322 492 346Z" fill="#b5d4f0"/><path d="M708 346C708 322 720 309 734 307C748 309 760 322 760 346Z" fill="#b5d4f0"/>
+  <rect x="500" y="300" width="200" height="74" fill="#b5d4f0"/>
+  <rect x="512" y="226" width="176" height="76" fill="#b5d4f0"/>
+  <path d="M512 224C512 142 548 86 600 78C652 86 688 142 688 224Z" fill="#b5d4f0"/>
+  <rect x="587" y="50" width="26" height="30" fill="#b5d4f0"/>
+</g>
+<g filter="url(#h-wb)" opacity="0.62">
+  <path d="M588 80C646 88 688 142 688 224H622C624 160 614 112 588 80Z" fill="#74acdf"/>
+  <path d="M466 307C480 309 492 322 492 346H474C474 330 471 316 466 307Z" fill="#74acdf"/><path d="M734 307C748 309 760 322 760 346H742C742 330 739 316 734 307Z" fill="#74acdf"/>
+  <path d="M470 410L600 350L730 410Z" fill="#74acdf"/>
+  <rect x="640" y="300" width="60" height="74" fill="#74acdf"/><rect x="430" y="430" width="62" height="108" fill="#74acdf"/><rect x="708" y="430" width="62" height="108" fill="#74acdf"/>
+  <rect x="1000" y="414" width="50" height="146" fill="#74acdf"/><rect x="74" y="392" width="20" height="168" fill="#74acdf"/>
+  <rect x="482" y="540" width="236" height="10" fill="#74acdf"/><rect x="466" y="550" width="268" height="12" fill="#74acdf"/>
+</g>
+<g filter="url(#h-wc)" opacity="0.6">
+  <path d="M642 98C671 124 688 166 688 224H667C667 172 658 130 642 98Z" fill="#3876b0"/>
+  <path fill-rule="evenodd" d="M514 230H686V300H514Z M522.5 232V299H531.5V232Z M543.5 232V299H552.5V232Z M564.5 232V299H573.5V232Z M585.5 232V299H594.5V232Z M606.5 232V299H615.5V232Z M627.5 232V299H636.5V232Z M648.5 232V299H657.5V232Z M669.5 232V299H678.5V232Z" fill="#3876b0"/>
+  <path fill-rule="evenodd" d="M494 430H706V538H494Z M496.5 432V537H513.5V432Z M534.5 432V537H551.5V432Z M572.5 432V537H589.5V432Z M610.5 432V537H627.5V432Z M648.5 432V537H665.5V432Z M686.5 432V537H703.5V432Z" fill="#3876b0"/>
+  <path fill-rule="evenodd" d="M590 56H610V78H590Z M594.5 58V77H597.5V58Z M602.5 58V77H605.5V58Z" fill="#3876b0"/>
+  <path d="M170 472V445.5A7.5 7.5 0 0 1 185 445.5V472ZM204 472V445.5A7.5 7.5 0 0 1 219 445.5V472ZM238 472V445.5A7.5 7.5 0 0 1 253 445.5V472ZM272 472V445.5A7.5 7.5 0 0 1 287 445.5V472ZM306 472V445.5A7.5 7.5 0 0 1 321 445.5V472ZM340 472V445.5A7.5 7.5 0 0 1 355 445.5V472ZM374 472V445.5A7.5 7.5 0 0 1 389 445.5V472ZM408 472V445.5A7.5 7.5 0 0 1 423 445.5V472ZM780 472V445.5A7.5 7.5 0 0 1 795 445.5V472ZM814 472V445.5A7.5 7.5 0 0 1 829 445.5V472ZM848 472V445.5A7.5 7.5 0 0 1 863 445.5V472ZM882 472V445.5A7.5 7.5 0 0 1 897 445.5V472ZM916 472V445.5A7.5 7.5 0 0 1 931 445.5V472ZM950 472V445.5A7.5 7.5 0 0 1 965 445.5V472ZM984 472V445.5A7.5 7.5 0 0 1 999 445.5V472ZM1018 472V445.5A7.5 7.5 0 0 1 1033 445.5V472Z" fill="#3876b0"/>
+  <path d="M170 534V499.5A7.5 7.5 0 0 1 185 499.5V534ZM204 534V499.5A7.5 7.5 0 0 1 219 499.5V534ZM238 534V499.5A7.5 7.5 0 0 1 253 499.5V534ZM272 534V499.5A7.5 7.5 0 0 1 287 499.5V534ZM306 534V499.5A7.5 7.5 0 0 1 321 499.5V534ZM340 534V499.5A7.5 7.5 0 0 1 355 499.5V534ZM374 534V499.5A7.5 7.5 0 0 1 389 499.5V534ZM408 534V499.5A7.5 7.5 0 0 1 423 499.5V534ZM780 534V499.5A7.5 7.5 0 0 1 795 499.5V534ZM814 534V499.5A7.5 7.5 0 0 1 829 499.5V534ZM848 534V499.5A7.5 7.5 0 0 1 863 499.5V534ZM882 534V499.5A7.5 7.5 0 0 1 897 499.5V534ZM916 534V499.5A7.5 7.5 0 0 1 931 499.5V534ZM950 534V499.5A7.5 7.5 0 0 1 965 499.5V534ZM984 534V499.5A7.5 7.5 0 0 1 999 499.5V534ZM1018 534V499.5A7.5 7.5 0 0 1 1033 499.5V534Z" fill="#3876b0"/>
+  <path d="M104 520V441A11 11 0 0 1 126 441V520ZM1074 520V441A11 11 0 0 1 1096 441V520ZM452 372V359A7 7 0 0 1 466 359V372ZM727 372V359A7 7 0 0 1 741 359V372Z" fill="#3876b0"/>
+  <path d="M522 358V326A8 8 0 0 1 538 326V358ZM552 358V326A8 8 0 0 1 568 326V358ZM582 358V326A8 8 0 0 1 598 326V358ZM612 358V326A8 8 0 0 1 628 326V358ZM642 358V326A8 8 0 0 1 658 326V358ZM672 358V326A8 8 0 0 1 688 326V358Z" fill="#3876b0"/>
+</g>
+<g filter="url(#h-wc)" opacity="0.72">
+  <rect x="506" y="218" width="188" height="10" fill="#3876b0"/><rect x="498" y="296" width="204" height="7" fill="#3876b0"/>
+  <rect x="466" y="408" width="268" height="20" fill="#3876b0"/>
+  <rect x="146" y="406" width="296" height="9" fill="#3876b0"/><rect x="758" y="406" width="296" height="9" fill="#3876b0"/>
+  <rect x="70" y="386" width="92" height="8" fill="#3876b0"/><rect x="1038" y="386" width="92" height="8" fill="#3876b0"/>
+  <rect x="426" y="366" width="348" height="8" fill="#3876b0"/>
+  <path d="M584 54Q600 30 616 54Z" fill="#3876b0"/>
+</g>
+<g filter="url(#h-ln)" fill="none" stroke="#3876b0" stroke-linecap="round" opacity="0.55">
+  <path d="M600 8V34" stroke="#1f4e79" stroke-width="3"/>
+  <path d="M600 80C574 110 562 160 560 222M600 80C626 110 638 160 640 222M600 80C588 112 584 160 584 222M600 80C612 112 616 160 616 222" stroke-width="1.6"/>
+  <path d="M512 224C512 142 548 86 600 78C652 86 688 142 688 224" stroke-width="2"/>
+  <path d="M470 410L600 350L730 410" stroke-width="2"/>
+  <path d="M60 560H1140" stroke-width="1.8"/>
+  <path d="M150 398H440M760 398H1050" stroke-width="1.2" stroke-dasharray="3 5"/>
+  <path d="M440 346C440 322 452 309 466 307C480 309 492 322 492 346M708 346C708 322 720 309 734 307C748 309 760 322 760 346" stroke-width="1.4"/>
+</g>
+<g opacity="0.5" filter="url(#h-wc)">
+  <circle cx="214" cy="610" r="3.5" fill="#74acdf"/><circle cx="232" cy="622" r="2" fill="#3876b0"/><circle cx="960" cy="604" r="4" fill="#74acdf"/><circle cx="986" cy="616" r="2.2" fill="#74acdf"/>
+  <circle cx="842" cy="122" r="3" fill="#b5d4f0"/><circle cx="366" cy="198" r="2.5" fill="#74acdf"/><circle cx="720" cy="618" r="1.8" fill="#3876b0"/>
+</g>
+<rect width="1200" height="660" filter="url(#h-paper)" opacity="0.22"/></svg>
+      <figcaption>Ilustración de portada, 1200 × 660. Uso: portada del sitio, redes, presentaciones. No es el logo: el logo sale de la cúpula.</figcaption>
+    </figure>
+    <div class="copy-row"><button type="button" class="btn" data-copy="hero-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+<details><summary>Ver código SVG</summary><textarea id="hero-code" readonly spellcheck="false" aria-label="Código SVG: ilustración en acuarela">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-labelledby="h-t h-d"&gt;&lt;title id="h-t"&gt;Palacio del Congreso de la Nación Argentina, acuarela en celeste&lt;/title&gt;&lt;desc id="h-d"&gt;Ilustración en acuarela: la gran cúpula sobre su tambor de columnas y la linterna, el pórtico con columnas y frontón en el centro y las dos alas laterales con ventanas en arco.&lt;/desc&gt;&lt;defs&gt;
+&lt;filter id="h-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="4" seed="3" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="60" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="10" result="s"/&gt;
+&lt;feMorphology in="d" operator="erode" radius="10" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="15" result="eb"/&gt;
+&lt;feComposite in="d" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncA type="linear" slope="0.35"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="s"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;
+&lt;filter id="h-bl2" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="4" seed="21" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="40" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="6" result="s"/&gt;
+&lt;feMorphology in="d" operator="erode" radius="6" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="9" result="eb"/&gt;
+&lt;feComposite in="d" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncA type="linear" slope="0.35"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="s"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;
+&lt;filter id="h-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="3" seed="5" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="0.9" result="s"/&gt;
+&lt;feMorphology in="s" operator="erode" radius="2.5" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="2.5" result="eb"/&gt;
+&lt;feComposite in="s" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncR type="linear" slope="0.7"/&gt;&lt;feFuncG type="linear" slope="0.76"/&gt;&lt;feFuncB type="linear" slope="0.86"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="2" seed="12" result="g"/&gt;
+&lt;feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/&gt;
+&lt;feComposite in="s" in2="ga" operator="in" result="gr"/&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="gr"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;
+&lt;filter id="h-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.026" numOctaves="3" seed="13" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="0.7" result="s"/&gt;
+&lt;feMorphology in="s" operator="erode" radius="1.8" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="1.8" result="eb"/&gt;
+&lt;feComposite in="s" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncR type="linear" slope="0.7"/&gt;&lt;feFuncG type="linear" slope="0.76"/&gt;&lt;feFuncB type="linear" slope="0.86"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="2" seed="20" result="g"/&gt;
+&lt;feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/&gt;
+&lt;feComposite in="s" in2="ga" operator="in" result="gr"/&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="gr"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;
+&lt;filter id="h-wc" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="31" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="0.5" result="s"/&gt;
+&lt;feMorphology in="s" operator="erode" radius="1.2" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="1.2" result="eb"/&gt;
+&lt;feComposite in="s" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncR type="linear" slope="0.7"/&gt;&lt;feFuncG type="linear" slope="0.76"/&gt;&lt;feFuncB type="linear" slope="0.86"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="38" result="g"/&gt;
+&lt;feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/&gt;
+&lt;feComposite in="s" in2="ga" operator="in" result="gr"/&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="gr"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;
+&lt;filter id="h-ln" x="-10%" y="-10%" width="120%" height="120%"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="17" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/&gt;
+&lt;/filter&gt;
+&lt;filter id="h-paper" x="0" y="0" width="100%" height="100%"&gt;&lt;feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" seed="2" result="n"/&gt;&lt;feColorMatrix in="n" type="matrix" values="0 0 0 0 0.33 0 0 0 0 0.32 0 0 0 0 0.29 0 0 0 -0.9 0.62"/&gt;&lt;/filter&gt;
+&lt;/defs&gt;
+&lt;rect width="1200" height="660" fill="#fbfaf7"/&gt;
+&lt;g filter="url(#h-bl)" opacity="0.95"&gt;&lt;ellipse cx="600" cy="300" rx="470" ry="250" fill="#e4f0fa"/&gt;&lt;/g&gt;
+&lt;g filter="url(#h-bl2)" opacity="0.45"&gt;&lt;ellipse cx="780" cy="190" rx="250" ry="140" fill="#b5d4f0"/&gt;&lt;ellipse cx="330" cy="330" rx="200" ry="90" fill="#b5d4f0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#h-wa)" opacity="0.5"&gt;&lt;path d="M40 562Q600 538 1160 566L1172 612Q600 636 28 606Z" fill="#b5d4f0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#h-wa)" opacity="0.78"&gt;
+  &lt;rect x="150" y="414" width="290" height="146" fill="#b5d4f0"/&gt;&lt;rect x="760" y="414" width="290" height="146" fill="#b5d4f0"/&gt;
+  &lt;rect x="74" y="392" width="84" height="168" fill="#b5d4f0"/&gt;&lt;rect x="1042" y="392" width="84" height="168" fill="#b5d4f0"/&gt;
+  &lt;rect x="430" y="372" width="340" height="188" fill="#b5d4f0"/&gt;
+  &lt;rect x="440" y="344" width="52" height="30" fill="#b5d4f0"/&gt;&lt;rect x="708" y="344" width="52" height="30" fill="#b5d4f0"/&gt;
+  &lt;path d="M440 346C440 322 452 309 466 307C480 309 492 322 492 346Z" fill="#b5d4f0"/&gt;&lt;path d="M708 346C708 322 720 309 734 307C748 309 760 322 760 346Z" fill="#b5d4f0"/&gt;
+  &lt;rect x="500" y="300" width="200" height="74" fill="#b5d4f0"/&gt;
+  &lt;rect x="512" y="226" width="176" height="76" fill="#b5d4f0"/&gt;
+  &lt;path d="M512 224C512 142 548 86 600 78C652 86 688 142 688 224Z" fill="#b5d4f0"/&gt;
+  &lt;rect x="587" y="50" width="26" height="30" fill="#b5d4f0"/&gt;
+&lt;/g&gt;
+&lt;g filter="url(#h-wb)" opacity="0.62"&gt;
+  &lt;path d="M588 80C646 88 688 142 688 224H622C624 160 614 112 588 80Z" fill="#74acdf"/&gt;
+  &lt;path d="M466 307C480 309 492 322 492 346H474C474 330 471 316 466 307Z" fill="#74acdf"/&gt;&lt;path d="M734 307C748 309 760 322 760 346H742C742 330 739 316 734 307Z" fill="#74acdf"/&gt;
+  &lt;path d="M470 410L600 350L730 410Z" fill="#74acdf"/&gt;
+  &lt;rect x="640" y="300" width="60" height="74" fill="#74acdf"/&gt;&lt;rect x="430" y="430" width="62" height="108" fill="#74acdf"/&gt;&lt;rect x="708" y="430" width="62" height="108" fill="#74acdf"/&gt;
+  &lt;rect x="1000" y="414" width="50" height="146" fill="#74acdf"/&gt;&lt;rect x="74" y="392" width="20" height="168" fill="#74acdf"/&gt;
+  &lt;rect x="482" y="540" width="236" height="10" fill="#74acdf"/&gt;&lt;rect x="466" y="550" width="268" height="12" fill="#74acdf"/&gt;
+&lt;/g&gt;
+&lt;g filter="url(#h-wc)" opacity="0.6"&gt;
+  &lt;path d="M642 98C671 124 688 166 688 224H667C667 172 658 130 642 98Z" fill="#3876b0"/&gt;
+  &lt;path fill-rule="evenodd" d="M514 230H686V300H514Z M522.5 232V299H531.5V232Z M543.5 232V299H552.5V232Z M564.5 232V299H573.5V232Z M585.5 232V299H594.5V232Z M606.5 232V299H615.5V232Z M627.5 232V299H636.5V232Z M648.5 232V299H657.5V232Z M669.5 232V299H678.5V232Z" fill="#3876b0"/&gt;
+  &lt;path fill-rule="evenodd" d="M494 430H706V538H494Z M496.5 432V537H513.5V432Z M534.5 432V537H551.5V432Z M572.5 432V537H589.5V432Z M610.5 432V537H627.5V432Z M648.5 432V537H665.5V432Z M686.5 432V537H703.5V432Z" fill="#3876b0"/&gt;
+  &lt;path fill-rule="evenodd" d="M590 56H610V78H590Z M594.5 58V77H597.5V58Z M602.5 58V77H605.5V58Z" fill="#3876b0"/&gt;
+  &lt;path d="M170 472V445.5A7.5 7.5 0 0 1 185 445.5V472ZM204 472V445.5A7.5 7.5 0 0 1 219 445.5V472ZM238 472V445.5A7.5 7.5 0 0 1 253 445.5V472ZM272 472V445.5A7.5 7.5 0 0 1 287 445.5V472ZM306 472V445.5A7.5 7.5 0 0 1 321 445.5V472ZM340 472V445.5A7.5 7.5 0 0 1 355 445.5V472ZM374 472V445.5A7.5 7.5 0 0 1 389 445.5V472ZM408 472V445.5A7.5 7.5 0 0 1 423 445.5V472ZM780 472V445.5A7.5 7.5 0 0 1 795 445.5V472ZM814 472V445.5A7.5 7.5 0 0 1 829 445.5V472ZM848 472V445.5A7.5 7.5 0 0 1 863 445.5V472ZM882 472V445.5A7.5 7.5 0 0 1 897 445.5V472ZM916 472V445.5A7.5 7.5 0 0 1 931 445.5V472ZM950 472V445.5A7.5 7.5 0 0 1 965 445.5V472ZM984 472V445.5A7.5 7.5 0 0 1 999 445.5V472ZM1018 472V445.5A7.5 7.5 0 0 1 1033 445.5V472Z" fill="#3876b0"/&gt;
+  &lt;path d="M170 534V499.5A7.5 7.5 0 0 1 185 499.5V534ZM204 534V499.5A7.5 7.5 0 0 1 219 499.5V534ZM238 534V499.5A7.5 7.5 0 0 1 253 499.5V534ZM272 534V499.5A7.5 7.5 0 0 1 287 499.5V534ZM306 534V499.5A7.5 7.5 0 0 1 321 499.5V534ZM340 534V499.5A7.5 7.5 0 0 1 355 499.5V534ZM374 534V499.5A7.5 7.5 0 0 1 389 499.5V534ZM408 534V499.5A7.5 7.5 0 0 1 423 499.5V534ZM780 534V499.5A7.5 7.5 0 0 1 795 499.5V534ZM814 534V499.5A7.5 7.5 0 0 1 829 499.5V534ZM848 534V499.5A7.5 7.5 0 0 1 863 499.5V534ZM882 534V499.5A7.5 7.5 0 0 1 897 499.5V534ZM916 534V499.5A7.5 7.5 0 0 1 931 499.5V534ZM950 534V499.5A7.5 7.5 0 0 1 965 499.5V534ZM984 534V499.5A7.5 7.5 0 0 1 999 499.5V534ZM1018 534V499.5A7.5 7.5 0 0 1 1033 499.5V534Z" fill="#3876b0"/&gt;
+  &lt;path d="M104 520V441A11 11 0 0 1 126 441V520ZM1074 520V441A11 11 0 0 1 1096 441V520ZM452 372V359A7 7 0 0 1 466 359V372ZM727 372V359A7 7 0 0 1 741 359V372Z" fill="#3876b0"/&gt;
+  &lt;path d="M522 358V326A8 8 0 0 1 538 326V358ZM552 358V326A8 8 0 0 1 568 326V358ZM582 358V326A8 8 0 0 1 598 326V358ZM612 358V326A8 8 0 0 1 628 326V358ZM642 358V326A8 8 0 0 1 658 326V358ZM672 358V326A8 8 0 0 1 688 326V358Z" fill="#3876b0"/&gt;
+&lt;/g&gt;
+&lt;g filter="url(#h-wc)" opacity="0.72"&gt;
+  &lt;rect x="506" y="218" width="188" height="10" fill="#3876b0"/&gt;&lt;rect x="498" y="296" width="204" height="7" fill="#3876b0"/&gt;
+  &lt;rect x="466" y="408" width="268" height="20" fill="#3876b0"/&gt;
+  &lt;rect x="146" y="406" width="296" height="9" fill="#3876b0"/&gt;&lt;rect x="758" y="406" width="296" height="9" fill="#3876b0"/&gt;
+  &lt;rect x="70" y="386" width="92" height="8" fill="#3876b0"/&gt;&lt;rect x="1038" y="386" width="92" height="8" fill="#3876b0"/&gt;
+  &lt;rect x="426" y="366" width="348" height="8" fill="#3876b0"/&gt;
+  &lt;path d="M584 54Q600 30 616 54Z" fill="#3876b0"/&gt;
+&lt;/g&gt;
+&lt;g filter="url(#h-ln)" fill="none" stroke="#3876b0" stroke-linecap="round" opacity="0.55"&gt;
+  &lt;path d="M600 8V34" stroke="#1f4e79" stroke-width="3"/&gt;
+  &lt;path d="M600 80C574 110 562 160 560 222M600 80C626 110 638 160 640 222M600 80C588 112 584 160 584 222M600 80C612 112 616 160 616 222" stroke-width="1.6"/&gt;
+  &lt;path d="M512 224C512 142 548 86 600 78C652 86 688 142 688 224" stroke-width="2"/&gt;
+  &lt;path d="M470 410L600 350L730 410" stroke-width="2"/&gt;
+  &lt;path d="M60 560H1140" stroke-width="1.8"/&gt;
+  &lt;path d="M150 398H440M760 398H1050" stroke-width="1.2" stroke-dasharray="3 5"/&gt;
+  &lt;path d="M440 346C440 322 452 309 466 307C480 309 492 322 492 346M708 346C708 322 720 309 734 307C748 309 760 322 760 346" stroke-width="1.4"/&gt;
+&lt;/g&gt;
+&lt;g opacity="0.5" filter="url(#h-wc)"&gt;
+  &lt;circle cx="214" cy="610" r="3.5" fill="#74acdf"/&gt;&lt;circle cx="232" cy="622" r="2" fill="#3876b0"/&gt;&lt;circle cx="960" cy="604" r="4" fill="#74acdf"/&gt;&lt;circle cx="986" cy="616" r="2.2" fill="#74acdf"/&gt;
+  &lt;circle cx="842" cy="122" r="3" fill="#b5d4f0"/&gt;&lt;circle cx="366" cy="198" r="2.5" fill="#74acdf"/&gt;&lt;circle cx="720" cy="618" r="1.8" fill="#3876b0"/&gt;
+&lt;/g&gt;
+&lt;rect width="1200" height="660" filter="url(#h-paper)" opacity="0.22"/&gt;&lt;/svg&gt;</textarea></details>
+  </section>
+
+  <section class="block" aria-labelledby="s-color">
+    <div class="head"><span class="num">·</span><h2 id="s-color">Color: familia celeste</h2><span class="tag flag">Propuesta para agregar al sistema</span></div>
+    <p class="note"><code>design/system.md</code> no tiene celeste. Propongo una sola familia de marca, cerca del celeste de la bandera argentina. Todo lo demás usa los tokens del sistema: <code>--ink</code>, <code>--paper</code>, <code>--surface</code>, <code>--line</code>, <code>--muted</code>, <code>--accent</code> y las fuentes <code>--serif</code> y <code>--sans</code>.</p>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:var(--celeste-soft);color:var(--ink)">--celeste-soft</div><dl><dt>Valor</dt><dd><code>#e4f0fa</code></dd><dt>Uso</dt><dd>Mancha de fondo de la marca, fondo del favicon, cielo de la ilustración</dd></dl></div>
+      <div class="sw"><div class="chip" style="background:var(--celeste-light);color:var(--ink)">--celeste-light</div><dl><dt>Valor</dt><dd><code>#b5d4f0</code></dd><dt>Uso</dt><dd>Primera aguada; estructura de la marca sobre fondo oscuro</dd></dl></div>
+      <div class="sw"><div class="chip" style="background:var(--celeste);color:var(--ink)">--celeste</div><dl><dt>Valor</dt><dd><code>#74acdf</code></dd><dt>Uso</dt><dd>Color base de la cúpula; cerca del celeste de la bandera</dd></dl></div>
+      <div class="sw"><div class="chip" style="background:var(--celeste-deep);color:var(--surface)">--celeste-deep</div><dl><dt>Valor</dt><dd><code>#3876b0</code></dd><dt>Uso</dt><dd>Sombra de la cúpula, bordes oscuros, ventanas</dd></dl></div>
+    </div>
+    <table>
+      <caption>Contraste de texto sobre celeste (WCAG 2.1; AA pide 4.5:1 para texto normal y 3:1 para texto grande o gráficos)</caption>
+      <thead><tr><th>Combinación</th><th>Muestra</th><th class="r">Contraste</th><th>Resultado</th></tr></thead>
+      <tbody>
+        <tr><td><code>--ink</code> sobre <code>--celeste</code></td><td><span class="sample" style="background:var(--celeste);color:var(--ink)">Congreso Abierto</span></td><td class="r">7.14:1</td><td><span class="tag ok">AA y AAA</span></td></tr>
+        <tr><td><code>--ink</code> sobre <code>--celeste-light</code></td><td><span class="sample" style="background:var(--celeste-light);color:var(--ink)">Congreso Abierto</span></td><td class="r">11.18:1</td><td><span class="tag ok">AA y AAA</span></td></tr>
+        <tr><td><code>--ink</code> sobre <code>--celeste-soft</code></td><td><span class="sample" style="background:var(--celeste-soft);color:var(--ink)">Congreso Abierto</span></td><td class="r">14.87:1</td><td><span class="tag ok">AA y AAA</span></td></tr>
+        <tr><td><code>--muted</code> sobre <code>--celeste-soft</code></td><td><span class="sample" style="background:var(--celeste-soft);color:var(--muted)">Datos abiertos</span></td><td class="r">6.73:1</td><td><span class="tag ok">AA</span></td></tr>
+        <tr><td><code>--accent</code> sobre <code>--celeste-soft</code></td><td><span class="sample" style="background:var(--celeste-soft);color:var(--accent)">Datos abiertos</span></td><td class="r">7.48:1</td><td><span class="tag ok">AA y AAA</span></td></tr>
+        <tr><td><code>--surface</code> sobre <code>--celeste-deep</code></td><td><span class="sample" style="background:var(--celeste-deep);color:var(--surface)">Congreso Abierto</span></td><td class="r">4.79:1</td><td><span class="tag ok">AA</span></td></tr>
+        <tr><td><code>--surface</code> sobre <code>--celeste</code></td><td><span class="sample" style="background:var(--celeste);color:var(--surface)">Congreso Abierto</span></td><td class="r">2.41:1</td><td><span class="tag flag">No pasa: no usar</span></td></tr>
+        <tr><td><code>--celeste</code> sobre <code>--paper</code> (como texto)</td><td><span class="sample" style="background:var(--paper);color:var(--celeste)">Congreso Abierto</span></td><td class="r">2.31:1</td><td><span class="tag flag">No pasa: solo para aguadas</span></td></tr>
+      </tbody>
+    </table>
+    <p class="note">Por eso la palabra nunca va en celeste: va en <code>--ink</code> sobre claro y en <code>--surface</code> sobre <code>--ink</code> (17.21:1). La bajada va en <code>--muted</code> sobre <code>--paper</code> (7.47:1) y en <code>--line</code> sobre <code>--ink</code> (11.75:1).</p>
+  </section>
+
+  <section class="block" aria-labelledby="s2">
+    <div class="head"><span class="num">2</span><h2 id="s2">El logo</h2></div>
+    <p class="note">Cada variante tiene su botón "Copiar SVG" y su código. Las versiones en acuarela traen sus filtros adentro, con ids propios, así que se pueden pegar juntas en una página. La bajada "Datos abiertos del Congreso argentino" es opcional: se quita borrando el segundo &lt;text&gt;. La palabra usa la serif del sistema, así que se ve con la fuente que tenga cada equipo. Para imprenta conviene pasar el texto a curvas.</p>
+
+    <h3 class="group">Acuarela (con filtros SVG)</h3>
+    <p class="note">Para el header, la portada y las redes, desde 32 px de marca. Debajo de eso, usar la versión plana.</p>
+    <div class="grid"><article class="variant" aria-labelledby="wc-h-paper-h">
+  <h4 id="wc-h-paper-h">Horizontal · fondo claro</h4>
+  <div class="stage paper"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 84" width="420" height="84" role="img" aria-labelledby="wc-h-paper-t"><title id="wc-h-paper-t">Congreso Abierto, logo horizontal en acuarela</title><defs><filter id="wc-h-paper-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="1.6" result="s"/>
+<feMorphology in="d" operator="erode" radius="1.6" result="e"/>
+<feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/>
+<feComposite in="d" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+<feMerge><feMergeNode in="s"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="wc-h-paper-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.35" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.9" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.9" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="wc-h-paper-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.25" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.7" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.7" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter></defs><g transform="translate(0 2) scale(1.25)"><g filter="url(#wc-h-paper-bl)"><path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/></g>
+<g filter="url(#wc-h-paper-wa)" opacity="0.9"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/></g>
+<g filter="url(#wc-h-paper-wb)" opacity="0.72"><path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/><rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/></g>
+<g filter="url(#wc-h-paper-wa)" opacity="0.55"><path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/><path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/></g>
+<g filter="url(#wc-h-paper-wb)" opacity="0.85"><rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/></g>
+<g filter="url(#wc-h-paper-wb)"><rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/></g></g>
+<text x="94" y="46" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="34" fill="#1c1b19">Congreso Abierto</text>
+<text x="95" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#55524b">Datos abiertos del Congreso argentino</text></svg></div>
+  
+  <div class="copy-row"><button type="button" class="btn" data-copy="wc-h-paper-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  <details><summary>Ver código SVG</summary><textarea id="wc-h-paper-code" readonly spellcheck="false" aria-label="Código SVG: Horizontal · fondo claro">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 84" width="420" height="84" role="img" aria-labelledby="wc-h-paper-t"&gt;&lt;title id="wc-h-paper-t"&gt;Congreso Abierto, logo horizontal en acuarela&lt;/title&gt;&lt;defs&gt;&lt;filter id="wc-h-paper-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="1.6" result="s"/&gt;
+&lt;feMorphology in="d" operator="erode" radius="1.6" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/&gt;
+&lt;feComposite in="d" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncA type="linear" slope="0.35"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="s"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;filter id="wc-h-paper-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="0.35" result="s"/&gt;
+&lt;feMorphology in="s" operator="erode" radius="0.9" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="0.9" result="eb"/&gt;
+&lt;feComposite in="s" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncR type="linear" slope="0.7"/&gt;&lt;feFuncG type="linear" slope="0.76"/&gt;&lt;feFuncB type="linear" slope="0.86"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/&gt;
+&lt;feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/&gt;
+&lt;feComposite in="s" in2="ga" operator="in" result="gr"/&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="gr"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;filter id="wc-h-paper-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="0.25" result="s"/&gt;
+&lt;feMorphology in="s" operator="erode" radius="0.7" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="0.7" result="eb"/&gt;
+&lt;feComposite in="s" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncR type="linear" slope="0.7"/&gt;&lt;feFuncG type="linear" slope="0.76"/&gt;&lt;feFuncB type="linear" slope="0.86"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/&gt;
+&lt;feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/&gt;
+&lt;feComposite in="s" in2="ga" operator="in" result="gr"/&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="gr"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;/defs&gt;&lt;g transform="translate(0 2) scale(1.25)"&gt;&lt;g filter="url(#wc-h-paper-bl)"&gt;&lt;path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-h-paper-wa)" opacity="0.9"&gt;&lt;path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/&gt;&lt;rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-h-paper-wb)" opacity="0.72"&gt;&lt;path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/&gt;&lt;rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-h-paper-wa)" opacity="0.55"&gt;&lt;path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/&gt;&lt;path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-h-paper-wb)" opacity="0.85"&gt;&lt;rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/&gt;&lt;rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/&gt;&lt;path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/&gt;&lt;rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-h-paper-wb)"&gt;&lt;rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/&gt;&lt;rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/&gt;&lt;/g&gt;&lt;/g&gt;
+&lt;text x="94" y="46" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="34" fill="#1c1b19"&gt;Congreso Abierto&lt;/text&gt;
+&lt;text x="95" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#55524b"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea></details>
+</article>
+<article class="variant" aria-labelledby="wc-h-ink-h">
+  <h4 id="wc-h-ink-h">Horizontal · fondo oscuro</h4>
+  <div class="stage ink"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 84" width="420" height="84" role="img" aria-labelledby="wc-h-ink-t"><title id="wc-h-ink-t">Congreso Abierto, logo horizontal en acuarela sobre fondo oscuro</title><defs><filter id="wc-h-ink-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="1.6" result="s"/>
+<feMorphology in="d" operator="erode" radius="1.6" result="e"/>
+<feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/>
+<feComposite in="d" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+<feMerge><feMergeNode in="s"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="wc-h-ink-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.35" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.9" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.9" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="wc-h-ink-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.25" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.7" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.7" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter></defs><g transform="translate(0 2) scale(1.25)"><g filter="url(#wc-h-ink-bl)"><path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/></g>
+<g filter="url(#wc-h-ink-wa)" opacity="0.9"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/></g>
+<g filter="url(#wc-h-ink-wb)" opacity="0.72"><path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/><rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/></g>
+<g filter="url(#wc-h-ink-wa)" opacity="0.55"><path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/><path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/></g>
+<g filter="url(#wc-h-ink-wb)" opacity="0.85"><rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/></g>
+<g filter="url(#wc-h-ink-wb)"><rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/></g></g>
+<text x="94" y="46" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="34" fill="#ffffff">Congreso Abierto</text>
+<text x="95" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#d9d5cc">Datos abiertos del Congreso argentino</text></svg></div>
+  
+  <div class="copy-row"><button type="button" class="btn" data-copy="wc-h-ink-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  <details><summary>Ver código SVG</summary><textarea id="wc-h-ink-code" readonly spellcheck="false" aria-label="Código SVG: Horizontal · fondo oscuro">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 84" width="420" height="84" role="img" aria-labelledby="wc-h-ink-t"&gt;&lt;title id="wc-h-ink-t"&gt;Congreso Abierto, logo horizontal en acuarela sobre fondo oscuro&lt;/title&gt;&lt;defs&gt;&lt;filter id="wc-h-ink-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="1.6" result="s"/&gt;
+&lt;feMorphology in="d" operator="erode" radius="1.6" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/&gt;
+&lt;feComposite in="d" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncA type="linear" slope="0.35"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="s"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;filter id="wc-h-ink-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="0.35" result="s"/&gt;
+&lt;feMorphology in="s" operator="erode" radius="0.9" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="0.9" result="eb"/&gt;
+&lt;feComposite in="s" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncR type="linear" slope="0.7"/&gt;&lt;feFuncG type="linear" slope="0.76"/&gt;&lt;feFuncB type="linear" slope="0.86"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/&gt;
+&lt;feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/&gt;
+&lt;feComposite in="s" in2="ga" operator="in" result="gr"/&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="gr"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;filter id="wc-h-ink-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="0.25" result="s"/&gt;
+&lt;feMorphology in="s" operator="erode" radius="0.7" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="0.7" result="eb"/&gt;
+&lt;feComposite in="s" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncR type="linear" slope="0.7"/&gt;&lt;feFuncG type="linear" slope="0.76"/&gt;&lt;feFuncB type="linear" slope="0.86"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/&gt;
+&lt;feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/&gt;
+&lt;feComposite in="s" in2="ga" operator="in" result="gr"/&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="gr"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;/defs&gt;&lt;g transform="translate(0 2) scale(1.25)"&gt;&lt;g filter="url(#wc-h-ink-bl)"&gt;&lt;path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-h-ink-wa)" opacity="0.9"&gt;&lt;path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/&gt;&lt;rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-h-ink-wb)" opacity="0.72"&gt;&lt;path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/&gt;&lt;rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-h-ink-wa)" opacity="0.55"&gt;&lt;path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/&gt;&lt;path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-h-ink-wb)" opacity="0.85"&gt;&lt;rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/&gt;&lt;rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/&gt;&lt;path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/&gt;&lt;rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-h-ink-wb)"&gt;&lt;rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/&gt;&lt;rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/&gt;&lt;/g&gt;&lt;/g&gt;
+&lt;text x="94" y="46" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="34" fill="#ffffff"&gt;Congreso Abierto&lt;/text&gt;
+&lt;text x="95" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#d9d5cc"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea></details>
+</article>
+<article class="variant" aria-labelledby="wc-s-paper-h">
+  <h4 id="wc-s-paper-h">Apilado · fondo claro</h4>
+  <div class="stage paper"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 190" width="300" height="190" role="img" aria-labelledby="wc-s-paper-t"><title id="wc-s-paper-t">Congreso Abierto, logo apilado en acuarela</title><defs><filter id="wc-s-paper-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="1.6" result="s"/>
+<feMorphology in="d" operator="erode" radius="1.6" result="e"/>
+<feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/>
+<feComposite in="d" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+<feMerge><feMergeNode in="s"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="wc-s-paper-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.35" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.9" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.9" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="wc-s-paper-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.25" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.7" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.7" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter></defs><g transform="translate(102 0) scale(1.5)"><g filter="url(#wc-s-paper-bl)"><path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/></g>
+<g filter="url(#wc-s-paper-wa)" opacity="0.9"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/></g>
+<g filter="url(#wc-s-paper-wb)" opacity="0.72"><path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/><rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/></g>
+<g filter="url(#wc-s-paper-wa)" opacity="0.55"><path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/><path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/></g>
+<g filter="url(#wc-s-paper-wb)" opacity="0.85"><rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/></g>
+<g filter="url(#wc-s-paper-wb)"><rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/></g></g>
+<text x="150" y="134" text-anchor="middle" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="32" fill="#1c1b19">Congreso Abierto</text>
+<text x="150" y="160" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#55524b">Datos abiertos del Congreso argentino</text></svg></div>
+  
+  <div class="copy-row"><button type="button" class="btn" data-copy="wc-s-paper-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  <details><summary>Ver código SVG</summary><textarea id="wc-s-paper-code" readonly spellcheck="false" aria-label="Código SVG: Apilado · fondo claro">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 190" width="300" height="190" role="img" aria-labelledby="wc-s-paper-t"&gt;&lt;title id="wc-s-paper-t"&gt;Congreso Abierto, logo apilado en acuarela&lt;/title&gt;&lt;defs&gt;&lt;filter id="wc-s-paper-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="1.6" result="s"/&gt;
+&lt;feMorphology in="d" operator="erode" radius="1.6" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/&gt;
+&lt;feComposite in="d" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncA type="linear" slope="0.35"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="s"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;filter id="wc-s-paper-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="0.35" result="s"/&gt;
+&lt;feMorphology in="s" operator="erode" radius="0.9" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="0.9" result="eb"/&gt;
+&lt;feComposite in="s" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncR type="linear" slope="0.7"/&gt;&lt;feFuncG type="linear" slope="0.76"/&gt;&lt;feFuncB type="linear" slope="0.86"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/&gt;
+&lt;feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/&gt;
+&lt;feComposite in="s" in2="ga" operator="in" result="gr"/&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="gr"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;filter id="wc-s-paper-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="0.25" result="s"/&gt;
+&lt;feMorphology in="s" operator="erode" radius="0.7" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="0.7" result="eb"/&gt;
+&lt;feComposite in="s" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncR type="linear" slope="0.7"/&gt;&lt;feFuncG type="linear" slope="0.76"/&gt;&lt;feFuncB type="linear" slope="0.86"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/&gt;
+&lt;feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/&gt;
+&lt;feComposite in="s" in2="ga" operator="in" result="gr"/&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="gr"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;/defs&gt;&lt;g transform="translate(102 0) scale(1.5)"&gt;&lt;g filter="url(#wc-s-paper-bl)"&gt;&lt;path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-s-paper-wa)" opacity="0.9"&gt;&lt;path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/&gt;&lt;rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-s-paper-wb)" opacity="0.72"&gt;&lt;path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/&gt;&lt;rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-s-paper-wa)" opacity="0.55"&gt;&lt;path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/&gt;&lt;path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-s-paper-wb)" opacity="0.85"&gt;&lt;rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/&gt;&lt;rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/&gt;&lt;path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/&gt;&lt;rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-s-paper-wb)"&gt;&lt;rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/&gt;&lt;rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/&gt;&lt;/g&gt;&lt;/g&gt;
+&lt;text x="150" y="134" text-anchor="middle" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="32" fill="#1c1b19"&gt;Congreso Abierto&lt;/text&gt;
+&lt;text x="150" y="160" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#55524b"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea></details>
+</article>
+<article class="variant" aria-labelledby="wc-s-ink-h">
+  <h4 id="wc-s-ink-h">Apilado · fondo oscuro</h4>
+  <div class="stage ink"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 190" width="300" height="190" role="img" aria-labelledby="wc-s-ink-t"><title id="wc-s-ink-t">Congreso Abierto, logo apilado en acuarela sobre fondo oscuro</title><defs><filter id="wc-s-ink-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="1.6" result="s"/>
+<feMorphology in="d" operator="erode" radius="1.6" result="e"/>
+<feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/>
+<feComposite in="d" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+<feMerge><feMergeNode in="s"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="wc-s-ink-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.35" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.9" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.9" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="wc-s-ink-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.25" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.7" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.7" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter></defs><g transform="translate(102 0) scale(1.5)"><g filter="url(#wc-s-ink-bl)"><path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/></g>
+<g filter="url(#wc-s-ink-wa)" opacity="0.9"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/></g>
+<g filter="url(#wc-s-ink-wb)" opacity="0.72"><path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/><rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/></g>
+<g filter="url(#wc-s-ink-wa)" opacity="0.55"><path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/><path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/></g>
+<g filter="url(#wc-s-ink-wb)" opacity="0.85"><rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/></g>
+<g filter="url(#wc-s-ink-wb)"><rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/></g></g>
+<text x="150" y="134" text-anchor="middle" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="32" fill="#ffffff">Congreso Abierto</text>
+<text x="150" y="160" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#d9d5cc">Datos abiertos del Congreso argentino</text></svg></div>
+  
+  <div class="copy-row"><button type="button" class="btn" data-copy="wc-s-ink-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  <details><summary>Ver código SVG</summary><textarea id="wc-s-ink-code" readonly spellcheck="false" aria-label="Código SVG: Apilado · fondo oscuro">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 190" width="300" height="190" role="img" aria-labelledby="wc-s-ink-t"&gt;&lt;title id="wc-s-ink-t"&gt;Congreso Abierto, logo apilado en acuarela sobre fondo oscuro&lt;/title&gt;&lt;defs&gt;&lt;filter id="wc-s-ink-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="1.6" result="s"/&gt;
+&lt;feMorphology in="d" operator="erode" radius="1.6" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/&gt;
+&lt;feComposite in="d" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncA type="linear" slope="0.35"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="s"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;filter id="wc-s-ink-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="0.35" result="s"/&gt;
+&lt;feMorphology in="s" operator="erode" radius="0.9" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="0.9" result="eb"/&gt;
+&lt;feComposite in="s" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncR type="linear" slope="0.7"/&gt;&lt;feFuncG type="linear" slope="0.76"/&gt;&lt;feFuncB type="linear" slope="0.86"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/&gt;
+&lt;feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/&gt;
+&lt;feComposite in="s" in2="ga" operator="in" result="gr"/&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="gr"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;filter id="wc-s-ink-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="0.25" result="s"/&gt;
+&lt;feMorphology in="s" operator="erode" radius="0.7" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="0.7" result="eb"/&gt;
+&lt;feComposite in="s" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncR type="linear" slope="0.7"/&gt;&lt;feFuncG type="linear" slope="0.76"/&gt;&lt;feFuncB type="linear" slope="0.86"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/&gt;
+&lt;feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/&gt;
+&lt;feComposite in="s" in2="ga" operator="in" result="gr"/&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="gr"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;/defs&gt;&lt;g transform="translate(102 0) scale(1.5)"&gt;&lt;g filter="url(#wc-s-ink-bl)"&gt;&lt;path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-s-ink-wa)" opacity="0.9"&gt;&lt;path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/&gt;&lt;rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-s-ink-wb)" opacity="0.72"&gt;&lt;path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/&gt;&lt;rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-s-ink-wa)" opacity="0.55"&gt;&lt;path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/&gt;&lt;path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-s-ink-wb)" opacity="0.85"&gt;&lt;rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/&gt;&lt;rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/&gt;&lt;path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/&gt;&lt;rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-s-ink-wb)"&gt;&lt;rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/&gt;&lt;rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/&gt;&lt;/g&gt;&lt;/g&gt;
+&lt;text x="150" y="134" text-anchor="middle" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="32" fill="#ffffff"&gt;Congreso Abierto&lt;/text&gt;
+&lt;text x="150" y="160" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#d9d5cc"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea></details>
+</article>
+<article class="variant" aria-labelledby="wc-m-paper-h">
+  <h4 id="wc-m-paper-h">Marca sola · fondo claro</h4>
+  <div class="stage paper"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128" role="img" aria-labelledby="wc-m-paper-t"><title id="wc-m-paper-t">Congreso Abierto, marca en acuarela</title><defs><filter id="wc-m-paper-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="1.6" result="s"/>
+<feMorphology in="d" operator="erode" radius="1.6" result="e"/>
+<feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/>
+<feComposite in="d" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+<feMerge><feMergeNode in="s"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="wc-m-paper-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.35" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.9" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.9" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="wc-m-paper-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.25" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.7" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.7" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter></defs><g filter="url(#wc-m-paper-bl)"><path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/></g>
+<g filter="url(#wc-m-paper-wa)" opacity="0.9"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/></g>
+<g filter="url(#wc-m-paper-wb)" opacity="0.72"><path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/><rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/></g>
+<g filter="url(#wc-m-paper-wa)" opacity="0.55"><path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/><path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/></g>
+<g filter="url(#wc-m-paper-wb)" opacity="0.85"><rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/></g>
+<g filter="url(#wc-m-paper-wb)"><rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/></g></svg></div>
+  
+  <div class="copy-row"><button type="button" class="btn" data-copy="wc-m-paper-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  <details><summary>Ver código SVG</summary><textarea id="wc-m-paper-code" readonly spellcheck="false" aria-label="Código SVG: Marca sola · fondo claro">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128" role="img" aria-labelledby="wc-m-paper-t"&gt;&lt;title id="wc-m-paper-t"&gt;Congreso Abierto, marca en acuarela&lt;/title&gt;&lt;defs&gt;&lt;filter id="wc-m-paper-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="1.6" result="s"/&gt;
+&lt;feMorphology in="d" operator="erode" radius="1.6" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/&gt;
+&lt;feComposite in="d" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncA type="linear" slope="0.35"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="s"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;filter id="wc-m-paper-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="0.35" result="s"/&gt;
+&lt;feMorphology in="s" operator="erode" radius="0.9" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="0.9" result="eb"/&gt;
+&lt;feComposite in="s" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncR type="linear" slope="0.7"/&gt;&lt;feFuncG type="linear" slope="0.76"/&gt;&lt;feFuncB type="linear" slope="0.86"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/&gt;
+&lt;feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/&gt;
+&lt;feComposite in="s" in2="ga" operator="in" result="gr"/&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="gr"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;filter id="wc-m-paper-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="0.25" result="s"/&gt;
+&lt;feMorphology in="s" operator="erode" radius="0.7" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="0.7" result="eb"/&gt;
+&lt;feComposite in="s" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncR type="linear" slope="0.7"/&gt;&lt;feFuncG type="linear" slope="0.76"/&gt;&lt;feFuncB type="linear" slope="0.86"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/&gt;
+&lt;feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/&gt;
+&lt;feComposite in="s" in2="ga" operator="in" result="gr"/&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="gr"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;/defs&gt;&lt;g filter="url(#wc-m-paper-bl)"&gt;&lt;path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-m-paper-wa)" opacity="0.9"&gt;&lt;path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/&gt;&lt;rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-m-paper-wb)" opacity="0.72"&gt;&lt;path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/&gt;&lt;rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-m-paper-wa)" opacity="0.55"&gt;&lt;path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/&gt;&lt;path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-m-paper-wb)" opacity="0.85"&gt;&lt;rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/&gt;&lt;rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/&gt;&lt;path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/&gt;&lt;rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-m-paper-wb)"&gt;&lt;rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/&gt;&lt;rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/&gt;&lt;/g&gt;&lt;/svg&gt;</textarea></details>
+</article>
+<article class="variant" aria-labelledby="wc-m-ink-h">
+  <h4 id="wc-m-ink-h">Marca sola · fondo oscuro</h4>
+  <div class="stage ink"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128" role="img" aria-labelledby="wc-m-ink-t"><title id="wc-m-ink-t">Congreso Abierto, marca en acuarela sobre fondo oscuro</title><defs><filter id="wc-m-ink-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="1.6" result="s"/>
+<feMorphology in="d" operator="erode" radius="1.6" result="e"/>
+<feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/>
+<feComposite in="d" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+<feMerge><feMergeNode in="s"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="wc-m-ink-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.35" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.9" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.9" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="wc-m-ink-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.25" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.7" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.7" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter></defs><g filter="url(#wc-m-ink-bl)"><path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/></g>
+<g filter="url(#wc-m-ink-wa)" opacity="0.9"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/></g>
+<g filter="url(#wc-m-ink-wb)" opacity="0.72"><path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/><rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/></g>
+<g filter="url(#wc-m-ink-wa)" opacity="0.55"><path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/><path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/></g>
+<g filter="url(#wc-m-ink-wb)" opacity="0.85"><rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/></g>
+<g filter="url(#wc-m-ink-wb)"><rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/></g></svg></div>
+  <p class="note">La mancha celeste de fondo viaja con la marca, así que es la misma en los dos fondos.</p>
+  <div class="copy-row"><button type="button" class="btn" data-copy="wc-m-ink-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  <details><summary>Ver código SVG</summary><textarea id="wc-m-ink-code" readonly spellcheck="false" aria-label="Código SVG: Marca sola · fondo oscuro">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128" role="img" aria-labelledby="wc-m-ink-t"&gt;&lt;title id="wc-m-ink-t"&gt;Congreso Abierto, marca en acuarela sobre fondo oscuro&lt;/title&gt;&lt;defs&gt;&lt;filter id="wc-m-ink-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="1.6" result="s"/&gt;
+&lt;feMorphology in="d" operator="erode" radius="1.6" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/&gt;
+&lt;feComposite in="d" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncA type="linear" slope="0.35"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="s"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;filter id="wc-m-ink-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="0.35" result="s"/&gt;
+&lt;feMorphology in="s" operator="erode" radius="0.9" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="0.9" result="eb"/&gt;
+&lt;feComposite in="s" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncR type="linear" slope="0.7"/&gt;&lt;feFuncG type="linear" slope="0.76"/&gt;&lt;feFuncB type="linear" slope="0.86"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/&gt;
+&lt;feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/&gt;
+&lt;feComposite in="s" in2="ga" operator="in" result="gr"/&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="gr"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;filter id="wc-m-ink-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB"&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/&gt;
+&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/&gt;
+&lt;feGaussianBlur in="d" stdDeviation="0.25" result="s"/&gt;
+&lt;feMorphology in="s" operator="erode" radius="0.7" result="e"/&gt;
+&lt;feGaussianBlur in="e" stdDeviation="0.7" result="eb"/&gt;
+&lt;feComposite in="s" in2="eb" operator="out" result="rim"/&gt;
+&lt;feComponentTransfer in="rim" result="rd"&gt;&lt;feFuncR type="linear" slope="0.7"/&gt;&lt;feFuncG type="linear" slope="0.76"/&gt;&lt;feFuncB type="linear" slope="0.86"/&gt;&lt;/feComponentTransfer&gt;
+&lt;feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/&gt;
+&lt;feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/&gt;
+&lt;feComposite in="s" in2="ga" operator="in" result="gr"/&gt;
+&lt;feMerge&gt;&lt;feMergeNode in="gr"/&gt;&lt;feMergeNode in="rd"/&gt;&lt;/feMerge&gt;
+&lt;/filter&gt;&lt;/defs&gt;&lt;g filter="url(#wc-m-ink-bl)"&gt;&lt;path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-m-ink-wa)" opacity="0.9"&gt;&lt;path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/&gt;&lt;rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-m-ink-wb)" opacity="0.72"&gt;&lt;path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/&gt;&lt;rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-m-ink-wa)" opacity="0.55"&gt;&lt;path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/&gt;&lt;path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-m-ink-wb)" opacity="0.85"&gt;&lt;rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/&gt;&lt;rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/&gt;&lt;rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/&gt;&lt;path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/&gt;&lt;rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/&gt;&lt;/g&gt;
+&lt;g filter="url(#wc-m-ink-wb)"&gt;&lt;rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/&gt;&lt;rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/&gt;&lt;/g&gt;&lt;/svg&gt;</textarea></details>
+</article></div>
+
+    <h3 class="group">Plana (sin filtros)</h3>
+    <p class="note">Las mismas formas con colores lisos de la familia celeste más <code>--accent</code>. Para favicon, mails, PDF, programas que no leen filtros y tamaños chicos.</p>
+    <div class="grid"><article class="variant" aria-labelledby="fl-h-paper-h">
+  <h4 id="fl-h-paper-h">Horizontal · fondo claro</h4>
+  <div class="stage paper"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 84" width="420" height="84" role="img" aria-labelledby="fl-h-paper-t"><title id="fl-h-paper-t">Congreso Abierto, logo horizontal plano</title><g transform="translate(0 2) scale(1.25)"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#74acdf"/><path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#3876b0"/>
+<rect x="31" y="3" width="2" height="6.4" rx="1" fill="#1f4e79"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/>
+<rect x="12" y="36.5" width="40" height="3" fill="#1f4e79"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/>
+<rect x="8" y="48.5" width="48" height="4" fill="#1f4e79"/><rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#3876b0"/></g>
+<text x="94" y="46" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="34" fill="#1c1b19">Congreso Abierto</text>
+<text x="95" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#55524b">Datos abiertos del Congreso argentino</text></svg></div>
+  
+  <div class="copy-row"><button type="button" class="btn" data-copy="fl-h-paper-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  <details><summary>Ver código SVG</summary><textarea id="fl-h-paper-code" readonly spellcheck="false" aria-label="Código SVG: Horizontal · fondo claro">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 84" width="420" height="84" role="img" aria-labelledby="fl-h-paper-t"&gt;&lt;title id="fl-h-paper-t"&gt;Congreso Abierto, logo horizontal plano&lt;/title&gt;&lt;g transform="translate(0 2) scale(1.25)"&gt;&lt;path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#74acdf"/&gt;&lt;path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#3876b0"/&gt;
+&lt;rect x="31" y="3" width="2" height="6.4" rx="1" fill="#1f4e79"/&gt;&lt;path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/&gt;&lt;rect x="29" y="12.6" width="6" height="4.6" fill="#1f4e79"/&gt;&lt;rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/&gt;
+&lt;rect x="12" y="36.5" width="40" height="3" fill="#1f4e79"/&gt;&lt;rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/&gt;&lt;rect x="15.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;&lt;rect x="21.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;&lt;rect x="27.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;&lt;rect x="33.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;&lt;rect x="39.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;&lt;rect x="45.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;
+&lt;rect x="8" y="48.5" width="48" height="4" fill="#1f4e79"/&gt;&lt;rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#3876b0"/&gt;&lt;/g&gt;
+&lt;text x="94" y="46" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="34" fill="#1c1b19"&gt;Congreso Abierto&lt;/text&gt;
+&lt;text x="95" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#55524b"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea></details>
+</article>
+<article class="variant" aria-labelledby="fl-h-ink-h">
+  <h4 id="fl-h-ink-h">Horizontal · fondo oscuro</h4>
+  <div class="stage ink"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 84" width="420" height="84" role="img" aria-labelledby="fl-h-ink-t"><title id="fl-h-ink-t">Congreso Abierto, logo horizontal plano sobre fondo oscuro</title><g transform="translate(0 2) scale(1.25)"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#74acdf"/><path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#3876b0"/>
+<rect x="31" y="3" width="2" height="6.4" rx="1" fill="#b5d4f0"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#74acdf"/><rect x="29" y="12.6" width="6" height="4.6" fill="#b5d4f0"/><rect x="31" y="13.8" width="2" height="2.6" fill="#1c1b19"/>
+<rect x="12" y="36.5" width="40" height="3" fill="#b5d4f0"/><rect x="14" y="39.5" width="36" height="9" fill="#3876b0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/>
+<rect x="8" y="48.5" width="48" height="4" fill="#b5d4f0"/><rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#74acdf"/></g>
+<text x="94" y="46" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="34" fill="#ffffff">Congreso Abierto</text>
+<text x="95" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#d9d5cc">Datos abiertos del Congreso argentino</text></svg></div>
+  
+  <div class="copy-row"><button type="button" class="btn" data-copy="fl-h-ink-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  <details><summary>Ver código SVG</summary><textarea id="fl-h-ink-code" readonly spellcheck="false" aria-label="Código SVG: Horizontal · fondo oscuro">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 84" width="420" height="84" role="img" aria-labelledby="fl-h-ink-t"&gt;&lt;title id="fl-h-ink-t"&gt;Congreso Abierto, logo horizontal plano sobre fondo oscuro&lt;/title&gt;&lt;g transform="translate(0 2) scale(1.25)"&gt;&lt;path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#74acdf"/&gt;&lt;path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#3876b0"/&gt;
+&lt;rect x="31" y="3" width="2" height="6.4" rx="1" fill="#b5d4f0"/&gt;&lt;path d="M28 12.6Q32 7.2 36 12.6Z" fill="#74acdf"/&gt;&lt;rect x="29" y="12.6" width="6" height="4.6" fill="#b5d4f0"/&gt;&lt;rect x="31" y="13.8" width="2" height="2.6" fill="#1c1b19"/&gt;
+&lt;rect x="12" y="36.5" width="40" height="3" fill="#b5d4f0"/&gt;&lt;rect x="14" y="39.5" width="36" height="9" fill="#3876b0"/&gt;&lt;rect x="15.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;&lt;rect x="21.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;&lt;rect x="27.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;&lt;rect x="33.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;&lt;rect x="39.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;&lt;rect x="45.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;
+&lt;rect x="8" y="48.5" width="48" height="4" fill="#b5d4f0"/&gt;&lt;rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#74acdf"/&gt;&lt;/g&gt;
+&lt;text x="94" y="46" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="34" fill="#ffffff"&gt;Congreso Abierto&lt;/text&gt;
+&lt;text x="95" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#d9d5cc"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea></details>
+</article>
+<article class="variant" aria-labelledby="fl-s-paper-h">
+  <h4 id="fl-s-paper-h">Apilado · fondo claro</h4>
+  <div class="stage paper"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 190" width="300" height="190" role="img" aria-labelledby="fl-s-paper-t"><title id="fl-s-paper-t">Congreso Abierto, logo apilado plano</title><g transform="translate(102 0) scale(1.5)"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#74acdf"/><path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#3876b0"/>
+<rect x="31" y="3" width="2" height="6.4" rx="1" fill="#1f4e79"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/>
+<rect x="12" y="36.5" width="40" height="3" fill="#1f4e79"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/>
+<rect x="8" y="48.5" width="48" height="4" fill="#1f4e79"/><rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#3876b0"/></g>
+<text x="150" y="134" text-anchor="middle" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="32" fill="#1c1b19">Congreso Abierto</text>
+<text x="150" y="160" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#55524b">Datos abiertos del Congreso argentino</text></svg></div>
+  
+  <div class="copy-row"><button type="button" class="btn" data-copy="fl-s-paper-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  <details><summary>Ver código SVG</summary><textarea id="fl-s-paper-code" readonly spellcheck="false" aria-label="Código SVG: Apilado · fondo claro">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 190" width="300" height="190" role="img" aria-labelledby="fl-s-paper-t"&gt;&lt;title id="fl-s-paper-t"&gt;Congreso Abierto, logo apilado plano&lt;/title&gt;&lt;g transform="translate(102 0) scale(1.5)"&gt;&lt;path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#74acdf"/&gt;&lt;path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#3876b0"/&gt;
+&lt;rect x="31" y="3" width="2" height="6.4" rx="1" fill="#1f4e79"/&gt;&lt;path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/&gt;&lt;rect x="29" y="12.6" width="6" height="4.6" fill="#1f4e79"/&gt;&lt;rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/&gt;
+&lt;rect x="12" y="36.5" width="40" height="3" fill="#1f4e79"/&gt;&lt;rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/&gt;&lt;rect x="15.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;&lt;rect x="21.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;&lt;rect x="27.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;&lt;rect x="33.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;&lt;rect x="39.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;&lt;rect x="45.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;
+&lt;rect x="8" y="48.5" width="48" height="4" fill="#1f4e79"/&gt;&lt;rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#3876b0"/&gt;&lt;/g&gt;
+&lt;text x="150" y="134" text-anchor="middle" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="32" fill="#1c1b19"&gt;Congreso Abierto&lt;/text&gt;
+&lt;text x="150" y="160" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#55524b"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea></details>
+</article>
+<article class="variant" aria-labelledby="fl-s-ink-h">
+  <h4 id="fl-s-ink-h">Apilado · fondo oscuro</h4>
+  <div class="stage ink"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 190" width="300" height="190" role="img" aria-labelledby="fl-s-ink-t"><title id="fl-s-ink-t">Congreso Abierto, logo apilado plano sobre fondo oscuro</title><g transform="translate(102 0) scale(1.5)"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#74acdf"/><path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#3876b0"/>
+<rect x="31" y="3" width="2" height="6.4" rx="1" fill="#b5d4f0"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#74acdf"/><rect x="29" y="12.6" width="6" height="4.6" fill="#b5d4f0"/><rect x="31" y="13.8" width="2" height="2.6" fill="#1c1b19"/>
+<rect x="12" y="36.5" width="40" height="3" fill="#b5d4f0"/><rect x="14" y="39.5" width="36" height="9" fill="#3876b0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/>
+<rect x="8" y="48.5" width="48" height="4" fill="#b5d4f0"/><rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#74acdf"/></g>
+<text x="150" y="134" text-anchor="middle" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="32" fill="#ffffff">Congreso Abierto</text>
+<text x="150" y="160" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#d9d5cc">Datos abiertos del Congreso argentino</text></svg></div>
+  
+  <div class="copy-row"><button type="button" class="btn" data-copy="fl-s-ink-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  <details><summary>Ver código SVG</summary><textarea id="fl-s-ink-code" readonly spellcheck="false" aria-label="Código SVG: Apilado · fondo oscuro">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 190" width="300" height="190" role="img" aria-labelledby="fl-s-ink-t"&gt;&lt;title id="fl-s-ink-t"&gt;Congreso Abierto, logo apilado plano sobre fondo oscuro&lt;/title&gt;&lt;g transform="translate(102 0) scale(1.5)"&gt;&lt;path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#74acdf"/&gt;&lt;path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#3876b0"/&gt;
+&lt;rect x="31" y="3" width="2" height="6.4" rx="1" fill="#b5d4f0"/&gt;&lt;path d="M28 12.6Q32 7.2 36 12.6Z" fill="#74acdf"/&gt;&lt;rect x="29" y="12.6" width="6" height="4.6" fill="#b5d4f0"/&gt;&lt;rect x="31" y="13.8" width="2" height="2.6" fill="#1c1b19"/&gt;
+&lt;rect x="12" y="36.5" width="40" height="3" fill="#b5d4f0"/&gt;&lt;rect x="14" y="39.5" width="36" height="9" fill="#3876b0"/&gt;&lt;rect x="15.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;&lt;rect x="21.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;&lt;rect x="27.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;&lt;rect x="33.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;&lt;rect x="39.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;&lt;rect x="45.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;
+&lt;rect x="8" y="48.5" width="48" height="4" fill="#b5d4f0"/&gt;&lt;rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#74acdf"/&gt;&lt;/g&gt;
+&lt;text x="150" y="134" text-anchor="middle" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="32" fill="#ffffff"&gt;Congreso Abierto&lt;/text&gt;
+&lt;text x="150" y="160" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#d9d5cc"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea></details>
+</article>
+<article class="variant" aria-labelledby="fl-m-paper-h">
+  <h4 id="fl-m-paper-h">Marca sola · fondo claro</h4>
+  <div class="stage paper"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128" role="img" aria-labelledby="fl-m-paper-t"><title id="fl-m-paper-t">Congreso Abierto, marca plana</title><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#74acdf"/><path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#3876b0"/>
+<rect x="31" y="3" width="2" height="6.4" rx="1" fill="#1f4e79"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/>
+<rect x="12" y="36.5" width="40" height="3" fill="#1f4e79"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/>
+<rect x="8" y="48.5" width="48" height="4" fill="#1f4e79"/><rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#3876b0"/></svg></div>
+  
+  <div class="copy-row"><button type="button" class="btn" data-copy="fl-m-paper-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  <details><summary>Ver código SVG</summary><textarea id="fl-m-paper-code" readonly spellcheck="false" aria-label="Código SVG: Marca sola · fondo claro">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128" role="img" aria-labelledby="fl-m-paper-t"&gt;&lt;title id="fl-m-paper-t"&gt;Congreso Abierto, marca plana&lt;/title&gt;&lt;path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#74acdf"/&gt;&lt;path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#3876b0"/&gt;
+&lt;rect x="31" y="3" width="2" height="6.4" rx="1" fill="#1f4e79"/&gt;&lt;path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/&gt;&lt;rect x="29" y="12.6" width="6" height="4.6" fill="#1f4e79"/&gt;&lt;rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/&gt;
+&lt;rect x="12" y="36.5" width="40" height="3" fill="#1f4e79"/&gt;&lt;rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/&gt;&lt;rect x="15.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;&lt;rect x="21.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;&lt;rect x="27.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;&lt;rect x="33.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;&lt;rect x="39.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;&lt;rect x="45.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/&gt;
+&lt;rect x="8" y="48.5" width="48" height="4" fill="#1f4e79"/&gt;&lt;rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#3876b0"/&gt;&lt;/svg&gt;</textarea></details>
+</article>
+<article class="variant" aria-labelledby="fl-m-ink-h">
+  <h4 id="fl-m-ink-h">Marca sola · fondo oscuro</h4>
+  <div class="stage ink"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128" role="img" aria-labelledby="fl-m-ink-t"><title id="fl-m-ink-t">Congreso Abierto, marca plana sobre fondo oscuro</title><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#74acdf"/><path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#3876b0"/>
+<rect x="31" y="3" width="2" height="6.4" rx="1" fill="#b5d4f0"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#74acdf"/><rect x="29" y="12.6" width="6" height="4.6" fill="#b5d4f0"/><rect x="31" y="13.8" width="2" height="2.6" fill="#1c1b19"/>
+<rect x="12" y="36.5" width="40" height="3" fill="#b5d4f0"/><rect x="14" y="39.5" width="36" height="9" fill="#3876b0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/>
+<rect x="8" y="48.5" width="48" height="4" fill="#b5d4f0"/><rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#74acdf"/></svg></div>
+  <p class="note">En oscuro la estructura pasa de azul acento a celeste claro.</p>
+  <div class="copy-row"><button type="button" class="btn" data-copy="fl-m-ink-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  <details><summary>Ver código SVG</summary><textarea id="fl-m-ink-code" readonly spellcheck="false" aria-label="Código SVG: Marca sola · fondo oscuro">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128" role="img" aria-labelledby="fl-m-ink-t"&gt;&lt;title id="fl-m-ink-t"&gt;Congreso Abierto, marca plana sobre fondo oscuro&lt;/title&gt;&lt;path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#74acdf"/&gt;&lt;path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#3876b0"/&gt;
+&lt;rect x="31" y="3" width="2" height="6.4" rx="1" fill="#b5d4f0"/&gt;&lt;path d="M28 12.6Q32 7.2 36 12.6Z" fill="#74acdf"/&gt;&lt;rect x="29" y="12.6" width="6" height="4.6" fill="#b5d4f0"/&gt;&lt;rect x="31" y="13.8" width="2" height="2.6" fill="#1c1b19"/&gt;
+&lt;rect x="12" y="36.5" width="40" height="3" fill="#b5d4f0"/&gt;&lt;rect x="14" y="39.5" width="36" height="9" fill="#3876b0"/&gt;&lt;rect x="15.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;&lt;rect x="21.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;&lt;rect x="27.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;&lt;rect x="33.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;&lt;rect x="39.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;&lt;rect x="45.8" y="39.5" width="2.4" height="9" fill="#b5d4f0"/&gt;
+&lt;rect x="8" y="48.5" width="48" height="4" fill="#b5d4f0"/&gt;&lt;rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#74acdf"/&gt;&lt;/svg&gt;</textarea></details>
+</article></div>
+
+    <h3 class="group">Favicon (plano)</h3>
+    <p class="note">Dos dibujos separados, ajustados a la grilla de píxeles: el de 32 conserva el tambor con ventanas; el de 16 queda en cúpula, aguja y base. Se muestran a tamaño real y ampliados para revisarlos.</p>
+    <div class="fav-row">
+      <article class="variant" aria-labelledby="fav32-h"><h4 id="fav32-h">Favicon 32 px</h4>
+        <div class="fav-sizes"><figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-labelledby="fav32-t"><title id="fav32-t">Congreso Abierto, favicon 32 px</title><rect width="32" height="32" rx="6" fill="#e4f0fa"/><rect x="15" y="2.5" width="2" height="3.5" fill="#1f4e79"/><rect x="14" y="6" width="4" height="3" fill="#1f4e79"/>
+<path d="M7 19C7 13 11 9.5 16 9C21 9.5 25 13 25 19Z" fill="#74acdf"/><path d="M16 9C21 9.5 25 13 25 19H18C18 14.5 17.4 11.5 16 9Z" fill="#3876b0"/>
+<rect x="6" y="19" width="20" height="2" fill="#1f4e79"/><rect x="7" y="21" width="18" height="4" fill="#1f4e79"/><rect x="10" y="21.5" width="2" height="3" fill="#e4f0fa"/><rect x="15" y="21.5" width="2" height="3" fill="#e4f0fa"/><rect x="20" y="21.5" width="2" height="3" fill="#e4f0fa"/>
+<rect x="4" y="25" width="24" height="3" rx="0.5" fill="#1f4e79"/></svg><figcaption>32 px</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="128" height="128" role="img" aria-labelledby="fav32-x-t"><title id="fav32-x-t">Congreso Abierto, favicon 32 px</title><rect width="32" height="32" rx="6" fill="#e4f0fa"/><rect x="15" y="2.5" width="2" height="3.5" fill="#1f4e79"/><rect x="14" y="6" width="4" height="3" fill="#1f4e79"/>
+<path d="M7 19C7 13 11 9.5 16 9C21 9.5 25 13 25 19Z" fill="#74acdf"/><path d="M16 9C21 9.5 25 13 25 19H18C18 14.5 17.4 11.5 16 9Z" fill="#3876b0"/>
+<rect x="6" y="19" width="20" height="2" fill="#1f4e79"/><rect x="7" y="21" width="18" height="4" fill="#1f4e79"/><rect x="10" y="21.5" width="2" height="3" fill="#e4f0fa"/><rect x="15" y="21.5" width="2" height="3" fill="#e4f0fa"/><rect x="20" y="21.5" width="2" height="3" fill="#e4f0fa"/>
+<rect x="4" y="25" width="24" height="3" rx="0.5" fill="#1f4e79"/></svg><figcaption>ampliado ×4</figcaption></figure></div>
+        <div class="copy-row"><button type="button" class="btn" data-copy="fav32-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+<details><summary>Ver código SVG</summary><textarea id="fav32-code" readonly spellcheck="false" aria-label="Código SVG: favicon 32 px">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-labelledby="fav32-t"&gt;&lt;title id="fav32-t"&gt;Congreso Abierto, favicon 32 px&lt;/title&gt;&lt;rect width="32" height="32" rx="6" fill="#e4f0fa"/&gt;&lt;rect x="15" y="2.5" width="2" height="3.5" fill="#1f4e79"/&gt;&lt;rect x="14" y="6" width="4" height="3" fill="#1f4e79"/&gt;
+&lt;path d="M7 19C7 13 11 9.5 16 9C21 9.5 25 13 25 19Z" fill="#74acdf"/&gt;&lt;path d="M16 9C21 9.5 25 13 25 19H18C18 14.5 17.4 11.5 16 9Z" fill="#3876b0"/&gt;
+&lt;rect x="6" y="19" width="20" height="2" fill="#1f4e79"/&gt;&lt;rect x="7" y="21" width="18" height="4" fill="#1f4e79"/&gt;&lt;rect x="10" y="21.5" width="2" height="3" fill="#e4f0fa"/&gt;&lt;rect x="15" y="21.5" width="2" height="3" fill="#e4f0fa"/&gt;&lt;rect x="20" y="21.5" width="2" height="3" fill="#e4f0fa"/&gt;
+&lt;rect x="4" y="25" width="24" height="3" rx="0.5" fill="#1f4e79"/&gt;&lt;/svg&gt;</textarea></details>
+      </article>
+      <article class="variant" aria-labelledby="fav16-h"><h4 id="fav16-h">Favicon 16 px</h4>
+        <div class="fav-sizes"><figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" role="img" aria-labelledby="fav16-t"><title id="fav16-t">Congreso Abierto, favicon 16 px</title><rect width="16" height="16" rx="3.5" fill="#e4f0fa"/><rect x="7" y="1.5" width="2" height="3" fill="#1f4e79"/>
+<path d="M3.5 10C3.5 6.6 5.5 4.6 8 4.5C10.5 4.6 12.5 6.6 12.5 10Z" fill="#3876b0"/><rect x="3" y="10" width="10" height="2" fill="#1f4e79"/><rect x="2" y="12.5" width="12" height="1.75" fill="#1f4e79"/></svg><figcaption>16 px</figcaption></figure><figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="128" height="128" role="img" aria-labelledby="fav16-x-t"><title id="fav16-x-t">Congreso Abierto, favicon 16 px</title><rect width="16" height="16" rx="3.5" fill="#e4f0fa"/><rect x="7" y="1.5" width="2" height="3" fill="#1f4e79"/>
+<path d="M3.5 10C3.5 6.6 5.5 4.6 8 4.5C10.5 4.6 12.5 6.6 12.5 10Z" fill="#3876b0"/><rect x="3" y="10" width="10" height="2" fill="#1f4e79"/><rect x="2" y="12.5" width="12" height="1.75" fill="#1f4e79"/></svg><figcaption>ampliado ×8</figcaption></figure></div>
+        <div class="copy-row"><button type="button" class="btn" data-copy="fav16-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+<details><summary>Ver código SVG</summary><textarea id="fav16-code" readonly spellcheck="false" aria-label="Código SVG: favicon 16 px">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" role="img" aria-labelledby="fav16-t"&gt;&lt;title id="fav16-t"&gt;Congreso Abierto, favicon 16 px&lt;/title&gt;&lt;rect width="16" height="16" rx="3.5" fill="#e4f0fa"/&gt;&lt;rect x="7" y="1.5" width="2" height="3" fill="#1f4e79"/&gt;
+&lt;path d="M3.5 10C3.5 6.6 5.5 4.6 8 4.5C10.5 4.6 12.5 6.6 12.5 10Z" fill="#3876b0"/&gt;&lt;rect x="3" y="10" width="10" height="2" fill="#1f4e79"/&gt;&lt;rect x="2" y="12.5" width="12" height="1.75" fill="#1f4e79"/&gt;&lt;/svg&gt;</textarea></details>
+      </article>
+    </div>
+    <div class="tabs" aria-label="Favicon en pestañas del navegador">
+      <div class="tab-bar light"><div class="tab light"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" role="img" aria-labelledby="fav16-tab-l-t"><title id="fav16-tab-l-t">Congreso Abierto, favicon 16 px</title><rect width="16" height="16" rx="3.5" fill="#e4f0fa"/><rect x="7" y="1.5" width="2" height="3" fill="#1f4e79"/>
+<path d="M3.5 10C3.5 6.6 5.5 4.6 8 4.5C10.5 4.6 12.5 6.6 12.5 10Z" fill="#3876b0"/><rect x="3" y="10" width="10" height="2" fill="#1f4e79"/><rect x="2" y="12.5" width="12" height="1.75" fill="#1f4e79"/></svg><span>Congreso Abierto · Diputados</span></div></div>
+      <div class="tab-bar dark"><div class="tab dark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" role="img" aria-labelledby="fav16-tab-d-t"><title id="fav16-tab-d-t">Congreso Abierto, favicon 16 px</title><rect width="16" height="16" rx="3.5" fill="#e4f0fa"/><rect x="7" y="1.5" width="2" height="3" fill="#1f4e79"/>
+<path d="M3.5 10C3.5 6.6 5.5 4.6 8 4.5C10.5 4.6 12.5 6.6 12.5 10Z" fill="#3876b0"/><rect x="3" y="10" width="10" height="2" fill="#1f4e79"/><rect x="2" y="12.5" width="12" height="1.75" fill="#1f4e79"/></svg><span>Congreso Abierto · Viajes</span></div></div>
+    </div>
+
+    <h3 class="group">Monocromo</h3>
+    <p class="note">Una sola tinta para sellos, documentos en blanco y negro y fondos de color. El hueco entre la cúpula y la cornisa reemplaza la sombra.</p>
+    <div class="grid three"><article class="variant" aria-labelledby="mo-h-ink-h">
+  <h4 id="mo-h-ink-h">Horizontal · tinta</h4>
+  <div class="stage paper"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 84" width="420" height="84" role="img" aria-labelledby="mo-h-ink-t"><title id="mo-h-ink-t">Congreso Abierto, logo horizontal monocromo</title><g transform="translate(0 2) scale(1.25)"><path d="M15 36C15 24.5 22.5 17.5 32 17C41.5 17.5 49 24.5 49 36Z" fill="#1c1b19"/>
+<rect x="31" y="3" width="2" height="6.4" rx="1" fill="#1c1b19"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#1c1b19"/><path fill-rule="evenodd" d="M29 12.6H35V16H29Z M31 13.6V15.2H33V13.6Z" fill="#1c1b19"/>
+<rect x="12" y="37.2" width="40" height="2.6" fill="#1c1b19"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/>
+<rect x="8" y="48.5" width="48" height="4" fill="#1c1b19"/><rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#1c1b19"/></g>
+<text x="94" y="46" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="34" fill="#1c1b19">Congreso Abierto</text>
+<text x="95" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#1c1b19">Datos abiertos del Congreso argentino</text></svg></div>
+  
+  <div class="copy-row"><button type="button" class="btn" data-copy="mo-h-ink-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  <details><summary>Ver código SVG</summary><textarea id="mo-h-ink-code" readonly spellcheck="false" aria-label="Código SVG: Horizontal · tinta">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 84" width="420" height="84" role="img" aria-labelledby="mo-h-ink-t"&gt;&lt;title id="mo-h-ink-t"&gt;Congreso Abierto, logo horizontal monocromo&lt;/title&gt;&lt;g transform="translate(0 2) scale(1.25)"&gt;&lt;path d="M15 36C15 24.5 22.5 17.5 32 17C41.5 17.5 49 24.5 49 36Z" fill="#1c1b19"/&gt;
+&lt;rect x="31" y="3" width="2" height="6.4" rx="1" fill="#1c1b19"/&gt;&lt;path d="M28 12.6Q32 7.2 36 12.6Z" fill="#1c1b19"/&gt;&lt;path fill-rule="evenodd" d="M29 12.6H35V16H29Z M31 13.6V15.2H33V13.6Z" fill="#1c1b19"/&gt;
+&lt;rect x="12" y="37.2" width="40" height="2.6" fill="#1c1b19"/&gt;&lt;rect x="15.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/&gt;&lt;rect x="21.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/&gt;&lt;rect x="27.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/&gt;&lt;rect x="33.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/&gt;&lt;rect x="39.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/&gt;&lt;rect x="45.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/&gt;
+&lt;rect x="8" y="48.5" width="48" height="4" fill="#1c1b19"/&gt;&lt;rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#1c1b19"/&gt;&lt;/g&gt;
+&lt;text x="94" y="46" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="34" fill="#1c1b19"&gt;Congreso Abierto&lt;/text&gt;
+&lt;text x="95" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#1c1b19"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea></details>
+</article>
+<article class="variant" aria-labelledby="mo-h-white-h">
+  <h4 id="mo-h-white-h">Horizontal · blanco</h4>
+  <div class="stage ink"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 84" width="420" height="84" role="img" aria-labelledby="mo-h-white-t"><title id="mo-h-white-t">Congreso Abierto, logo horizontal monocromo en blanco</title><g transform="translate(0 2) scale(1.25)"><path d="M15 36C15 24.5 22.5 17.5 32 17C41.5 17.5 49 24.5 49 36Z" fill="#ffffff"/>
+<rect x="31" y="3" width="2" height="6.4" rx="1" fill="#ffffff"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#ffffff"/><path fill-rule="evenodd" d="M29 12.6H35V16H29Z M31 13.6V15.2H33V13.6Z" fill="#ffffff"/>
+<rect x="12" y="37.2" width="40" height="2.6" fill="#ffffff"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#ffffff"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#ffffff"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#ffffff"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#ffffff"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#ffffff"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#ffffff"/>
+<rect x="8" y="48.5" width="48" height="4" fill="#ffffff"/><rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#ffffff"/></g>
+<text x="94" y="46" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="34" fill="#ffffff">Congreso Abierto</text>
+<text x="95" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#ffffff">Datos abiertos del Congreso argentino</text></svg></div>
+  
+  <div class="copy-row"><button type="button" class="btn" data-copy="mo-h-white-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  <details><summary>Ver código SVG</summary><textarea id="mo-h-white-code" readonly spellcheck="false" aria-label="Código SVG: Horizontal · blanco">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 84" width="420" height="84" role="img" aria-labelledby="mo-h-white-t"&gt;&lt;title id="mo-h-white-t"&gt;Congreso Abierto, logo horizontal monocromo en blanco&lt;/title&gt;&lt;g transform="translate(0 2) scale(1.25)"&gt;&lt;path d="M15 36C15 24.5 22.5 17.5 32 17C41.5 17.5 49 24.5 49 36Z" fill="#ffffff"/&gt;
+&lt;rect x="31" y="3" width="2" height="6.4" rx="1" fill="#ffffff"/&gt;&lt;path d="M28 12.6Q32 7.2 36 12.6Z" fill="#ffffff"/&gt;&lt;path fill-rule="evenodd" d="M29 12.6H35V16H29Z M31 13.6V15.2H33V13.6Z" fill="#ffffff"/&gt;
+&lt;rect x="12" y="37.2" width="40" height="2.6" fill="#ffffff"/&gt;&lt;rect x="15.8" y="39.5" width="2.4" height="9" fill="#ffffff"/&gt;&lt;rect x="21.8" y="39.5" width="2.4" height="9" fill="#ffffff"/&gt;&lt;rect x="27.8" y="39.5" width="2.4" height="9" fill="#ffffff"/&gt;&lt;rect x="33.8" y="39.5" width="2.4" height="9" fill="#ffffff"/&gt;&lt;rect x="39.8" y="39.5" width="2.4" height="9" fill="#ffffff"/&gt;&lt;rect x="45.8" y="39.5" width="2.4" height="9" fill="#ffffff"/&gt;
+&lt;rect x="8" y="48.5" width="48" height="4" fill="#ffffff"/&gt;&lt;rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#ffffff"/&gt;&lt;/g&gt;
+&lt;text x="94" y="46" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="34" fill="#ffffff"&gt;Congreso Abierto&lt;/text&gt;
+&lt;text x="95" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#ffffff"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea></details>
+</article>
+<article class="variant" aria-labelledby="mo-m-ink-h">
+  <h4 id="mo-m-ink-h">Marca · tinta</h4>
+  <div class="stage paper"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128" role="img" aria-labelledby="mo-m-ink-t"><title id="mo-m-ink-t">Congreso Abierto, marca monocroma</title><path d="M15 36C15 24.5 22.5 17.5 32 17C41.5 17.5 49 24.5 49 36Z" fill="#1c1b19"/>
+<rect x="31" y="3" width="2" height="6.4" rx="1" fill="#1c1b19"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#1c1b19"/><path fill-rule="evenodd" d="M29 12.6H35V16H29Z M31 13.6V15.2H33V13.6Z" fill="#1c1b19"/>
+<rect x="12" y="37.2" width="40" height="2.6" fill="#1c1b19"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/>
+<rect x="8" y="48.5" width="48" height="4" fill="#1c1b19"/><rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#1c1b19"/></svg></div>
+  
+  <div class="copy-row"><button type="button" class="btn" data-copy="mo-m-ink-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  <details><summary>Ver código SVG</summary><textarea id="mo-m-ink-code" readonly spellcheck="false" aria-label="Código SVG: Marca · tinta">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128" role="img" aria-labelledby="mo-m-ink-t"&gt;&lt;title id="mo-m-ink-t"&gt;Congreso Abierto, marca monocroma&lt;/title&gt;&lt;path d="M15 36C15 24.5 22.5 17.5 32 17C41.5 17.5 49 24.5 49 36Z" fill="#1c1b19"/&gt;
+&lt;rect x="31" y="3" width="2" height="6.4" rx="1" fill="#1c1b19"/&gt;&lt;path d="M28 12.6Q32 7.2 36 12.6Z" fill="#1c1b19"/&gt;&lt;path fill-rule="evenodd" d="M29 12.6H35V16H29Z M31 13.6V15.2H33V13.6Z" fill="#1c1b19"/&gt;
+&lt;rect x="12" y="37.2" width="40" height="2.6" fill="#1c1b19"/&gt;&lt;rect x="15.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/&gt;&lt;rect x="21.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/&gt;&lt;rect x="27.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/&gt;&lt;rect x="33.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/&gt;&lt;rect x="39.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/&gt;&lt;rect x="45.8" y="39.5" width="2.4" height="9" fill="#1c1b19"/&gt;
+&lt;rect x="8" y="48.5" width="48" height="4" fill="#1c1b19"/&gt;&lt;rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#1c1b19"/&gt;&lt;/svg&gt;</textarea></details>
+</article></div>
+  </section>
+
+  <section class="block" aria-labelledby="cabecera">
+    <div class="head"><span class="num">3</span><h2 id="cabecera" tabindex="-1">El logo en el header del sitio</h2></div>
+    <p class="note">Mismo header de <code>src/layouts/SiteLayout.astro</code>: fondo <code>--surface</code>, línea inferior <code>--line</code>, marca en serif 18 px 700 con su bajada en 11 px. La marca en acuarela mide 40 px y queda decorativa (<code>aria-hidden</code>), porque el nombre ya está como texto en el link.</p>
+    <p class="mock-label">Hoy</p>
+    <div class="mock"><header class="site-header" aria-label="Maqueta del header actual">
+  <div class="site-bar"><a class="brand" href="#cabecera">Gastos y trabajo legislativo<small>Diputados y Senado de la Nación · datos oficiales</small></a>
+    <div class="site-search"><div class="sbox"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" fill="none" stroke="#55524b" stroke-width="2.4"/><path d="M16.5 16.5L21 21" stroke="#55524b" stroke-width="2.4" stroke-linecap="round"/></svg><span class="ph">Buscar diputado, senador, bloque o proyecto</span><kbd>/</kbd></div></div>
+  </div>
+  <nav class="site-nav" aria-label="Secciones (maqueta)"><ul><li><a href="#cabecera" aria-current="page">Inicio</a></li><li><a href="#cabecera">Diputados</a></li><li><a href="#cabecera">Senado</a></li><li><a href="#cabecera">Bloques</a></li><li><a href="#cabecera">Provincias</a></li><li><a href="#cabecera">Comisiones</a></li><li><a href="#cabecera">Viajes</a></li><li><a href="#cabecera">Proyectos</a></li></ul></nav>
+</header></div>
+    <p class="mock-label">Con el logo</p>
+    <div class="mock-row">
+      <div class="mock"><header class="site-header" aria-label="Maqueta del header con el logo">
+  <div class="site-bar"><a class="brand logo" href="#cabecera"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="40" height="40" aria-hidden="true" focusable="false"><title id="hdr-wide-t">Congreso Abierto</title><defs><filter id="hdr-wide-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="1.6" result="s"/>
+<feMorphology in="d" operator="erode" radius="1.6" result="e"/>
+<feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/>
+<feComposite in="d" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+<feMerge><feMergeNode in="s"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="hdr-wide-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.35" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.9" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.9" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="hdr-wide-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.25" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.7" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.7" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter></defs><g filter="url(#hdr-wide-bl)"><path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/></g>
+<g filter="url(#hdr-wide-wa)" opacity="0.9"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/></g>
+<g filter="url(#hdr-wide-wb)" opacity="0.72"><path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/><rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/></g>
+<g filter="url(#hdr-wide-wa)" opacity="0.55"><path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/><path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/></g>
+<g filter="url(#hdr-wide-wb)" opacity="0.85"><rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/></g>
+<g filter="url(#hdr-wide-wb)"><rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/></g></svg><span>Congreso Abierto<small>Diputados y Senado de la Nación · datos oficiales</small></span></a>
+    <div class="site-search"><div class="sbox"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" fill="none" stroke="#55524b" stroke-width="2.4"/><path d="M16.5 16.5L21 21" stroke="#55524b" stroke-width="2.4" stroke-linecap="round"/></svg><span class="ph">Buscar diputado, senador, bloque o proyecto</span><kbd>/</kbd></div></div>
+  </div>
+  <nav class="site-nav" aria-label="Secciones (maqueta)"><ul><li><a href="#cabecera" aria-current="page">Inicio</a></li><li><a href="#cabecera">Diputados</a></li><li><a href="#cabecera">Senado</a></li><li><a href="#cabecera">Bloques</a></li><li><a href="#cabecera">Provincias</a></li><li><a href="#cabecera">Comisiones</a></li><li><a href="#cabecera">Viajes</a></li><li><a href="#cabecera">Proyectos</a></li></ul></nav>
+</header>
+        <div class="mock-body"><h2 style="font-size:var(--text-xl)">Qué hacen y cuánto gastan los legisladores</h2><p>Diputados, senadores, viajes, proyectos y votaciones con datos oficiales.</p></div>
+      </div>
+      <div class="mock phone"><header class="site-header narrow" aria-label="Maqueta del header con el logo en el teléfono">
+  <div class="site-bar"><a class="brand logo" href="#cabecera"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="40" height="40" aria-hidden="true" focusable="false"><title id="hdr-phone-t">Congreso Abierto</title><defs><filter id="hdr-phone-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="1.6" result="s"/>
+<feMorphology in="d" operator="erode" radius="1.6" result="e"/>
+<feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/>
+<feComposite in="d" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+<feMerge><feMergeNode in="s"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="hdr-phone-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.35" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.9" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.9" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="hdr-phone-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.25" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.7" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.7" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter></defs><g filter="url(#hdr-phone-bl)"><path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/></g>
+<g filter="url(#hdr-phone-wa)" opacity="0.9"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/></g>
+<g filter="url(#hdr-phone-wb)" opacity="0.72"><path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/><rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/></g>
+<g filter="url(#hdr-phone-wa)" opacity="0.55"><path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/><path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/></g>
+<g filter="url(#hdr-phone-wb)" opacity="0.85"><rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/></g>
+<g filter="url(#hdr-phone-wb)"><rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/></g></svg><span>Congreso Abierto<small>Diputados y Senado de la Nación · datos oficiales</small></span></a>
+    <div class="site-search"><div class="sbox"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" fill="none" stroke="#55524b" stroke-width="2.4"/><path d="M16.5 16.5L21 21" stroke="#55524b" stroke-width="2.4" stroke-linecap="round"/></svg><span class="ph">Buscar diputado, senador, bloque o proyecto</span><kbd>/</kbd></div></div>
+  </div>
+  <nav class="site-nav" aria-label="Secciones (maqueta)"><ul><li><a href="#cabecera" aria-current="page">Inicio</a></li><li><a href="#cabecera">Diputados</a></li><li><a href="#cabecera">Senado</a></li><li><a href="#cabecera">Bloques</a></li><li><a href="#cabecera">Provincias</a></li><li><a href="#cabecera">Comisiones</a></li><li><a href="#cabecera">Viajes</a></li><li><a href="#cabecera">Proyectos</a></li></ul></nav>
+</header></div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="s4">
+    <div class="head"><span class="num">4</span><h2 id="s4">Cómo usarlo</h2></div>
+    <div class="usage">
+      <div>
+        <h3>Tamaño mínimo</h3>
+        <ul>
+          <li>Horizontal en acuarela: 180 px de ancho (marca de 36 px). Más chico, la textura se vuelve mancha.</li>
+          <li>Horizontal plano: 140 px de ancho.</li>
+          <li>Marca en acuarela: 32 px. Marca plana: 20 px.</li>
+          <li>Debajo de 20 px, solo el favicon de 16 px.</li>
+        </ul>
+        <div class="minsizes">
+          <figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 84" width="180" height="36" role="img" aria-labelledby="min-wc-t"><title id="min-wc-t">Horizontal en acuarela a 180 px</title><defs><filter id="min-wc-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="1.6" result="s"/>
+<feMorphology in="d" operator="erode" radius="1.6" result="e"/>
+<feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/>
+<feComposite in="d" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+<feMerge><feMergeNode in="s"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="min-wc-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.35" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.9" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.9" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="min-wc-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.25" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.7" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.7" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter></defs><g transform="translate(0 2) scale(1.25)"><g filter="url(#min-wc-bl)"><path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/></g>
+<g filter="url(#min-wc-wa)" opacity="0.9"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/></g>
+<g filter="url(#min-wc-wb)" opacity="0.72"><path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/><rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/></g>
+<g filter="url(#min-wc-wa)" opacity="0.55"><path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/><path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/></g>
+<g filter="url(#min-wc-wb)" opacity="0.85"><rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/></g>
+<g filter="url(#min-wc-wb)"><rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/></g></g>
+<text x="94" y="46" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="34" fill="#1c1b19">Congreso Abierto</text>
+<text x="95" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#55524b">Datos abiertos del Congreso argentino</text></svg><figcaption>180 px</figcaption></figure>
+          <figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 84" width="140" height="28" role="img" aria-labelledby="min-fl-t"><title id="min-fl-t">Horizontal plano a 140 px</title><g transform="translate(0 2) scale(1.25)"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#74acdf"/><path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#3876b0"/>
+<rect x="31" y="3" width="2" height="6.4" rx="1" fill="#1f4e79"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/>
+<rect x="12" y="36.5" width="40" height="3" fill="#1f4e79"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/>
+<rect x="8" y="48.5" width="48" height="4" fill="#1f4e79"/><rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#3876b0"/></g>
+<text x="94" y="46" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="34" fill="#1c1b19">Congreso Abierto</text>
+<text x="95" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#55524b">Datos abiertos del Congreso argentino</text></svg><figcaption>140 px</figcaption></figure>
+          <figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="32" height="32" role="img" aria-labelledby="min-mwc-t"><title id="min-mwc-t">Marca en acuarela a 32 px</title><defs><filter id="min-mwc-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="1.6" result="s"/>
+<feMorphology in="d" operator="erode" radius="1.6" result="e"/>
+<feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/>
+<feComposite in="d" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+<feMerge><feMergeNode in="s"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="min-mwc-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.35" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.9" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.9" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="min-mwc-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.25" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.7" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.7" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter></defs><g filter="url(#min-mwc-bl)"><path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/></g>
+<g filter="url(#min-mwc-wa)" opacity="0.9"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/></g>
+<g filter="url(#min-mwc-wb)" opacity="0.72"><path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/><rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/></g>
+<g filter="url(#min-mwc-wa)" opacity="0.55"><path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/><path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/></g>
+<g filter="url(#min-mwc-wb)" opacity="0.85"><rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/></g>
+<g filter="url(#min-mwc-wb)"><rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/></g></svg><figcaption>32 px</figcaption></figure>
+          <figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="20" height="20" role="img" aria-labelledby="min-mfl-t"><title id="min-mfl-t">Marca plana a 20 px</title><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#74acdf"/><path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#3876b0"/>
+<rect x="31" y="3" width="2" height="6.4" rx="1" fill="#1f4e79"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/>
+<rect x="12" y="36.5" width="40" height="3" fill="#1f4e79"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/>
+<rect x="8" y="48.5" width="48" height="4" fill="#1f4e79"/><rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#3876b0"/></svg><figcaption>20 px</figcaption></figure>
+        </div>
+      </div>
+      <div>
+        <h3>Área de resguardo</h3>
+        <ul>
+          <li>Dejar libre, alrededor de todo el logo, una medida <strong>x</strong> igual al alto de la linterna con su aguja: un cuarto del alto de la marca (20 px si la marca mide 80).</li>
+          <li>Ningún texto, borde ni imagen entra en esa zona.</li>
+        </ul>
+        <svg viewBox="0 0 520 170" width="520" height="170" role="img" aria-labelledby="cs-t"><title id="cs-t">Área de resguardo: margen x alrededor del logo horizontal</title>
+          <rect x="0.5" y="0.5" width="519" height="169" fill="#fbfaf7" stroke="#d9d5cc"/>
+          <rect x="30" y="22" width="460" height="126" fill="#e4f0fa" opacity="0.6"/>
+          <rect x="30" y="22" width="460" height="126" fill="none" stroke="#3876b0" stroke-dasharray="4 4"/>
+          <rect x="50" y="43" width="420" height="84" fill="#fbfaf7" stroke="#d9d5cc"/>
+          <g transform="translate(50 43)"><g transform="translate(0 2) scale(1.25)"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#74acdf"/><path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#3876b0"/>
+<rect x="31" y="3" width="2" height="6.4" rx="1" fill="#1f4e79"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/>
+<rect x="12" y="36.5" width="40" height="3" fill="#1f4e79"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/>
+<rect x="8" y="48.5" width="48" height="4" fill="#1f4e79"/><rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#3876b0"/></g>
+<text x="94" y="46" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="34" fill="#1c1b19">Congreso Abierto</text>
+<text x="95" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="0.3" fill="#55524b">Datos abiertos del Congreso argentino</text></g>
+          <g font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f4e79" text-anchor="middle"><text x="40" y="89">x</text><text x="480" y="89">x</text><text x="260" y="37">x</text><text x="260" y="142">x</text></g>
+        </svg>
+      </div>
+    </div>
+    <h3 style="font-size:var(--text-md);margin-top:var(--space-6)">Qué no hacer</h3>
+    <div class="donts">
+      <div class="dont"><div class="x"><svg viewBox="0 0 160 100" width="160" height="100" role="img" aria-label="No: marca estirada"><title>No: marca estirada</title><use href="#sym-flat" x="30" y="10" width="100" height="80" transform="matrix(1.6 0 0 0.8 -48 10)"/></svg></div><p><strong>No</strong> estirar ni aplastar. Escalar siempre en proporción.</p></div>
+      <div class="dont"><div class="x"><svg viewBox="0 0 160 100" width="160" height="100" role="img" aria-label="No: cúpula recoloreada en verde"><title>No: cúpula recoloreada en verde</title><g transform="translate(40 10) scale(1.25)"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#bfd8c3"/><path d="M32 17C41.5 17.5 49 25 49 37H35.5C35.5 28 34.5 21.5 32 17Z" fill="#2f6b3a"/>
+<rect x="31" y="3" width="2" height="6.4" rx="1" fill="#1f4e79"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#2f6b3a"/><rect x="29" y="12.6" width="6" height="4.6" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/>
+<rect x="12" y="36.5" width="40" height="3" fill="#1f4e79"/><rect x="14" y="39.5" width="36" height="9" fill="#e7f1e8"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#1f4e79"/>
+<rect x="8" y="48.5" width="48" height="4" fill="#1f4e79"/><rect x="4" y="53.5" width="56" height="2.5" rx="1" fill="#2f6b3a"/></g></svg></div><p><strong>No</strong> pintar la cúpula verde aunque la real tenga pátina: el logo es celeste.</p></div>
+      <div class="dont"><div class="x"><svg viewBox="0 0 160 100" width="160" height="100" role="img" aria-label="No: texto blanco sobre celeste"><title>No: texto blanco sobre celeste</title><rect x="4" y="22" width="152" height="56" rx="6" fill="#74acdf"/><text x="80" y="57" text-anchor="middle" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-weight="700" font-size="15" fill="#ffffff">Congreso Abierto</text></svg></div><p><strong>No</strong> poner texto blanco sobre <code>--celeste</code>: 2.41:1, no pasa AA.</p></div>
+      <div class="dont"><div class="x"><svg viewBox="0 0 160 100" width="160" height="100" role="img" aria-label="No: acuarela por debajo de 32 px"><title>No: acuarela por debajo de 32 px</title><g transform="translate(70 40)"><defs><filter id="dn-bl" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" seed="4" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="1.6" result="s"/>
+<feMorphology in="d" operator="erode" radius="1.6" result="e"/>
+<feGaussianBlur in="e" stdDeviation="2.4000000000000004" result="eb"/>
+<feComposite in="d" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+<feMerge><feMergeNode in="s"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="dn-wa" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" seed="2" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.35" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.9" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.9" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="9" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter><filter id="dn-wb" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="9" result="n"/>
+<feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G" result="d"/>
+<feGaussianBlur in="d" stdDeviation="0.25" result="s"/>
+<feMorphology in="s" operator="erode" radius="0.7" result="e"/>
+<feGaussianBlur in="e" stdDeviation="0.7" result="eb"/>
+<feComposite in="s" in2="eb" operator="out" result="rim"/>
+<feComponentTransfer in="rim" result="rd"><feFuncR type="linear" slope="0.7"/><feFuncG type="linear" slope="0.76"/><feFuncB type="linear" slope="0.86"/></feComponentTransfer>
+<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="16" result="g"/>
+<feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0 0 0 0.3" result="ga"/>
+<feComposite in="s" in2="ga" operator="in" result="gr"/>
+<feMerge><feMergeNode in="gr"/><feMergeNode in="rd"/></feMerge>
+</filter></defs><g transform="scale(0.3)"><g filter="url(#dn-bl)"><path d="M6 36C5 20 18 7 33 7.5C48 8 59 20 58 35C57 50 46 59 32 58.5C17 58 7 50 6 36Z" fill="#e4f0fa"/></g>
+<g filter="url(#dn-wa)" opacity="0.9"><path d="M15 37C15 25 22.5 17.5 32 17C41.5 17.5 49 25 49 37Z" fill="#b5d4f0"/><rect x="14" y="39.5" width="36" height="9" fill="#b5d4f0"/></g>
+<g filter="url(#dn-wb)" opacity="0.72"><path d="M30.5 17.2C40.8 17.6 49 25 49 37H33.5C33.8 28.5 33 22 30.5 17.2Z" fill="#74acdf"/><rect x="4" y="53.2" width="56" height="2.8" rx="1.2" fill="#74acdf"/></g>
+<g filter="url(#dn-wa)" opacity="0.55"><path d="M39 19.6C45 22.6 49 29 49 37H45.2C45.2 29.5 43 23.5 39 19.6Z" fill="#3876b0"/><path d="M32 17.4C27.6 22 25.6 29 25.6 37H26.8C26.8 29.5 28.6 22.4 32 17.4Z" fill="#3876b0"/></g>
+<g filter="url(#dn-wb)" opacity="0.85"><rect x="12" y="36.5" width="40" height="3" fill="#3876b0"/><rect x="15.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="21.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="27.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="33.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="39.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="45.8" y="39.5" width="2.4" height="9" fill="#3876b0"/><rect x="8" y="48.5" width="48" height="4" fill="#3876b0"/><path d="M28 12.6Q32 7.2 36 12.6Z" fill="#3876b0"/><rect x="29" y="12.6" width="6" height="4.6" fill="#3876b0"/></g>
+<g filter="url(#dn-wb)"><rect x="31.1" y="3" width="1.8" height="6.4" rx="0.9" fill="#1f4e79"/><rect x="31" y="13.8" width="2" height="2.6" fill="#e4f0fa"/></g></g></g></svg></div><p><strong>No</strong> usar la acuarela debajo de 32 px: se ensucia. Ir a la plana.</p></div>
+      <div class="dont"><div class="x"><svg viewBox="0 0 160 100" width="160" height="100" role="img" aria-label="No: marca girada y con sombra"><title>No: marca girada y con sombra</title><g style="filter:drop-shadow(0 6px 6px rgba(28,27,25,0.35))"><use href="#sym-flat" x="40" y="10" width="80" height="80" transform="rotate(-14 80 50)"/></g></svg></div><p><strong>No</strong> girar, ni agregar sombras, contornos o degradés.</p></div>
+    </div>
+  </section>
+
+  <section class="block check" aria-labelledby="s5">
+    <div class="head"><h2 id="s5">Self-check contra design/system.md</h2></div>
+    <ul>
+      <li><strong>Colores del sistema usados:</strong> <code>--ink #1c1b19</code>, <code>--muted #55524b</code>, <code>--placeholder #76726a</code>, <code>--paper #fbfaf7</code>, <code>--surface #ffffff</code>, <code>--line #d9d5cc</code>, <code>--line-soft #ebe8e1</code>, <code>--accent #1f4e79</code>, <code>--accent-ink #163a5c</code>, <code>--accent-soft #e8eef5</code>, <code>--focus #1f4e79</code>, <code>--flag</code>/<code>--flag-soft</code>/<code>--flag-line</code>, <code>--quality</code>/<code>--quality-soft</code>/<code>--quality-line</code>, y la sombra <code>rgba(28, 27, 25, …)</code> del sistema.</li>
+      <li><strong>Propuesta (no está en el sistema):</strong> <code>--celeste-soft #e4f0fa</code>, <code>--celeste-light #b5d4f0</code>, <code>--celeste #74acdf</code>, <code>--celeste-deep #3876b0</code>.</li>
+      <li><strong>Fuentes:</strong> <code>--serif</code> (palabra, títulos), <code>--sans</code> (bajada, texto), <code>--mono</code> (código y <code>kbd</code>). Ninguna fuente externa.</li>
+      <li><strong>Componentes:</strong> header, nav, buscador, <code>.tag</code>, tabla y tarjetas siguen las reglas de <code>design/system.md</code>. Foco con <code>--focus-ring</code>; las transiciones solo corren con <code>prefers-reduced-motion: no-preference</code>.</li>
+    </ul>
+  </section>
+</main>
+<script>
+document.querySelectorAll('[data-copy]').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var area = document.getElementById(btn.getAttribute('data-copy'));
+    var status = btn.nextElementSibling;
+    var done = function (msg) { status.textContent = msg; clearTimeout(btn._t); btn._t = setTimeout(function () { status.textContent = ''; }, 3000); };
+    var fallback = function () {
+      area.closest('details').open = true;
+      area.focus(); area.select();
+      var ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+      done(ok ? 'SVG copiado' : 'No se pudo copiar: el código quedó seleccionado, copialo con Cmd/Ctrl+C');
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(area.value).then(function () { done('SVG copiado'); }, fallback);
+    } else { fallback(); }
+  });
+});
+</script>
+<!--
+Self-check (gentle-design, design system sync):
+Colors used vs design/system.md tokens
+  system: --ink #1c1b19, --muted #55524b, --placeholder #76726a, --paper #fbfaf7, --surface #ffffff,
+          --line #d9d5cc, --line-soft #ebe8e1, --accent #1f4e79, --accent-ink #163a5c, --accent-soft #e8eef5,
+          --focus #1f4e79, --flag #8a3b12, --flag-soft #f7ebe3, --flag-line #e2c3ae,
+          --quality #2f6b3a, --quality-soft #e7f1e8, --quality-line #bfd8c3, shadow rgba(28, 27, 25, a).
+  PROPOSAL (not in system.md, brand celeste family): --celeste-soft #e4f0fa, --celeste-light #b5d4f0,
+          --celeste #74acdf, --celeste-deep #3876b0.
+  Paper grain filter tints noise with rgb(0.33, 0.32, 0.29), the --muted hue at low alpha.
+Font families: --serif, --sans, --mono stacks from system.md only; no external fonts.
+Contrast: ink/celeste 7.14, ink/celeste-light 11.18, ink/celeste-soft 14.87, surface/celeste-deep 4.79 (AA),
+          surface/celeste 2.41 (fails, documented as do-not), celeste-deep/paper 4.59.
+Deviations: none besides the labelled celeste proposal.
+-->
+</body>
+</html>

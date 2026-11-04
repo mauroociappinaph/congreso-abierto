@@ -1,0 +1,27 @@
+{
+  "title": "Logo Congreso Abierto",
+  "brief": "Logo SVG de Congreso Abierto: primero una imagen del Palacio del Congreso de la Nación en celeste, estilo acuarela, y a partir de ella un logo (horizontal, ícono, favicon, fondo claro y oscuro).",
+  "artboards": [
+    {
+      "file": "01-acuarela.html",
+      "title": "Acuarela: la cúpula pintada",
+      "tradeoff": "El más artesanal y cálido; el ícono simplificado pierde parte del encanto de la acuarela",
+      "width": 1440,
+      "height": 7190
+    },
+    {
+      "file": "02-trazo.html",
+      "title": "Trazo: línea fina sobre acuarela",
+      "tradeoff": "El más legible en tamaños chicos y en el header; la acuarela queda solo como ilustración de portada",
+      "width": 1440,
+      "height": 6170
+    },
+    {
+      "file": "03-sello.html",
+      "title": "Sello: cúpula en un sello circular",
+      "tradeoff": "Institucional y reconocible como emblema; el texto circular no se lee en tamaño favicon",
+      "width": 1440,
+      "height": 8090
+    }
+  ]
+}

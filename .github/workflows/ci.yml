@@ -1,6 +1,6 @@
 name: CI
 
-# Tests, type-checks and builds the site with live official data on every push and pull request.
+# Tests, type-checks and builds the site from the committed data snapshot on every push and pull request.
 on:
   push:
     branches: ['**']
@@ -18,7 +18,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      # Parsing the 32 MB bills file peaks around 1.5 GB.
       NODE_OPTIONS: --max-old-space-size=4096
     steps:
       - uses: actions/checkout@v7
@@ -29,5 +28,5 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run check
-      - name: Build with current official data
+      - name: Build from the data snapshot
         run: npm run build

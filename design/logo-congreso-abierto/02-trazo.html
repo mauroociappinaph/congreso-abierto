@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 · Trazo: línea fina sobre acuarela · Logo Congreso Abierto</title>
+<style>
+:root{
+  --ink:#1c1b19;--muted:#55524b;--placeholder:#76726a;--paper:#fbfaf7;--surface:#ffffff;--line:#d9d5cc;--line-soft:#ebe8e1;
+  --accent:#1f4e79;--accent-ink:#163a5c;--accent-soft:#e8eef5;--focus:#1f4e79;--flag:#8a3b12;--flag-soft:#f7ebe3;--flag-line:#e2c3ae;
+  --quality:#2f6b3a;--quality-soft:#e7f1e8;--quality-line:#bfd8c3;--badge:#f1efe9;
+  /* PROPUESTA: familia celeste nueva, no existe en design/system.md */
+  --celeste-50:#eaf3fb;--celeste-200:#b9d7f1;--celeste:#74acdf;--celeste-700:#2f6796;
+  --serif:ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --sans:system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --text-2xs:11px;--text-xs:12px;--text-sm:13px;--text-md:15px;--text-xl:20px;--text-3xl:32px;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-7:28px;--space-8:40px;
+  --page-max:1200px;--page-pad:clamp(16px, 3vw, 40px);
+  --radius-sm:3px;--radius-md:4px;--radius:6px;--radius-lg:8px;--radius-pill:999px;
+  --focus-ring:3px solid var(--focus);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:var(--text-md);line-height:1.45;font-variant-numeric:tabular-nums}
+h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.2;margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:var(--focus-ring);outline-offset:2px;border-radius:var(--radius-sm)}
+.wrap{max-width:var(--page-max);margin:0 auto;padding:0 var(--page-pad)}
+.eyebrow{font-size:var(--text-2xs);text-transform:uppercase;letter-spacing:.1em;font-weight:600;color:var(--muted);margin:0 0 var(--space-2)}
+.note{font-size:var(--text-xs);color:var(--muted);margin:0}
+.tag{display:inline-block;border-radius:var(--radius-pill);font-size:var(--text-2xs);padding:1px 7px;border:1px solid var(--line);background:var(--surface);color:var(--muted)}
+.tag.flag{border-color:var(--flag-line);background:var(--flag-soft);color:var(--flag)}
+.board-head{padding:var(--space-8) 0 var(--space-6);border-bottom:1px solid var(--line);background:var(--surface)}
+.board-head h1{font-size:var(--text-3xl)}
+.board-head p.lede{max-width:760px;color:var(--muted);margin:var(--space-2) 0 0}
+section.block{padding:var(--space-8) 0 0}
+section.block > .wrap > h2{font-size:var(--text-xl);margin-bottom:var(--space-2)}
+.section-head{display:flex;align-items:baseline;gap:var(--space-3);flex-wrap:wrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.hero-card{padding:0;overflow:hidden}
+.hero-card > svg{display:block;width:100%;height:auto}
+.hero-meta{display:flex;gap:var(--space-6);align-items:center;padding:var(--space-3) 20px;border-top:1px solid var(--line);flex-wrap:wrap}
+.hero-meta .flat{display:flex;gap:var(--space-3);align-items:center}
+.hero-meta .flat svg{width:300px;height:auto;flex:none;border:1px solid var(--line);border-radius:var(--radius-sm)}
+/* color proposal */
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-top:var(--space-4)}
+.swatch .chip{height:72px;border-radius:var(--radius);border:1px solid var(--line)}
+.swatch code{font-family:var(--mono);font-size:var(--text-xs)}
+.swatch p{margin:var(--space-2) 0 0;font-size:var(--text-sm)}
+table{border-collapse:collapse;width:100%;font-size:var(--text-sm);margin-top:var(--space-5)}
+caption{text-align:left;font-size:var(--text-xs);color:var(--muted);padding-bottom:var(--space-2)}
+th{text-transform:uppercase;font-size:var(--text-2xs);letter-spacing:.06em;font-weight:600;color:var(--muted);text-align:left;border-bottom:1px solid var(--line);padding:7px 8px}
+td{padding:7px 8px;border-bottom:1px solid var(--line-soft)}
+td.num{text-align:right;white-space:nowrap}
+.pair{display:inline-block;padding:2px 10px;border-radius:var(--radius-md);font-weight:600;border:1px solid var(--line)}
+/* variants */
+.variants{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-5);margin-top:var(--space-4)}
+.variant{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+.stage{min-height:200px;display:flex;align-items:center;justify-content:center;padding:var(--space-6)}
+.stage-paper{background:var(--paper)}
+.stage-ink{background:var(--ink)}
+.stage svg{max-width:100%;height:auto}
+.stage > svg[viewBox="0 0 340 64"]{width:408px}
+.stage > svg[viewBox="0 0 240 136"]{width:288px}
+.stage > svg[viewBox="0 0 64 64"]{width:128px}
+.fav-row{display:flex;align-items:flex-end;gap:var(--space-6)}
+.fav-row .real{display:flex;flex-direction:column;align-items:center;gap:var(--space-1)}
+.fav-row .real small{font-size:var(--text-2xs);color:var(--muted)}
+.variant-body{padding:18px 20px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:var(--space-2);flex:1}
+.variant-body h3{font-size:16px}
+.code-label{font-size:var(--text-2xs);text-transform:uppercase;letter-spacing:.06em;font-weight:600;color:var(--muted);margin-top:var(--space-1)}
+textarea{width:100%;font-family:var(--mono);font-size:var(--text-2xs);line-height:1.4;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:var(--space-2);resize:vertical}
+.copy-row{display:flex;align-items:center;gap:var(--space-3)}
+button.copy{font:inherit;font-size:var(--text-sm);padding:6px 12px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--surface);color:var(--ink);cursor:pointer}
+button.copy:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink)}
+.copied{font-size:var(--text-xs);color:var(--quality);font-weight:600}
+/* tab preview */
+.tabs{display:flex;gap:var(--space-4);margin-top:var(--space-4);flex-wrap:wrap}
+.tab{display:flex;align-items:center;gap:var(--space-2);padding:8px 14px;border:1px solid var(--line);border-bottom:none;border-radius:var(--radius-lg) var(--radius-lg) 0 0;background:var(--surface);font-size:var(--text-xs);min-width:240px}
+.tab.dark{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+/* header mock (SiteLayout) */
+.mock{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:var(--space-4);background:var(--paper)}
+.mock + .mock{margin-top:var(--space-5)}
+.mock-label{font-size:var(--text-2xs);text-transform:uppercase;letter-spacing:.1em;font-weight:600;color:var(--muted);padding:var(--space-2) var(--space-4);border-bottom:1px solid var(--line);background:var(--badge)}
+.site-header{background:var(--surface);border-bottom:1px solid var(--line)}
+.site-bar{max-width:var(--page-max);margin:0 auto;padding:14px var(--page-pad) 6px;display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-3) var(--space-6)}
+.brand{font-family:var(--serif);font-weight:700;font-size:18px;line-height:1.2;color:var(--ink);text-decoration:none}
+.brand small{display:block;font-family:var(--sans);font-weight:400;font-size:var(--text-2xs);color:var(--muted);letter-spacing:.04em}
+.brand-logo{display:flex;align-items:center;gap:10px}
+.brand-logo .brand-name{font-weight:400;font-size:20px}
+.brand-logo .brand-name b{font-weight:700}
+.site-search{margin-left:auto;width:min(100%,360px)}
+.search-box{display:flex;align-items:center;gap:var(--space-2);background:var(--surface);border:1px solid var(--placeholder);border-radius:var(--radius);padding:6px 10px}
+.search-box:focus-within{outline:var(--focus-ring);outline-offset:2px}
+.search-box input{border:0;outline:0;flex:1;font:inherit;font-size:var(--text-sm);color:var(--ink);background:transparent;min-width:0}
+.search-box input::placeholder{color:var(--placeholder)}
+kbd{font-family:var(--mono);font-size:var(--text-2xs);border:1px solid var(--line);border-bottom-width:2px;border-radius:var(--radius-sm);background:var(--surface);padding:0 5px}
+.site-nav{max-width:var(--page-max);margin:0 auto;padding:0 var(--page-pad) var(--space-2);overflow-x:auto}
+.site-nav ul{display:flex;gap:var(--space-1);list-style:none;margin:0 0 0 -10px;padding:0}
+.site-nav a{display:block;padding:6px 10px;font-size:var(--text-sm);color:var(--ink);text-decoration:none;border-radius:var(--radius-md);white-space:nowrap}
+.site-nav a:hover{background:var(--accent-soft)}
+.site-nav a[aria-current='page']{font-weight:600;box-shadow:inset 0 -2px 0 var(--accent)}
+/* usage */
+.usage{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-5);margin-top:var(--space-4)}
+.usage h3{font-size:16px;margin-bottom:var(--space-2)}
+.usage ul{margin:0;padding-left:18px;font-size:var(--text-sm)}
+.usage li{margin-bottom:var(--space-1)}
+.sizes{display:flex;align-items:flex-end;gap:var(--space-6);margin-top:var(--space-3)}
+.sizes figure{margin:0;display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-1)}
+.sizes figcaption{font-size:var(--text-2xs);color:var(--muted)}
+.donts{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4);margin-top:var(--space-4)}
+.dont{margin:0;border:1px solid var(--flag-line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+.dont-stage{height:96px;display:flex;align-items:center;justify-content:center;background:var(--paper)}
+.dont figcaption{font-size:var(--text-xs);padding:var(--space-2) var(--space-3);border-top:1px solid var(--flag-line);background:var(--flag-soft);color:var(--flag);font-weight:600}
+.tiny-hero svg{display:block;border:1px solid var(--line)}
+footer.board-foot{margin-top:var(--space-8);border-top:1px solid var(--line);background:var(--surface);padding:var(--space-5) 0 var(--space-7);font-size:var(--text-xs);color:var(--muted)}
+@media (prefers-reduced-motion: no-preference){button.copy,.site-nav a{transition:background .12s ease,border-color .12s ease}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="board-head">
+  <div class="wrap">
+    <p class="eyebrow">Logo Congreso Abierto · Dirección 02</p>
+    <h1>Trazo: línea fina sobre acuarela</h1>
+    <p class="lede">La acuarela celeste del Palacio del Congreso queda como ilustración de portada. El logo toma solo la cúpula y la dibuja con un trazo único, de puntas redondeadas, sobre una aguada celeste circular. Las separaciones entre cúpula, columnas y base quedan abiertas a propósito: el edificio se ve por dentro.</p>
+    <p class="note" style="margin-top:var(--space-3)"><span class="tag flag">Tradeoff</span> El más legible en tamaños chicos y en el header; la acuarela queda solo como ilustración de portada.</p>
+  </div>
+</header>
+<main id="contenido">
+
+<section class="block" aria-labelledby="s1">
+  <div class="wrap">
+    <div class="section-head"><h2 id="s1">1 · Ilustración: el Congreso en acuarela celeste</h2><span class="tag">SVG con filtros inline</span></div>
+    <p class="note">Aguadas semitransparentes en capas, bordes ondulados (feTurbulence + feDisplacementMap), floraciones (feGaussianBlur), acumulación de pigmento en los bordes (feMorphology) y grano de papel. Encima, el trazo fino en celeste 700.</p>
+    <div class="card hero-card" style="margin-top:var(--space-4)">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-labelledby="hero-t hero-d">
+<title id="hero-t">El Palacio del Congreso de la Nación, acuarela en celeste</title>
+<desc id="hero-d">Ilustración en acuarela celeste del Palacio del Congreso en Buenos Aires: cúpula central sobre un tambor de columnas con linterna, pórtico de seis columnas con frontón, alas laterales y pabellones con cupulines, con trazo fino encima.</desc>
+<defs>
+  <filter id="wc-bloom" x="-30%" y="-30%" width="160%" height="160%"><feTurbulence type="fractalNoise" baseFrequency="0.006" numOctaves="3" seed="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="70" xChannelSelector="R" yChannelSelector="G" result="w"/><feGaussianBlur in="w" stdDeviation="16"/></filter>
+  <filter id="wc-wash" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="3" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G" result="w"/><feGaussianBlur in="w" stdDeviation="1.3" result="s"/><feMorphology in="s" operator="erode" radius="2.5" result="e"/><feComposite in="s" in2="e" operator="out" result="edge"/><feColorMatrix in="edge" type="matrix" values="0.5 0 0 0 0 0 0.55 0 0 0 0 0 0.7 0 0 0 0 0 0.9 0" result="pool"/><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="8" result="g"/><feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -0.75 0 0 0 1.08" result="ga"/><feComposite in="s" in2="ga" operator="in" result="grain"/><feMerge><feMergeNode in="grain"/><feMergeNode in="pool"/></feMerge></filter>
+  <filter id="wc-dab" x="-30%" y="-30%" width="160%" height="160%"><feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="2" seed="6" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G" result="w"/><feGaussianBlur in="w" stdDeviation="0.6"/></filter>
+  <filter id="wc-line" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G"/></filter>
+  <filter id="wc-paper" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" seed="11" result="g"/><feColorMatrix in="g" type="matrix" values="0 0 0 0 0.11 0 0 0 0 0.106 0 0 0 0 0.098 0.55 0 0 0 -0.22"/></filter>
+</defs>
+<rect width="1200" height="700" fill="#fbfaf7"/>
+<g filter="url(#wc-bloom)">
+  <ellipse cx="600" cy="300" rx="520" ry="250" fill="#b9d7f1" opacity="0.55"/>
+  <ellipse cx="770" cy="190" rx="300" ry="140" fill="#74acdf" opacity="0.3"/>
+  <ellipse cx="330" cy="560" rx="360" ry="70" fill="#b9d7f1" opacity="0.45"/>
+</g>
+<path d="M70 604C300 596 900 598 1130 606L1150 650C900 662 320 660 50 648Z" fill="#b9d7f1" opacity="0.6" filter="url(#wc-wash)"/>
+<g fill="#74acdf" opacity="0.4" filter="url(#wc-wash)">
+  <rect x="150" y="432" width="290" height="178"/><rect x="760" y="432" width="290" height="178"/>
+  <rect x="108" y="398" width="92" height="212"/><rect x="1000" y="398" width="92" height="212"/>
+  <path d="M116 398Q154 350 192 398Z"/><path d="M1008 398Q1046 350 1084 398Z"/>
+  <rect x="440" y="380" width="320" height="230"/>
+  <rect x="478" y="330" width="244" height="66"/><rect x="508" y="300" width="184" height="32"/>
+  <rect x="524" y="216" width="152" height="86"/><rect x="514" y="208" width="172" height="10"/>
+  <path d="M462 456L600 396L738 456Z"/>
+  <rect x="588" y="50" width="24" height="28"/><path d="M584 52Q600 34 616 52Z"/></g>
+<path d="M528 212C528 122 566 80 600 76C634 80 672 122 672 212Z" fill="#74acdf" opacity="0.7" filter="url(#wc-wash)"/>
+<path d="M542 206C544 140 566 100 590 86C574 110 562 150 562 206Z" fill="#fbfaf7" opacity="0.55" filter="url(#wc-dab)"/>
+<g fill="#2f6796" opacity="0.22" filter="url(#wc-wash)">
+  <rect x="980" y="440" width="70" height="170"/><rect x="1060" y="406" width="32" height="204"/>
+  <path d="M150 446H440V458H150Z"/><path d="M760 446H1050V458H760Z"/>
+  <path d="M470 470H730V484H470Z"/>
+  <rect x="640" y="222" width="36" height="80"/><rect x="680" y="334" width="42" height="62"/>
+  <path d="M440 592H760L770 610H430Z"/>
+  <rect x="497" y="484" width="5" height="108"/><rect x="541" y="484" width="5" height="108"/><rect x="585" y="484" width="5" height="108"/><rect x="629" y="484" width="5" height="108"/><rect x="673" y="484" width="5" height="108"/><rect x="717" y="484" width="5" height="108"/><path d="M630 90C652 112 668 150 670 210H640C640 160 636 120 630 90Z"/></g>
+<g fill="#2f6796" opacity="0.45" filter="url(#wc-dab)">
+  <rect x="176" y="476" width="14" height="30" rx="7"/><rect x="210" y="476" width="14" height="30" rx="7"/><rect x="244" y="476" width="14" height="30" rx="7"/><rect x="278" y="476" width="14" height="30" rx="7"/><rect x="312" y="476" width="14" height="30" rx="7"/><rect x="346" y="476" width="14" height="30" rx="7"/><rect x="380" y="476" width="14" height="30" rx="7"/><rect x="176" y="540" width="14" height="32" rx="7"/><rect x="210" y="540" width="14" height="32" rx="7"/><rect x="244" y="540" width="14" height="32" rx="7"/><rect x="278" y="540" width="14" height="32" rx="7"/><rect x="312" y="540" width="14" height="32" rx="7"/><rect x="346" y="540" width="14" height="32" rx="7"/><rect x="380" y="540" width="14" height="32" rx="7"/><rect x="786" y="476" width="14" height="30" rx="7"/><rect x="820" y="476" width="14" height="30" rx="7"/><rect x="854" y="476" width="14" height="30" rx="7"/><rect x="888" y="476" width="14" height="30" rx="7"/><rect x="922" y="476" width="14" height="30" rx="7"/><rect x="956" y="476" width="14" height="30" rx="7"/><rect x="990" y="476" width="14" height="30" rx="7"/><rect x="786" y="540" width="14" height="32" rx="7"/><rect x="820" y="540" width="14" height="32" rx="7"/><rect x="854" y="540" width="14" height="32" rx="7"/><rect x="888" y="540" width="14" height="32" rx="7"/><rect x="922" y="540" width="14" height="32" rx="7"/><rect x="956" y="540" width="14" height="32" rx="7"/><rect x="990" y="540" width="14" height="32" rx="7"/>
+  <rect x="132" y="440" width="12" height="28" rx="6"/><rect x="158" y="440" width="12" height="28" rx="6"/><rect x="132" y="520" width="12" height="28" rx="6"/><rect x="158" y="520" width="12" height="28" rx="6"/><rect x="1024" y="440" width="12" height="28" rx="6"/><rect x="1050" y="440" width="12" height="28" rx="6"/><rect x="1024" y="520" width="12" height="28" rx="6"/><rect x="1050" y="520" width="12" height="28" rx="6"/>
+  <path d="M584 592V520A16 16 0 0 1 616 520V592Z"/><rect x="514" y="232" width="6" height="26" rx="3"/><rect x="536" y="232" width="6" height="26" rx="3"/><rect x="558" y="232" width="6" height="26" rx="3"/><rect x="580" y="232" width="6" height="26" rx="3"/><rect x="602" y="232" width="6" height="26" rx="3"/><rect x="624" y="232" width="6" height="26" rx="3"/><rect x="646" y="232" width="6" height="26" rx="3"/><rect x="668" y="232" width="6" height="26" rx="3"/>
+</g>
+<g fill="#74acdf" opacity="0.4" filter="url(#wc-dab)"><circle cx="232" cy="300" r="5"/><circle cx="248" cy="318" r="2.5"/><circle cx="960" cy="270" r="4"/><circle cx="978" cy="252" r="2"/><circle cx="880" cy="640" r="3"/></g>
+<g fill="none" stroke="#2f6796" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.85" filter="url(#wc-line)">
+  <path d="M60 612H1140"/>
+  <path d="M150 610V432H440M760 432H1050V610M150 446H440M760 446H1050"/>
+  <path d="M108 610V398H200V610M1000 610V398H1092V610M104 398H204M996 398H1096"/>
+  <path d="M116 398Q154 350 192 398M1008 398Q1046 350 1084 398M154 362V350M1046 362V350"/>
+  <path d="M440 610V380H760V610M436 380H764"/>
+  <path d="M478 396V330H722V396M474 330H726M508 330V300H692V330"/>
+  <path d="M462 456L600 396L738 456ZM470 456V470H730V456"/>
+  <path d="M488 470V592M502 470V592"/><path d="M532 470V592M546 470V592"/><path d="M576 470V592M590 470V592"/><path d="M620 470V592M634 470V592"/><path d="M664 470V592M678 470V592"/><path d="M708 470V592M722 470V592"/>
+  <path d="M440 592H760M430 610L440 592M770 610L760 592M450 601H750"/>
+  <path d="M514 208H686V218H514ZM524 218V302M676 218V302"/>
+  <path d="M532 218V300M536 218V300"/><path d="M554 218V300M558 218V300"/><path d="M576 218V300M580 218V300"/><path d="M598 218V300M602 218V300"/><path d="M620 218V300M624 218V300"/><path d="M642 218V300M646 218V300"/><path d="M664 218V300M668 218V300"/>
+  <path d="M528 212C528 122 566 80 600 76C634 80 672 122 672 212Z"/><path d="M552 212C552 150 576 100 600 78M576 212C578 150 590 104 600 78M624 212C622 150 610 104 600 78M648 212C648 150 624 100 600 78M540 170C580 160 620 160 660 170"/>
+  <path d="M588 78V50H612V78M584 52Q600 34 616 52M600 40V22"/><circle cx="600" cy="19" r="3"/>
+  <path d="M176 506V483A7 7 0 0 1 190 483V506Z"/><path d="M210 506V483A7 7 0 0 1 224 483V506Z"/><path d="M244 506V483A7 7 0 0 1 258 483V506Z"/><path d="M278 506V483A7 7 0 0 1 292 483V506Z"/><path d="M312 506V483A7 7 0 0 1 326 483V506Z"/><path d="M346 506V483A7 7 0 0 1 360 483V506Z"/><path d="M380 506V483A7 7 0 0 1 394 483V506Z"/><path d="M786 506V483A7 7 0 0 1 800 483V506Z"/><path d="M820 506V483A7 7 0 0 1 834 483V506Z"/><path d="M854 506V483A7 7 0 0 1 868 483V506Z"/><path d="M888 506V483A7 7 0 0 1 902 483V506Z"/><path d="M922 506V483A7 7 0 0 1 936 483V506Z"/><path d="M956 506V483A7 7 0 0 1 970 483V506Z"/><path d="M990 506V483A7 7 0 0 1 1004 483V506Z"/>
+</g>
+<rect width="1200" height="700" filter="url(#wc-paper)" opacity="0.5"/>
+</svg>
+      <div class="hero-meta">
+        <div class="flat"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="300" height="175" role="img" aria-labelledby="heroflat-t"><title id="heroflat-t">Ilustración del Congreso, versión plana sin filtros</title><rect width="1200" height="700" fill="#eaf3fb"/><path d="M60 604H1140V650H60Z" fill="#b9d7f1"/><g fill="#74acdf" opacity="0.55">
+  <rect x="150" y="432" width="290" height="178"/><rect x="760" y="432" width="290" height="178"/>
+  <rect x="108" y="398" width="92" height="212"/><rect x="1000" y="398" width="92" height="212"/>
+  <path d="M116 398Q154 350 192 398Z"/><path d="M1008 398Q1046 350 1084 398Z"/>
+  <rect x="440" y="380" width="320" height="230"/>
+  <rect x="478" y="330" width="244" height="66"/><rect x="508" y="300" width="184" height="32"/>
+  <rect x="524" y="216" width="152" height="86"/><rect x="514" y="208" width="172" height="10"/>
+  <path d="M462 456L600 396L738 456Z"/>
+  <rect x="588" y="50" width="24" height="28"/><path d="M584 52Q600 34 616 52Z"/></g><path d="M528 212C528 122 566 80 600 76C634 80 672 122 672 212Z" fill="#74acdf"/><g fill="#2f6796" opacity="0.35">
+  <rect x="980" y="440" width="70" height="170"/><rect x="1060" y="406" width="32" height="204"/>
+  <path d="M150 446H440V458H150Z"/><path d="M760 446H1050V458H760Z"/>
+  <path d="M470 470H730V484H470Z"/>
+  <rect x="640" y="222" width="36" height="80"/><rect x="680" y="334" width="42" height="62"/>
+  <path d="M440 592H760L770 610H430Z"/>
+  <rect x="497" y="484" width="5" height="108"/><rect x="541" y="484" width="5" height="108"/><rect x="585" y="484" width="5" height="108"/><rect x="629" y="484" width="5" height="108"/><rect x="673" y="484" width="5" height="108"/><rect x="717" y="484" width="5" height="108"/></g><g fill="none" stroke="#2f6796" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M60 612H1140M150 610V432H440M760 432H1050V610M108 610V398H200V610M1000 610V398H1092V610M440 610V380H760V610M478 396V330H722V396M462 456L600 396L738 456ZM524 218V302M676 218V302M514 208H686M588 78V50H612V78M600 40V22"/><path d="M528 212C528 122 566 80 600 76C634 80 672 122 672 212Z"/></g></svg><p class="note">Versión plana sin filtros, para correos, PDF y renderizadores que no soportan filtros SVG.</p></div>
+        <p class="note">Uso: portada de la home, página “Acerca de”, imagen para compartir en redes (1200 × 630 recortada). No usarla debajo de 300 px de ancho.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="s2">
+  <div class="wrap">
+    <div class="section-head"><h2 id="s2">2 · Color: familia celeste</h2><span class="tag flag">Propuesta: agregado al sistema</span></div>
+    <p class="note">design/system.md no tiene celeste. Esta familia es una <strong>propuesta</strong> para sumar a <code>src/styles/tokens.css</code>; todo lo demás usa los tokens actuales (--ink, --paper, --surface, --line, --muted, --accent, --accent-ink, --serif, --sans).</p>
+    <div class="swatches">
+      <div class="swatch"><div class="chip" style="background:var(--celeste-50)"></div><p><code>--celeste-50</code> <code>#eaf3fb</code></p><p class="note">Fondo de aguada suave, banda de portada.</p></div>
+      <div class="swatch"><div class="chip" style="background:var(--celeste-200)"></div><p><code>--celeste-200</code> <code>#b9d7f1</code></p><p class="note">Cielo y floraciones; bajada sobre --ink.</p></div>
+      <div class="swatch"><div class="chip" style="background:var(--celeste)"></div><p><code>--celeste</code> <code>#74acdf</code></p><p class="note">El celeste de la bandera. Aguada del ícono y fondo del favicon. Solo relleno, nunca texto sobre papel.</p></div>
+      <div class="swatch"><div class="chip" style="background:var(--celeste-700)"></div><p><code>--celeste-700</code> <code>#2f6796</code></p><p class="note">Trazo y sombras de la ilustración. Admite texto (5,75:1 sobre papel).</p></div>
+    </div>
+    <table>
+      <caption>Contraste WCAG 2.x calculado con la luminancia relativa de cada par.</caption>
+      <thead><tr><th scope="col">Par</th><th scope="col">Uso</th><th scope="col" class="num">Ratio</th><th scope="col">Resultado</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pair" style="background:#74acdf;color:#1c1b19">--ink sobre --celeste</span></td><td>Texto sobre celeste (ej. etiqueta en una banda celeste)</td><td class="num">7,14:1</td><td>AA y AAA texto</td></tr>
+        <tr><td><span class="pair" style="background:#74acdf;color:#163a5c">--accent-ink sobre --celeste</span></td><td>Trazo del ícono y del favicon sobre la aguada</td><td class="num">4,85:1</td><td>AA texto normal</td></tr>
+        <tr><td><span class="pair" style="background:#74acdf;color:#1f4e79">--accent sobre --celeste</span></td><td>No usar para texto; trazo sobre aguada en fondo oscuro</td><td class="num">3,59:1</td><td>Solo gráfico (≥ 3:1)</td></tr>
+        <tr><td><span class="pair" style="background:#fbfaf7;color:#163a5c">--accent-ink sobre --paper</span></td><td>Trazo del ícono fuera de la aguada</td><td class="num">11,22:1</td><td>AAA</td></tr>
+        <tr><td><span class="pair" style="background:#fbfaf7;color:#2f6796">--celeste-700 sobre --paper</span></td><td>Trazo de la ilustración, textos de apoyo</td><td class="num">5,75:1</td><td>AA texto normal</td></tr>
+        <tr><td><span class="pair" style="background:#1c1b19;color:#74acdf">--celeste sobre --ink</span></td><td>Trazo del ícono en fondo oscuro</td><td class="num">7,14:1</td><td>AAA</td></tr>
+        <tr><td><span class="pair" style="background:#1c1b19;color:#b9d7f1">--celeste-200 sobre --ink</span></td><td>Bajada del logo en fondo oscuro</td><td class="num">11,52:1</td><td>AAA</td></tr>
+        <tr><td><span class="pair" style="background:#fbfaf7;color:#74acdf">--celeste sobre --paper</span></td><td>Solo como relleno de aguada detrás del trazo</td><td class="num">2,31:1</td><td>Falla: nunca texto ni trazo</td></tr>
+        <tr><td><span class="pair" style="background:#74acdf;color:#ffffff">blanco sobre --celeste</span></td><td>Evitar</td><td class="num">2,41:1</td><td>Falla</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="s3">
+  <div class="wrap">
+    <div class="section-head"><h2 id="s3">3 · Logo: variantes</h2><span class="tag">Todas planas salvo la última</span></div>
+    <p class="note">Ícono en grilla de 64, trazo de 3,5 con puntas y uniones redondeadas. Wordmark en --serif: “Congreso” 700 y “Abierto” 400, como el brand actual del header. Bajada en --sans. El texto del SVG usa las pilas de fuentes del sistema: para un archivo final fuera del sitio, convertir el texto a trazos.</p>
+    <div class="tabs" aria-label="Vista previa del favicon en pestañas">
+      <div class="tab"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" role="img" aria-labelledby="fav16-tab-t"><title id="fav16-tab-t">Congreso Abierto, favicon 16 px</title><rect width="16" height="16" rx="3.5" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5C4 5.6 5.8 4 8 4C10.2 4 12 5.6 12 8.5"/><path d="M2.75 8.5H13.25"/><path d="M5.25 11V11.5M8 11V11.5M10.75 11V11.5"/><path d="M2.75 13.75H13.25"/></g></svg> Congreso Abierto · Diputados</div>
+      <div class="tab dark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" role="img" aria-labelledby="fav16-tab2-t"><title id="fav16-tab2-t">Congreso Abierto, favicon 16 px</title><rect width="16" height="16" rx="3.5" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5C4 5.6 5.8 4 8 4C10.2 4 12 5.6 12 8.5"/><path d="M2.75 8.5H13.25"/><path d="M5.25 11V11.5M8 11V11.5M10.75 11V11.5"/><path d="M2.75 13.75H13.25"/></g></svg> Congreso Abierto · Viajes</div>
+    </div>
+    <div class="variants">
+<article class="variant" aria-labelledby="h-light-h">
+  <div class="stage stage-paper"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" width="340" height="64" role="img" aria-labelledby="h-light-t"><title id="h-light-t">Congreso Abierto, logo horizontal</title><g transform="translate(0 0)"><circle cx="37" cy="28" r="21" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g><text x="80" y="35" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="27" fill="#1c1b19" text-anchor="start"><tspan font-weight="700">Congreso</tspan> <tspan font-weight="400">Abierto</tspan></text><text x="81" y="54" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#55524b" text-anchor="start" letter-spacing="0.04em">Datos abiertos del Congreso argentino</text></svg></div>
+  <div class="variant-body">
+    <h3 id="h-light-h">Horizontal · fondo claro</h3>
+    <p class="note">Header, documentos, redes. Mínimo 160 px de ancho.</p>
+    <label class="code-label" for="h-light-code">Markup SVG</label>
+    <textarea id="h-light-code" readonly rows="4" spellcheck="false">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" width="340" height="64" role="img" aria-labelledby="h-light-t"&gt;&lt;title id="h-light-t"&gt;Congreso Abierto, logo horizontal&lt;/title&gt;&lt;g transform="translate(0 0)"&gt;&lt;circle cx="37" cy="28" r="21" fill="#74acdf"/&gt;&lt;g fill="none" stroke="#163a5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M32 6V10"/&gt;&lt;path d="M28.5 17V12.5H35.5V17"/&gt;&lt;path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/&gt;&lt;path d="M13 31H51"/&gt;&lt;path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/&gt;&lt;path d="M10 50H54"/&gt;&lt;/g&gt;&lt;/g&gt;&lt;text x="80" y="35" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="27" fill="#1c1b19" text-anchor="start"&gt;&lt;tspan font-weight="700"&gt;Congreso&lt;/tspan&gt; &lt;tspan font-weight="400"&gt;Abierto&lt;/tspan&gt;&lt;/text&gt;&lt;text x="81" y="54" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#55524b" text-anchor="start" letter-spacing="0.04em"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea>
+    <div class="copy-row"><button type="button" class="copy" data-target="h-light-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  </div>
+</article>
+<article class="variant" aria-labelledby="h-dark-h">
+  <div class="stage stage-ink"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" width="340" height="64" role="img" aria-labelledby="h-dark-t"><title id="h-dark-t">Congreso Abierto, logo horizontal sobre fondo oscuro</title><g transform="translate(0 0)"><circle cx="37" cy="28" r="21" fill="#1f4e79"/><g fill="none" stroke="#74acdf" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g><text x="80" y="35" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="27" fill="#ffffff" text-anchor="start"><tspan font-weight="700">Congreso</tspan> <tspan font-weight="400">Abierto</tspan></text><text x="81" y="54" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#b9d7f1" text-anchor="start" letter-spacing="0.04em">Datos abiertos del Congreso argentino</text></svg></div>
+  <div class="variant-body">
+    <h3 id="h-dark-h">Horizontal · fondo oscuro</h3>
+    <p class="note">Sobre --ink. La aguada pasa a --accent y el trazo a celeste.</p>
+    <label class="code-label" for="h-dark-code">Markup SVG</label>
+    <textarea id="h-dark-code" readonly rows="4" spellcheck="false">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" width="340" height="64" role="img" aria-labelledby="h-dark-t"&gt;&lt;title id="h-dark-t"&gt;Congreso Abierto, logo horizontal sobre fondo oscuro&lt;/title&gt;&lt;g transform="translate(0 0)"&gt;&lt;circle cx="37" cy="28" r="21" fill="#1f4e79"/&gt;&lt;g fill="none" stroke="#74acdf" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M32 6V10"/&gt;&lt;path d="M28.5 17V12.5H35.5V17"/&gt;&lt;path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/&gt;&lt;path d="M13 31H51"/&gt;&lt;path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/&gt;&lt;path d="M10 50H54"/&gt;&lt;/g&gt;&lt;/g&gt;&lt;text x="80" y="35" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="27" fill="#ffffff" text-anchor="start"&gt;&lt;tspan font-weight="700"&gt;Congreso&lt;/tspan&gt; &lt;tspan font-weight="400"&gt;Abierto&lt;/tspan&gt;&lt;/text&gt;&lt;text x="81" y="54" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#b9d7f1" text-anchor="start" letter-spacing="0.04em"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea>
+    <div class="copy-row"><button type="button" class="copy" data-target="h-dark-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  </div>
+</article>
+<article class="variant" aria-labelledby="s-light-h">
+  <div class="stage stage-paper"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 136" width="240" height="136" role="img" aria-labelledby="s-light-t"><title id="s-light-t">Congreso Abierto, logo apilado</title><g transform="translate(88 0)"><circle cx="37" cy="28" r="21" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g><text x="120" y="98" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="26" fill="#1c1b19" text-anchor="middle"><tspan font-weight="700">Congreso</tspan> <tspan font-weight="400">Abierto</tspan></text><text x="120" y="122" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#55524b" text-anchor="middle" letter-spacing="0.04em">Datos abiertos del Congreso argentino</text></svg></div>
+  <div class="variant-body">
+    <h3 id="s-light-h">Apilado · fondo claro</h3>
+    <p class="note">Portadas, pie de página, perfiles. Mínimo 120 px de ancho.</p>
+    <label class="code-label" for="s-light-code">Markup SVG</label>
+    <textarea id="s-light-code" readonly rows="4" spellcheck="false">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 136" width="240" height="136" role="img" aria-labelledby="s-light-t"&gt;&lt;title id="s-light-t"&gt;Congreso Abierto, logo apilado&lt;/title&gt;&lt;g transform="translate(88 0)"&gt;&lt;circle cx="37" cy="28" r="21" fill="#74acdf"/&gt;&lt;g fill="none" stroke="#163a5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M32 6V10"/&gt;&lt;path d="M28.5 17V12.5H35.5V17"/&gt;&lt;path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/&gt;&lt;path d="M13 31H51"/&gt;&lt;path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/&gt;&lt;path d="M10 50H54"/&gt;&lt;/g&gt;&lt;/g&gt;&lt;text x="120" y="98" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="26" fill="#1c1b19" text-anchor="middle"&gt;&lt;tspan font-weight="700"&gt;Congreso&lt;/tspan&gt; &lt;tspan font-weight="400"&gt;Abierto&lt;/tspan&gt;&lt;/text&gt;&lt;text x="120" y="122" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#55524b" text-anchor="middle" letter-spacing="0.04em"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea>
+    <div class="copy-row"><button type="button" class="copy" data-target="s-light-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  </div>
+</article>
+<article class="variant" aria-labelledby="s-dark-h">
+  <div class="stage stage-ink"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 136" width="240" height="136" role="img" aria-labelledby="s-dark-t"><title id="s-dark-t">Congreso Abierto, logo apilado sobre fondo oscuro</title><g transform="translate(88 0)"><circle cx="37" cy="28" r="21" fill="#1f4e79"/><g fill="none" stroke="#74acdf" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g><text x="120" y="98" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="26" fill="#ffffff" text-anchor="middle"><tspan font-weight="700">Congreso</tspan> <tspan font-weight="400">Abierto</tspan></text><text x="120" y="122" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#b9d7f1" text-anchor="middle" letter-spacing="0.04em">Datos abiertos del Congreso argentino</text></svg></div>
+  <div class="variant-body">
+    <h3 id="s-dark-h">Apilado · fondo oscuro</h3>
+    <p class="note">Sobre --ink.</p>
+    <label class="code-label" for="s-dark-code">Markup SVG</label>
+    <textarea id="s-dark-code" readonly rows="4" spellcheck="false">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 136" width="240" height="136" role="img" aria-labelledby="s-dark-t"&gt;&lt;title id="s-dark-t"&gt;Congreso Abierto, logo apilado sobre fondo oscuro&lt;/title&gt;&lt;g transform="translate(88 0)"&gt;&lt;circle cx="37" cy="28" r="21" fill="#1f4e79"/&gt;&lt;g fill="none" stroke="#74acdf" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M32 6V10"/&gt;&lt;path d="M28.5 17V12.5H35.5V17"/&gt;&lt;path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/&gt;&lt;path d="M13 31H51"/&gt;&lt;path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/&gt;&lt;path d="M10 50H54"/&gt;&lt;/g&gt;&lt;/g&gt;&lt;text x="120" y="98" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="26" fill="#ffffff" text-anchor="middle"&gt;&lt;tspan font-weight="700"&gt;Congreso&lt;/tspan&gt; &lt;tspan font-weight="400"&gt;Abierto&lt;/tspan&gt;&lt;/text&gt;&lt;text x="120" y="122" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#b9d7f1" text-anchor="middle" letter-spacing="0.04em"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea>
+    <div class="copy-row"><button type="button" class="copy" data-target="s-dark-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  </div>
+</article>
+<article class="variant" aria-labelledby="m-light-h">
+  <div class="stage stage-paper"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="m-light-t"><title id="m-light-t">Congreso Abierto, ícono</title><g transform="translate(0 0)"><circle cx="37" cy="28" r="21" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g></svg></div>
+  <div class="variant-body">
+    <h3 id="m-light-h">Ícono · fondo claro</h3>
+    <p class="note">Avatar, app, marca de agua. Mínimo 24 px; debajo usar el favicon.</p>
+    <label class="code-label" for="m-light-code">Markup SVG</label>
+    <textarea id="m-light-code" readonly rows="4" spellcheck="false">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="m-light-t"&gt;&lt;title id="m-light-t"&gt;Congreso Abierto, ícono&lt;/title&gt;&lt;g transform="translate(0 0)"&gt;&lt;circle cx="37" cy="28" r="21" fill="#74acdf"/&gt;&lt;g fill="none" stroke="#163a5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M32 6V10"/&gt;&lt;path d="M28.5 17V12.5H35.5V17"/&gt;&lt;path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/&gt;&lt;path d="M13 31H51"/&gt;&lt;path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/&gt;&lt;path d="M10 50H54"/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;</textarea>
+    <div class="copy-row"><button type="button" class="copy" data-target="m-light-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  </div>
+</article>
+<article class="variant" aria-labelledby="m-dark-h">
+  <div class="stage stage-ink"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="m-dark-t"><title id="m-dark-t">Congreso Abierto, ícono sobre fondo oscuro</title><g transform="translate(0 0)"><circle cx="37" cy="28" r="21" fill="#1f4e79"/><g fill="none" stroke="#74acdf" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g></svg></div>
+  <div class="variant-body">
+    <h3 id="m-dark-h">Ícono · fondo oscuro</h3>
+    <p class="note">Sobre --ink.</p>
+    <label class="code-label" for="m-dark-code">Markup SVG</label>
+    <textarea id="m-dark-code" readonly rows="4" spellcheck="false">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="m-dark-t"&gt;&lt;title id="m-dark-t"&gt;Congreso Abierto, ícono sobre fondo oscuro&lt;/title&gt;&lt;g transform="translate(0 0)"&gt;&lt;circle cx="37" cy="28" r="21" fill="#1f4e79"/&gt;&lt;g fill="none" stroke="#74acdf" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M32 6V10"/&gt;&lt;path d="M28.5 17V12.5H35.5V17"/&gt;&lt;path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/&gt;&lt;path d="M13 31H51"/&gt;&lt;path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/&gt;&lt;path d="M10 50H54"/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;</textarea>
+    <div class="copy-row"><button type="button" class="copy" data-target="m-dark-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  </div>
+</article>
+<article class="variant" aria-labelledby="mono-ink-h">
+  <div class="stage stage-paper"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" width="340" height="64" role="img" aria-labelledby="mono-ink-t"><title id="mono-ink-t">Congreso Abierto, logo monocromo en tinta</title><g transform="translate(0 0)"><g fill="none" stroke="#1c1b19" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g><text x="80" y="35" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="27" fill="#1c1b19" text-anchor="start"><tspan font-weight="700">Congreso</tspan> <tspan font-weight="400">Abierto</tspan></text><text x="81" y="54" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#1c1b19" text-anchor="start" letter-spacing="0.04em">Datos abiertos del Congreso argentino</text></svg></div>
+  <div class="variant-body">
+    <h3 id="mono-ink-h">Monocromo · tinta</h3>
+    <p class="note">Impresión a una tinta, sellos, fax, documentos oficiales.</p>
+    <label class="code-label" for="mono-ink-code">Markup SVG</label>
+    <textarea id="mono-ink-code" readonly rows="4" spellcheck="false">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" width="340" height="64" role="img" aria-labelledby="mono-ink-t"&gt;&lt;title id="mono-ink-t"&gt;Congreso Abierto, logo monocromo en tinta&lt;/title&gt;&lt;g transform="translate(0 0)"&gt;&lt;g fill="none" stroke="#1c1b19" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M32 6V10"/&gt;&lt;path d="M28.5 17V12.5H35.5V17"/&gt;&lt;path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/&gt;&lt;path d="M13 31H51"/&gt;&lt;path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/&gt;&lt;path d="M10 50H54"/&gt;&lt;/g&gt;&lt;/g&gt;&lt;text x="80" y="35" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="27" fill="#1c1b19" text-anchor="start"&gt;&lt;tspan font-weight="700"&gt;Congreso&lt;/tspan&gt; &lt;tspan font-weight="400"&gt;Abierto&lt;/tspan&gt;&lt;/text&gt;&lt;text x="81" y="54" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#1c1b19" text-anchor="start" letter-spacing="0.04em"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea>
+    <div class="copy-row"><button type="button" class="copy" data-target="mono-ink-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  </div>
+</article>
+<article class="variant" aria-labelledby="mono-white-h">
+  <div class="stage stage-ink"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" width="340" height="64" role="img" aria-labelledby="mono-white-t"><title id="mono-white-t">Congreso Abierto, logo monocromo en blanco</title><g transform="translate(0 0)"><g fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g><text x="80" y="35" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="27" fill="#ffffff" text-anchor="start"><tspan font-weight="700">Congreso</tspan> <tspan font-weight="400">Abierto</tspan></text><text x="81" y="54" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#ffffff" text-anchor="start" letter-spacing="0.04em">Datos abiertos del Congreso argentino</text></svg></div>
+  <div class="variant-body">
+    <h3 id="mono-white-h">Monocromo · blanco</h3>
+    <p class="note">Calado sobre fotos oscuras o sobre --ink.</p>
+    <label class="code-label" for="mono-white-code">Markup SVG</label>
+    <textarea id="mono-white-code" readonly rows="4" spellcheck="false">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" width="340" height="64" role="img" aria-labelledby="mono-white-t"&gt;&lt;title id="mono-white-t"&gt;Congreso Abierto, logo monocromo en blanco&lt;/title&gt;&lt;g transform="translate(0 0)"&gt;&lt;g fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M32 6V10"/&gt;&lt;path d="M28.5 17V12.5H35.5V17"/&gt;&lt;path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/&gt;&lt;path d="M13 31H51"/&gt;&lt;path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/&gt;&lt;path d="M10 50H54"/&gt;&lt;/g&gt;&lt;/g&gt;&lt;text x="80" y="35" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="27" fill="#ffffff" text-anchor="start"&gt;&lt;tspan font-weight="700"&gt;Congreso&lt;/tspan&gt; &lt;tspan font-weight="400"&gt;Abierto&lt;/tspan&gt;&lt;/text&gt;&lt;text x="81" y="54" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#ffffff" text-anchor="start" letter-spacing="0.04em"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea>
+    <div class="copy-row"><button type="button" class="copy" data-target="mono-white-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  </div>
+</article>
+<article class="variant" aria-labelledby="fav32-h">
+  <div class="stage stage-paper"><div class="fav-row"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="128" height="128" role="img" aria-labelledby="fav32-big-t"><title id="fav32-big-t">Congreso Abierto, favicon 32 px</title><rect width="32" height="32" rx="7" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.5V7"/><path d="M8.5 16C8.5 11.3 11.8 8.5 16 8.5C20.2 8.5 23.5 11.3 23.5 16"/><path d="M6.5 16H25.5"/><path d="M10.5 19.5V23M16 19.5V23M21.5 19.5V23"/><path d="M5.5 26.5H26.5"/></g></svg><span class="real"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-labelledby="fav32-t"><title id="fav32-t">Congreso Abierto, favicon 32 px</title><rect width="32" height="32" rx="7" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.5V7"/><path d="M8.5 16C8.5 11.3 11.8 8.5 16 8.5C20.2 8.5 23.5 11.3 23.5 16"/><path d="M6.5 16H25.5"/><path d="M10.5 19.5V23M16 19.5V23M21.5 19.5V23"/><path d="M5.5 26.5H26.5"/></g></svg><small>tamaño real</small></span></div></div>
+  <div class="variant-body">
+    <h3 id="fav32-h">Favicon 32 px (plano)</h3>
+    <p class="note">favicon.svg y pestañas. Tres columnas en lugar de cinco.</p>
+    <label class="code-label" for="fav32-code">Markup SVG</label>
+    <textarea id="fav32-code" readonly rows="4" spellcheck="false">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-labelledby="fav32-t"&gt;&lt;title id="fav32-t"&gt;Congreso Abierto, favicon 32 px&lt;/title&gt;&lt;rect width="32" height="32" rx="7" fill="#74acdf"/&gt;&lt;g fill="none" stroke="#163a5c" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M16 4.5V7"/&gt;&lt;path d="M8.5 16C8.5 11.3 11.8 8.5 16 8.5C20.2 8.5 23.5 11.3 23.5 16"/&gt;&lt;path d="M6.5 16H25.5"/&gt;&lt;path d="M10.5 19.5V23M16 19.5V23M21.5 19.5V23"/&gt;&lt;path d="M5.5 26.5H26.5"/&gt;&lt;/g&gt;&lt;/svg&gt;</textarea>
+    <div class="copy-row"><button type="button" class="copy" data-target="fav32-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  </div>
+</article>
+<article class="variant" aria-labelledby="fav16-h">
+  <div class="stage stage-paper"><div class="fav-row"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="128" height="128" role="img" aria-labelledby="fav16-big-t"><title id="fav16-big-t">Congreso Abierto, favicon 16 px</title><rect width="16" height="16" rx="3.5" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5C4 5.6 5.8 4 8 4C10.2 4 12 5.6 12 8.5"/><path d="M2.75 8.5H13.25"/><path d="M5.25 11V11.5M8 11V11.5M10.75 11V11.5"/><path d="M2.75 13.75H13.25"/></g></svg><span class="real"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" role="img" aria-labelledby="fav16-t"><title id="fav16-t">Congreso Abierto, favicon 16 px</title><rect width="16" height="16" rx="3.5" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5C4 5.6 5.8 4 8 4C10.2 4 12 5.6 12 8.5"/><path d="M2.75 8.5H13.25"/><path d="M5.25 11V11.5M8 11V11.5M10.75 11V11.5"/><path d="M2.75 13.75H13.25"/></g></svg><small>tamaño real</small></span></div></div>
+  <div class="variant-body">
+    <h3 id="fav16-h">Favicon 16 px (plano)</h3>
+    <p class="note">Pestañas de 16 px. Sin linterna; tres columnas como puntos.</p>
+    <label class="code-label" for="fav16-code">Markup SVG</label>
+    <textarea id="fav16-code" readonly rows="4" spellcheck="false">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" role="img" aria-labelledby="fav16-t"&gt;&lt;title id="fav16-t"&gt;Congreso Abierto, favicon 16 px&lt;/title&gt;&lt;rect width="16" height="16" rx="3.5" fill="#74acdf"/&gt;&lt;g fill="none" stroke="#163a5c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M4 8.5C4 5.6 5.8 4 8 4C10.2 4 12 5.6 12 8.5"/&gt;&lt;path d="M2.75 8.5H13.25"/&gt;&lt;path d="M5.25 11V11.5M8 11V11.5M10.75 11V11.5"/&gt;&lt;path d="M2.75 13.75H13.25"/&gt;&lt;/g&gt;&lt;/svg&gt;</textarea>
+    <div class="copy-row"><button type="button" class="copy" data-target="fav16-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  </div>
+</article>
+<article class="variant" aria-labelledby="h-wc-h">
+  <div class="stage stage-paper"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" width="340" height="64" role="img" aria-labelledby="h-wc-t"><title id="h-wc-t">Congreso Abierto, logo horizontal, versión acuarela</title><defs><filter id="ha-wash" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="3" seed="5" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" result="w"/><feGaussianBlur in="w" stdDeviation="0.5" result="s"/><feMorphology in="s" operator="erode" radius="1" result="e"/><feComposite in="s" in2="e" operator="out" result="edge"/><feColorMatrix in="edge" type="matrix" values="0.55 0 0 0 0 0 0.6 0 0 0 0 0 0.75 0 0 0 0 0 0.8 0" result="pool"/><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="9" result="g"/><feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -0.7 0 0 0 1.05" result="ga"/><feComposite in="s" in2="ga" operator="in" result="grain"/><feMerge><feMergeNode in="grain"/><feMergeNode in="pool"/></feMerge></filter></defs><g transform="translate(0 0)"><circle cx="37" cy="28" r="21" fill="#74acdf" opacity="0.85" filter="url(#ha-wash)"/><g fill="none" stroke="#163a5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g><text x="80" y="35" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="27" fill="#1c1b19" text-anchor="start"><tspan font-weight="700">Congreso</tspan> <tspan font-weight="400">Abierto</tspan></text><text x="81" y="54" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#55524b" text-anchor="start" letter-spacing="0.04em">Datos abiertos del Congreso argentino</text></svg></div>
+  <div class="variant-body">
+    <h3 id="h-wc-h">Horizontal · acuarela (con filtro)</h3>
+    <p class="note">Solo ≥ 64 px de alto y en navegadores. Siempre con la versión plana de respaldo.</p>
+    <label class="code-label" for="h-wc-code">Markup SVG</label>
+    <textarea id="h-wc-code" readonly rows="4" spellcheck="false">&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" width="340" height="64" role="img" aria-labelledby="h-wc-t"&gt;&lt;title id="h-wc-t"&gt;Congreso Abierto, logo horizontal, versión acuarela&lt;/title&gt;&lt;defs&gt;&lt;filter id="ha-wash" x="-20%" y="-20%" width="140%" height="140%"&gt;&lt;feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="3" seed="5" result="n"/&gt;&lt;feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" result="w"/&gt;&lt;feGaussianBlur in="w" stdDeviation="0.5" result="s"/&gt;&lt;feMorphology in="s" operator="erode" radius="1" result="e"/&gt;&lt;feComposite in="s" in2="e" operator="out" result="edge"/&gt;&lt;feColorMatrix in="edge" type="matrix" values="0.55 0 0 0 0 0 0.6 0 0 0 0 0 0.75 0 0 0 0 0 0.8 0" result="pool"/&gt;&lt;feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="9" result="g"/&gt;&lt;feColorMatrix in="g" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -0.7 0 0 0 1.05" result="ga"/&gt;&lt;feComposite in="s" in2="ga" operator="in" result="grain"/&gt;&lt;feMerge&gt;&lt;feMergeNode in="grain"/&gt;&lt;feMergeNode in="pool"/&gt;&lt;/feMerge&gt;&lt;/filter&gt;&lt;/defs&gt;&lt;g transform="translate(0 0)"&gt;&lt;circle cx="37" cy="28" r="21" fill="#74acdf" opacity="0.85" filter="url(#ha-wash)"/&gt;&lt;g fill="none" stroke="#163a5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M32 6V10"/&gt;&lt;path d="M28.5 17V12.5H35.5V17"/&gt;&lt;path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/&gt;&lt;path d="M13 31H51"/&gt;&lt;path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/&gt;&lt;path d="M10 50H54"/&gt;&lt;/g&gt;&lt;/g&gt;&lt;text x="80" y="35" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="27" fill="#1c1b19" text-anchor="start"&gt;&lt;tspan font-weight="700"&gt;Congreso&lt;/tspan&gt; &lt;tspan font-weight="400"&gt;Abierto&lt;/tspan&gt;&lt;/text&gt;&lt;text x="81" y="54" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#55524b" text-anchor="start" letter-spacing="0.04em"&gt;Datos abiertos del Congreso argentino&lt;/text&gt;&lt;/svg&gt;</textarea>
+    <div class="copy-row"><button type="button" class="copy" data-target="h-wc-code">Copiar SVG</button><span class="copied" role="status" aria-live="polite"></span></div>
+  </div>
+</article>
+    </div>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="s4" id="header-mock">
+  <div class="wrap">
+    <div class="section-head"><h2 id="s4">4 · Header del sitio</h2><span class="tag">Estilo actual de SiteLayout</span></div>
+    <p class="note">Mismo header: --surface, línea inferior --line, buscador compacto de 360 px y navegación. Solo cambia el brand: el ícono a 40 px más el wordmark en HTML (no en SVG), para que escale con el texto y se lea con lector de pantalla.</p>
+    <div class="mock"><div class="mock-label">Actual</div><header class="site-header">
+  <div class="site-bar"><a class="brand" href="#header-mock">Gastos y trabajo legislativo<small>Diputados y Senado de la Nación · datos oficiales</small></a>
+    <div class="site-search"><div class="search-box"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" fill="none" stroke="#55524b" stroke-width="2.4"/><path d="M16.5 16.5L21 21" stroke="#55524b" stroke-width="2.4" stroke-linecap="round"/></svg><input type="search" aria-label="Buscar legislador, bloque, provincia o comisión" placeholder="Buscar persona, bloque, provincia o comisión"><kbd>/</kbd></div></div>
+  </div>
+  <nav class="site-nav" aria-label="Secciones (maqueta)"><ul><li><a href="#header-mock" aria-current="page">Inicio</a></li><li><a href="#header-mock">Diputados</a></li><li><a href="#header-mock">Senado</a></li><li><a href="#header-mock">Bloques</a></li><li><a href="#header-mock">Provincias</a></li><li><a href="#header-mock">Comisiones</a></li><li><a href="#header-mock">Viajes</a></li><li><a href="#header-mock">Proyectos</a></li></ul></nav>
+</header><div style="height:40px"></div></div>
+    <div class="mock"><div class="mock-label">Propuesta</div><header class="site-header">
+  <div class="site-bar"><a class="brand brand-logo" href="#header-mock"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="40" height="40" aria-hidden="true" focusable="false"><g transform="translate(0 0)"><circle cx="37" cy="28" r="21" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g></svg><span><span class="brand-name"><b>Congreso</b> Abierto</span><small>Diputados y Senado de la Nación · datos oficiales</small></span></a>
+    <div class="site-search"><div class="search-box"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" fill="none" stroke="#55524b" stroke-width="2.4"/><path d="M16.5 16.5L21 21" stroke="#55524b" stroke-width="2.4" stroke-linecap="round"/></svg><input type="search" aria-label="Buscar legislador, bloque, provincia o comisión" placeholder="Buscar persona, bloque, provincia o comisión"><kbd>/</kbd></div></div>
+  </div>
+  <nav class="site-nav" aria-label="Secciones (maqueta)"><ul><li><a href="#header-mock" aria-current="page">Inicio</a></li><li><a href="#header-mock">Diputados</a></li><li><a href="#header-mock">Senado</a></li><li><a href="#header-mock">Bloques</a></li><li><a href="#header-mock">Provincias</a></li><li><a href="#header-mock">Comisiones</a></li><li><a href="#header-mock">Viajes</a></li><li><a href="#header-mock">Proyectos</a></li></ul></nav>
+</header><div style="height:40px"></div></div>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="s5">
+  <div class="wrap">
+    <div class="section-head"><h2 id="s5">5 · Uso</h2></div>
+    <div class="usage">
+      <div class="card">
+        <h3>Tamaño mínimo</h3>
+        <ul>
+          <li>Horizontal: 160 px de ancho (ícono de 30 px). Debajo, usar solo el ícono.</li>
+          <li>Apilado: 120 px de ancho.</li>
+          <li>Ícono de 64: hasta 24 px. Entre 24 y 17 px, el favicon de 32; en 16 px, el favicon de 16.</li>
+          <li>Versión acuarela: solo desde 64 px de alto y en pantalla.</li>
+        </ul>
+        <div class="sizes">
+          <figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" width="160" height="30" role="img" aria-labelledby="hmin-t"><title id="hmin-t">Congreso Abierto, logo horizontal</title><g transform="translate(0 0)"><circle cx="37" cy="28" r="21" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g><text x="80" y="35" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="27" fill="#1c1b19" text-anchor="start"><tspan font-weight="700">Congreso</tspan> <tspan font-weight="400">Abierto</tspan></text><text x="81" y="54" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#55524b" text-anchor="start" letter-spacing="0.04em">Datos abiertos del Congreso argentino</text></svg><figcaption>160 px</figcaption></figure>
+          <figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="24" height="24" role="img" aria-labelledby="mmin-t"><title id="mmin-t">Congreso Abierto, ícono</title><g transform="translate(0 0)"><circle cx="37" cy="28" r="21" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g></svg><figcaption>24 px</figcaption></figure>
+          <figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-labelledby="fmin32-t"><title id="fmin32-t">Congreso Abierto, favicon 32 px</title><rect width="32" height="32" rx="7" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.5V7"/><path d="M8.5 16C8.5 11.3 11.8 8.5 16 8.5C20.2 8.5 23.5 11.3 23.5 16"/><path d="M6.5 16H25.5"/><path d="M10.5 19.5V23M16 19.5V23M21.5 19.5V23"/><path d="M5.5 26.5H26.5"/></g></svg><figcaption>32 px</figcaption></figure>
+          <figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" role="img" aria-labelledby="fmin16-t"><title id="fmin16-t">Congreso Abierto, favicon 16 px</title><rect width="16" height="16" rx="3.5" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5C4 5.6 5.8 4 8 4C10.2 4 12 5.6 12 8.5"/><path d="M2.75 8.5H13.25"/><path d="M5.25 11V11.5M8 11V11.5M10.75 11V11.5"/><path d="M2.75 13.75H13.25"/></g></svg><figcaption>16 px</figcaption></figure>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Área de resguardo</h3>
+        <p class="note" style="margin-bottom:var(--space-3)">x = la mitad de la altura del ícono (32 en la grilla de 64). Nada entra en ese margen: ni texto, ni bordes, ni otros logos.</p>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 404 128" width="404" height="128" role="img" aria-labelledby="cs-t"><title id="cs-t">Área de resguardo: x igual a la mitad de la altura del ícono alrededor de todo el logo</title><rect x="1" y="1" width="402" height="126" fill="#ffffff" stroke="#d9d5cc" stroke-dasharray="4 4"/><rect x="32" y="32" width="340" height="64" fill="none" stroke="#8a3b12" stroke-dasharray="3 3"/><g transform="translate(32 32)"><g transform="translate(0 0)"><circle cx="37" cy="28" r="21" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g><text x="80" y="35" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="27" fill="#1c1b19" text-anchor="start"><tspan font-weight="700">Congreso</tspan> <tspan font-weight="400">Abierto</tspan></text><text x="81" y="54" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#55524b" text-anchor="start" letter-spacing="0.04em">Datos abiertos del Congreso argentino</text></g><g font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#8a3b12"><text x="13" y="68">x</text><text x="384" y="68">x</text><text x="199" y="22">x</text><text x="199" y="116">x</text></g></svg>
+      </div>
+    </div>
+    <h3 style="font-size:16px;margin-top:var(--space-6)">Qué no hacer</h3>
+    <div class="donts">
+<figure class="dont"><div class="dont-stage"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" width="200" height="22" preserveAspectRatio="none" aria-hidden="true" focusable="false"><g transform="translate(0 0)"><circle cx="37" cy="28" r="21" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g><text x="80" y="35" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="27" fill="#1c1b19" text-anchor="start"><tspan font-weight="700">Congreso</tspan> <tspan font-weight="400">Abierto</tspan></text></svg></div><figcaption><span aria-hidden="true">✕</span> No estirar ni deformar</figcaption></figure>
+<figure class="dont"><div class="dont-stage"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" width="200" height="38" aria-hidden="true" focusable="false"><g transform="translate(0 0)"><circle cx="37" cy="28" r="21" fill="#e2c3ae"/><g fill="none" stroke="#163a5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g><text x="80" y="35" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="27" fill="#1c1b19" text-anchor="start"><tspan font-weight="700">Congreso</tspan> <tspan font-weight="400">Abierto</tspan></text></svg></div><figcaption><span aria-hidden="true">✕</span> No cambiar la aguada a otro color</figcaption></figure>
+<figure class="dont"><div class="dont-stage"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" width="200" height="38" aria-hidden="true" focusable="false"><g transform="translate(0 0)"><g fill="none" stroke="#74acdf" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g><text x="80" y="35" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="27" fill="#74acdf" text-anchor="start"><tspan font-weight="700">Congreso</tspan> <tspan font-weight="400">Abierto</tspan></text></svg></div><figcaption><span aria-hidden="true">✕</span> No poner el trazo celeste sobre papel (2,3:1)</figcaption></figure>
+<figure class="dont"><div class="dont-stage"><span class="tiny-hero"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="32" height="19" role="img" aria-labelledby="heroflat2-t"><title id="heroflat2-t">Ilustración del Congreso, versión plana sin filtros</title><rect width="1200" height="700" fill="#eaf3fb"/><path d="M60 604H1140V650H60Z" fill="#b9d7f1"/><g fill="#74acdf" opacity="0.55">
+  <rect x="150" y="432" width="290" height="178"/><rect x="760" y="432" width="290" height="178"/>
+  <rect x="108" y="398" width="92" height="212"/><rect x="1000" y="398" width="92" height="212"/>
+  <path d="M116 398Q154 350 192 398Z"/><path d="M1008 398Q1046 350 1084 398Z"/>
+  <rect x="440" y="380" width="320" height="230"/>
+  <rect x="478" y="330" width="244" height="66"/><rect x="508" y="300" width="184" height="32"/>
+  <rect x="524" y="216" width="152" height="86"/><rect x="514" y="208" width="172" height="10"/>
+  <path d="M462 456L600 396L738 456Z"/>
+  <rect x="588" y="50" width="24" height="28"/><path d="M584 52Q600 34 616 52Z"/></g><path d="M528 212C528 122 566 80 600 76C634 80 672 122 672 212Z" fill="#74acdf"/><g fill="#2f6796" opacity="0.35">
+  <rect x="980" y="440" width="70" height="170"/><rect x="1060" y="406" width="32" height="204"/>
+  <path d="M150 446H440V458H150Z"/><path d="M760 446H1050V458H760Z"/>
+  <path d="M470 470H730V484H470Z"/>
+  <rect x="640" y="222" width="36" height="80"/><rect x="680" y="334" width="42" height="62"/>
+  <path d="M440 592H760L770 610H430Z"/>
+  <rect x="497" y="484" width="5" height="108"/><rect x="541" y="484" width="5" height="108"/><rect x="585" y="484" width="5" height="108"/><rect x="629" y="484" width="5" height="108"/><rect x="673" y="484" width="5" height="108"/><rect x="717" y="484" width="5" height="108"/></g><g fill="none" stroke="#2f6796" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M60 612H1140M150 610V432H440M760 432H1050V610M108 610V398H200V610M1000 610V398H1092V610M440 610V380H760V610M478 396V330H722V396M462 456L600 396L738 456ZM524 218V302M676 218V302M514 208H686M588 78V50H612V78M600 40V22"/><path d="M528 212C528 122 566 80 600 76C634 80 672 122 672 212Z"/></g></svg></span></div><figcaption><span aria-hidden="true">✕</span> No usar la acuarela ni la ilustración como favicon</figcaption></figure>
+<figure class="dont"><div class="dont-stage"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" width="200" height="38" aria-hidden="true" focusable="false" style="filter: drop-shadow(3px 3px 0 #1c1b19)"><g transform="translate(0 0)"><circle cx="37" cy="28" r="21" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g><text x="80" y="35" font-family="ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif" font-size="27" fill="#1c1b19" text-anchor="start"><tspan font-weight="700">Congreso</tspan> <tspan font-weight="400">Abierto</tspan></text></svg></div><figcaption><span aria-hidden="true">✕</span> No agregar sombras ni contornos</figcaption></figure>
+<figure class="dont"><div class="dont-stage"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" width="200" height="38" aria-hidden="true" focusable="false"><g transform="translate(0 0)"><circle cx="37" cy="28" r="21" fill="#74acdf"/><g fill="none" stroke="#163a5c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6V10"/><path d="M28.5 17V12.5H35.5V17"/><path d="M17 31C17 22.5 23.7 17 32 17C40.3 17 47 22.5 47 31"/><path d="M13 31H51"/><path d="M19 36V45M25.5 36V45M32 36V45M38.5 36V45M45 36V45"/><path d="M10 50H54"/></g></g><text x="80" y="40" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="27" font-style="italic" fill="#1c1b19" transform="rotate(-6 80 40)">Congreso Abierto</text></svg></div><figcaption><span aria-hidden="true">✕</span> No rotar ni cambiar la tipografía</figcaption></figure>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="board-foot"><div class="wrap"><p>Artboard 02 de design/logo-congreso-abierto. Dibujo propio en SVG, sin calcos ni fotos. La familia celeste es una propuesta pendiente de aprobación.</p></div></footer>
+<script>
+document.querySelectorAll('button.copy').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var area = document.getElementById(btn.dataset.target);
+    var status = btn.parentElement.querySelector('.copied');
+    function done(ok) { status.textContent = ok ? 'Copiado ✓' : 'No se pudo copiar: seleccioná el texto'; setTimeout(function () { status.textContent = ''; }, 2500); }
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(area.value).then(function () { done(true); }, function () { fallback(); });
+    } else { fallback(); }
+    function fallback() { area.focus(); area.select(); var ok = false; try { ok = document.execCommand('copy'); } catch (e) {} done(ok); }
+  });
+});
+</script>
+<!--
+Self-check (gentle-design · Design system sync), artboard 02-trazo.html
+Colors used vs design/system.md tokens:
+  --ink #1c1b19 ✓ · --muted #55524b ✓ · --placeholder #76726a ✓ · --paper #fbfaf7 ✓ · --surface #ffffff ✓
+  --line #d9d5cc ✓ · --line-soft #ebe8e1 ✓ · --accent #1f4e79 ✓ (also --focus) · --accent-ink #163a5c ✓ · --accent-soft #e8eef5 ✓
+  --flag #8a3b12 ✓ · --flag-soft #f7ebe3 ✓ · --flag-line #e2c3ae ✓ (don't examples, tradeoff tag) · --quality #2f6b3a ✓ (copy confirmation) · --badge #f1efe9 ✓
+  PROPOSAL (not in system.md, labelled in section 2): --celeste-50 #eaf3fb · --celeste-200 #b9d7f1 · --celeste #74acdf · --celeste-700 #2f6796
+  Derived only inside SVG filters: edge pooling darkens the filtered celeste via feColorMatrix; paper grain is --ink at low alpha.
+  Brand sizes 18px (old) / 20px wordmark in the mock: 18px is the system's brand literal; 20px = --text-xl.
+Font families: --serif (headings, wordmark) ✓ · --sans (body, tagline) ✓ · --mono (textarea, code, kbd) ✓. No other fonts.
+Radius/spacing/focus: system tokens only; focus ring 3px solid --focus, offset 2px. No external URLs. Motion: transitions only under prefers-reduced-motion: no-preference.
+-->
+</body>
+</html>

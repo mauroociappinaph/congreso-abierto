@@ -1,0 +1,16 @@
+{
+  "summary": {
+    "dieta": 6125805.18,
+    "gastosRepresentacion": 464489.12,
+    "bruto": 6590294.3,
+    "descuentos": -1402882.42,
+    "neto": 5187411.88
+  },
+  "adicionales": [
+    {"concepto":"Desarraigo","importe":328751.12},
+    {"concepto":"Movilidad opción 2","importe":100000},
+    {"concepto":"Movilidad opción 3","importe":250000},
+    {"concepto":"Movilidad opción 4","importe":350000},
+    {"concepto":"Movilidad opción 5","importe":455000}
+  ]
+}

@@ -1,6 +1,8 @@
 // Build-time data loading. Runs in Node during `astro build`/`astro dev`, so CORS does not apply.
 // Every loader is memoized for the whole build, so getStaticPaths and pages share one fetch per source.
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+// DATA_MODE=snapshot (default) reads the committed src/data/snapshot/ and never touches the network;
+// DATA_MODE=refresh fetches the official sources live and rewrites the snapshot.
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import endpointsData from '../data/endpoints.json';
 import snapshot from '../data/senadores.json';
@@ -25,6 +27,7 @@ import { billsByAuthor, furthestStages, parseBills, type AuthorBills } from './p
 import { mapCurrentToHistoric, parseRoster, type RosterPerson } from './roster.ts';
 import { buildEntities, type Entities } from './entities.ts';
 import { describeFetchError, withRetries } from './http.ts';
+import { dataMode, deserialize, missingSnapshotMessage, serialize, updateMeta, type SnapshotMeta } from './snapshot.ts';
 import {
   actaDetailUrl,
   actaIndexRequest,
@@ -60,6 +63,49 @@ function once<T>(key: string, load: () => Promise<T>): Promise<T> {
 
 const today = () => new Date().toISOString().slice(0, 10);
 
+// --- Snapshot -------------------------------------------------------------------
+
+const MODE = dataMode(process.env.DATA_MODE);
+const SNAPSHOT_DIR = join(process.cwd(), 'src/data/snapshot');
+const META_FILE = join(SNAPSHOT_DIR, 'meta.json');
+const REFRESH_STARTED = new Date().toISOString();
+
+function readMeta(): SnapshotMeta | null {
+  return existsSync(META_FILE) ? (JSON.parse(readFileSync(META_FILE, 'utf8')) as SnapshotMeta) : null;
+}
+
+interface SnapshotInfo {
+  items: number;
+  period?: { desde: string | null; hasta: string | null };
+}
+
+// Snapshot mode reads src/data/snapshot/<name>.json; refresh mode runs `live`, writes the file and meta.json, and returns
+// the value read back from the text it wrote, so a refresh build and a later snapshot build render the same pages.
+function snapshotted<T>(name: string, live: () => Promise<T>, info: (value: T) => SnapshotInfo): Promise<T> {
+  return once(name, async () => {
+    const file = join(SNAPSHOT_DIR, `${name}.json`);
+    if (MODE === 'snapshot') {
+      if (!existsSync(file)) throw new Error(missingSnapshotMessage(name));
+      return deserialize(readFileSync(file, 'utf8')) as T;
+    }
+    const value = await live();
+    const text = serialize(value);
+    mkdirSync(SNAPSHOT_DIR, { recursive: true });
+    writeFileSync(file, text);
+    // Loaders run on one thread and these writes are synchronous, so meta.json is never written concurrently.
+    writeFileSync(META_FILE, JSON.stringify(updateMeta(readMeta(), name, { text, ...info(value) }, REFRESH_STARTED), null, 2) + '\n');
+    return deserialize(text) as T;
+  });
+}
+
+// The day the data was fetched: the snapshot's refresh date, or today while refreshing.
+function dataDay(): string {
+  if (MODE === 'refresh') return today();
+  const meta = readMeta();
+  if (!meta) throw new Error(missingSnapshotMessage('meta'));
+  return meta.generatedAt.slice(0, 10);
+}
+
 // The current legislative period starts every December 10.
 function periodStart(day: string): string {
   const year = Number(day.slice(0, 4));
@@ -68,6 +114,8 @@ function periodStart(day: string): string {
 
 // Official sites drop connections now and then: retry twice, and name the real network cause when it still fails.
 async function fetchText(url: string, init: RequestInit = {}, timeoutMs = 30_000, retries = 2): Promise<string> {
+  // Every page loader reads the snapshot first, so reaching this in snapshot mode means an entry is missing.
+  if (MODE === 'snapshot') throw new Error(missingSnapshotMessage(url));
   try {
     return await withRetries(
       async () => {
@@ -118,11 +166,11 @@ async function fetchHcdnCsv(label: string, url: string, timeoutMs = 120_000): Pr
 }
 
 export function loadDeputies(): Promise<Deputy[]> {
-  return once('deputies', async () => {
+  return snapshotted('deputies', async () => {
     const url = (await csvResources('legisladores'))['Composición Actual de la Cámara'];
     if (!url) throw new Error('HCDN: resource "Composición Actual de la Cámara" not found');
     return parseCsv(await fetchText(url)).map(normalizeDeputy).sort(byName);
-  });
+  }, deputies => ({ items: deputies.length }));
 }
 
 export interface PayData {
@@ -131,7 +179,7 @@ export interface PayData {
 }
 
 export function loadPay(): Promise<PayData> {
-  return once('pay', async () => {
+  return snapshotted('pay', async () => {
     const urls = await csvResources('dietas-y-gastos-de-representacion-legisladores-as');
     const load = async (name: string) => (urls[name] ? parseConcepts(await fetchText(urls[name])) : []);
     const [remuneraciones, descuentos, desarraigo, movilidad] = await Promise.all(
@@ -139,7 +187,7 @@ export function loadPay(): Promise<PayData> {
     );
     if (remuneraciones.length === 0) throw new Error('HCDN: no remuneraciones found');
     return { summary: summarizePay(remuneraciones, descuentos), adicionales: [...desarraigo, ...movilidad] };
-  });
+  }, pay => ({ items: pay.adicionales.length }));
 }
 
 export interface SenatorsData {
@@ -149,7 +197,7 @@ export interface SenatorsData {
 }
 
 export function loadSenators(): Promise<SenatorsData> {
-  return once('senators', async () => {
+  return snapshotted('senators', async () => {
     try {
       const rows = JSON.parse(await fetchText(SENATE_API))?.table?.rows as Row[] | undefined;
       if (!Array.isArray(rows) || rows.length === 0) throw new Error('unexpected Senate response');
@@ -158,13 +206,13 @@ export function loadSenators(): Promise<SenatorsData> {
       console.warn(`[senado] live API failed (${(error as Error).message}); using snapshot from ${snapshot.fecha}`);
       return { senators: (snapshot.rows as Row[]).map(normalizeSenator).sort(byName), snapshotDate: snapshot.fecha };
     }
-  });
+  }, ({ senators }) => ({ items: senators.length }));
 }
 
 // Downloads every CSV of the dataset: the window is chosen by the periods inside the files, not by their names.
 // Any failure stops the build, so the Viajes tab is never published empty.
 export function loadTravel(deputies: Deputy[]): Promise<TravelReport> {
-  return once('travel', async () => {
+  return snapshotted('travel', async () => {
     const resources = await csvResourceList('viajes-nacionales');
     if (resources.length === 0) throw new Error('HCDN: dataset "viajes-nacionales" has no CSV resources');
     const files = [];
@@ -178,7 +226,10 @@ export function loadTravel(deputies: Deputy[]): Promise<TravelReport> {
       }))));
     }
     return buildTravelReport(deputies, files, endpointsData.endpoints as EndpointTable);
-  });
+  }, travel => ({
+    items: travel.analysis.deputies.length,
+    period: { desde: travel.windowMonths[0] ?? null, hasta: travel.windowMonths.at(-1) ?? null },
+  }));
 }
 
 // --- Linked sources -------------------------------------------------------------
@@ -234,7 +285,7 @@ export interface CommitteesData extends LinkedSource {
 
 // The files describe today's committees: linked against the deputies of the current legislative period.
 export function loadCommittees(deputies: Deputy[]): Promise<CommitteesData> {
-  return once('committees', async () => {
+  return snapshotted('committees', async () => {
     const urls = await Promise.all(
       ['Comisiones', 'Comisiones Permanentes - integrantes', 'Comisiones Permanentes Autoridades'].map(name => csvResource('comisiones', name)),
     );
@@ -250,7 +301,7 @@ export function loadCommittees(deputies: Deputy[]): Promise<CommitteesData> {
       period,
       sources: urls,
     };
-  });
+  }, committees => ({ items: committees.committees.size, period: committees.period }));
 }
 
 export interface BillsData {
@@ -263,7 +314,7 @@ export interface BillsData {
 }
 
 export function loadBills(deputies: Deputy[], senators: Senator[]): Promise<BillsData> {
-  return once('bills', async () => {
+  return snapshotted('bills', async () => {
     const urls = await Promise.all([
       csvResource('proyectos-parlamentarios', 'Proyectos Parlamentarios'),
       csvResource('movimientos-de-proyectos', 'Movimientos de proyectos'),
@@ -286,7 +337,7 @@ export function loadBills(deputies: Deputy[], senators: Senator[]): Promise<Bill
       period,
       sources: urls,
     };
-  });
+  }, bills => ({ items: bills.bills.total, period: bills.period }));
 }
 
 export interface MissionsData extends LinkedSource {
@@ -298,7 +349,7 @@ const resourceYear = (name: string) => Number(name.match(/\b(20\d{2})\b/)?.[1] ?
 
 // One CSV per semester (or year in older files); every file named with a year since FIRST_YEAR.
 export function loadMissions(deputies: Deputy[]): Promise<MissionsData> {
-  return once('missions', async () => {
+  return snapshotted('missions', async () => {
     const resources = (await csvResourceList('misiones-oficiales')).filter(r => resourceYear(r.name) >= FIRST_YEAR);
     if (resources.length === 0) throw new Error(`HCDN: dataset "misiones-oficiales" has no CSV since ${FIRST_YEAR}`);
     const files = await Promise.all(resources.map(async ({ name, url }) =>
@@ -309,7 +360,7 @@ export function loadMissions(deputies: Deputy[]): Promise<MissionsData> {
     const policy = await deputyPolicy(deputies, period.desde ?? SOURCES_SINCE, period.hasta ?? today());
     const summary = summarizeMissions(missions, raw => policy.linkFn(raw));
     return { deputies: summary.deputies, missions: missions.length, quality: policy.quality(), period, sources: resources.map(r => r.url) };
-  });
+  }, missions => ({ items: missions.missions, period: missions.period }));
 }
 
 // --- Senate votes -----------------------------------------------------------------
@@ -385,12 +436,16 @@ async function pool<T, R>(items: T[], size: number, run: (item: T) => Promise<R>
 }
 
 // Fetches the index of every year since FIRST_YEAR and only the details missing from the committed cache.
-// If the Senate site fails, the cache is used as is and the result is marked stale.
+// If the Senate site fails, the cache is used as is and the result is marked stale. Snapshot mode only reads the cache.
 export function loadSenateActas(): Promise<SenateActasData> {
   return once('senate-actas', async () => {
     const cache = readSenateCache();
     const cachedSince = () =>
       Object.values(cache.actas).filter(a => !cancelled(a.resultado) && (a.fecha ?? '') >= SOURCES_SINCE).sort(byActa);
+    if (MODE === 'snapshot') {
+      if (Object.keys(cache.actas).length === 0) throw new Error(missingSnapshotMessage('senado-actas'));
+      return { actas: cachedSince(), stale: false, cacheDate: cache.fecha, fetched: 0 };
+    }
     let fetched = 0;
     try {
       const years = Array.from({ length: new Date().getFullYear() - FIRST_YEAR + 1 }, (_, i) => FIRST_YEAR + i);
@@ -439,7 +494,7 @@ export interface SenateVotesData extends LinkedSource {
 }
 
 export function loadSenateVotes(senators: Senator[]): Promise<SenateVotesData> {
-  return once('senate-votes', async () => {
+  return snapshotted('senate-votes', async () => {
     const { actas, stale, cacheDate } = await loadSenateActas();
     const { former, idOf } = senateIdentities(latestVotes(actas), senators);
     const policy = createSenatePolicy(senators, former, idOf);
@@ -453,7 +508,7 @@ export function loadSenateVotes(senators: Senator[]): Promise<SenateVotesData> {
       period: { desde: summary.periodo.desde, hasta: summary.periodo.hasta },
       sources: [SENADO_ACTAS_URL],
     };
-  });
+  }, votes => ({ items: votes.actas, period: votes.period }));
 }
 
 function byName(a: { nombre: string }, b: { nombre: string }) {
@@ -471,6 +526,6 @@ export function loadEntities(): Promise<Entities> {
       loadMissions(deputies),
       loadSenateVotes(senators),
     ]);
-    return buildEntities({ asOf: today(), deputies, senators, pay: pay.summary, travel, committees, bills, missions, senateVotes });
+    return buildEntities({ asOf: dataDay(), deputies, senators, pay: pay.summary, travel, committees, bills, missions, senateVotes });
   });
 }

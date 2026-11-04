@@ -1,0 +1,2315 @@
+[
+  {
+    "id": "dip-aguero-guillermo-cesar-chaco",
+    "nombre": "Agüero, Guillermo César",
+    "lugar": "CHACO",
+    "bloque": "UCR - UNIÓN CÍVICA RADICAL",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-aguirre-hilda-la-rioja",
+    "nombre": "Aguirre, Hilda",
+    "lugar": "LA RIOJA",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-ajmechet-sabrina-ciudad-de-buenos-aires",
+    "nombre": "Ajmechet, Sabrina",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-ali-ernesto-pipi-san-luis",
+    "nombre": "Alí, Ernesto \"Pipi\"",
+    "lugar": "SAN LUIS",
+    "bloque": "PRIMERO SAN LUIS",
+    "mandato": "2023-2027",
+    "fechaJura": "31/01/2024",
+    "fechaInicio": "31/01/2024"
+  },
+  {
+    "id": "dip-almena-carlos-alberto-san-luis",
+    "nombre": "Almena, Carlos Alberto",
+    "lugar": "SAN LUIS",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-almiron-lisandro-corrientes",
+    "nombre": "Almirón, Lisandro",
+    "lugar": "CORRIENTES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-alvarez-claudio-san-luis",
+    "nombre": "Álvarez, Claudio",
+    "lugar": "SAN LUIS",
+    "bloque": "ARGENTINA FEDERAL",
+    "mandato": "2023-2027",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-andino-cristian-san-juan",
+    "nombre": "Andino, Cristian",
+    "lugar": "SAN JUAN",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-andrade-javier-ciudad-de-buenos-aires",
+    "nombre": "Andrade, Javier",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-andreussi-barbara-jujuy",
+    "nombre": "Andreussi, Barbara",
+    "lugar": "JUJUY",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-ansaloni-pablo-buenos-aires",
+    "nombre": "Ansaloni, Pablo",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-arabia-damian-ciudad-de-buenos-aires",
+    "nombre": "Arabia, Damián",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-araujo-hernandez-jorge-neri-tierra-del-fuego",
+    "nombre": "Araujo Hernández, Jorge Neri",
+    "lugar": "TIERRA DEL FUEGO",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-ardohain-martin-la-pampa",
+    "nombre": "Ardohain, Martín",
+    "lugar": "LA PAMPA",
+    "bloque": "PRO",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-arrieta-lourdes-micaela-mendoza",
+    "nombre": "Arrieta, Lourdes Micaela",
+    "lugar": "MENDOZA",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-arrua-alberto-misiones",
+    "nombre": "Arrúa, Alberto",
+    "lugar": "MISIONES",
+    "bloque": "ARGENTINA FEDERAL",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-aveiro-martin-mendoza",
+    "nombre": "Aveiro, Martín",
+    "lugar": "MENDOZA",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-avico-belen-cordoba",
+    "nombre": "Avico, Belén",
+    "lugar": "CORDOBA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-avila-fernanda-catamarca",
+    "nombre": "Avila, Fernanda",
+    "lugar": "CATAMARCA",
+    "bloque": "ELIJO CATAMARCA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-avila-jorge-antonio-chubut",
+    "nombre": "Avila, Jorge Antonio",
+    "lugar": "CHUBUT",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-banfi-karina-buenos-aires",
+    "nombre": "Banfi, Karina",
+    "lugar": "BUENOS AIRES",
+    "bloque": "ADELANTE BUENOS AIRES",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-barbur-marcelo-santiago-del-estero",
+    "nombre": "Barbur, Marcelo",
+    "lugar": "SANTIAGO DEL ESTERO",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-basterra-luis-eugenio-formosa",
+    "nombre": "Basterra, Luis Eugenio",
+    "lugar": "FORMOSA",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-basualdo-atilio-formosa",
+    "nombre": "Basualdo, Atilio",
+    "lugar": "FORMOSA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "17/12/2025",
+    "fechaInicio": "17/12/2025"
+  },
+  {
+    "id": "dip-basualdo-carolina-cordoba",
+    "nombre": "Basualdo, Carolina",
+    "lugar": "CORDOBA",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-becerra-monica-san-luis",
+    "nombre": "Becerra, Mónica",
+    "lugar": "SAN LUIS",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-benedit-beltran-entre-rios",
+    "nombre": "Benedit, Beltrán",
+    "lugar": "ENTRE RIOS",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-benegas-lynch-bertie-buenos-aires",
+    "nombre": "Benegas Lynch, Bertie",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-bianchetti-emmanuel-misiones",
+    "nombre": "Bianchetti, Emmanuel",
+    "lugar": "MISIONES",
+    "bloque": "PRO",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-biella-bernardo-salta",
+    "nombre": "Biella, Bernardo",
+    "lugar": "SALTA",
+    "bloque": "ARGENTINA FEDERAL",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-bonacci-rocio-santa-fe",
+    "nombre": "Bonacci, Rocío",
+    "lugar": "SANTA FE",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-bongiovanni-alejandro-santa-fe",
+    "nombre": "Bongiovanni, Alejandro",
+    "lugar": "SANTA FE",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-bordet-gustavo-entre-rios",
+    "nombre": "Bordet, Gustavo",
+    "lugar": "ENTRE RIOS",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-borgatta-alejandrina-santa-fe",
+    "nombre": "Borgatta, Alejandrina",
+    "lugar": "SANTA FE",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-bornoroni-gabriel-cordoba",
+    "nombre": "Bornoroni, Gabriel",
+    "lugar": "CORDOBA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-bregman-myriam-ciudad-de-buenos-aires",
+    "nombre": "Bregman, Myriam",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "PTS-FRENTE DE IZQUIERDA Y DE TRABAJADORES UNIDAD",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-brizuela-adrian-catamarca",
+    "nombre": "Brizuela, Adrián",
+    "lugar": "CATAMARCA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-brugge-juan-fernando-cordoba",
+    "nombre": "Brügge, Juan Fernando",
+    "lugar": "CORDOBA",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-bruno-eliana-salta",
+    "nombre": "Bruno, Eliana",
+    "lugar": "SALTA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-cafiero-santiago-buenos-aires",
+    "nombre": "Cafiero, Santiago",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-campero-mariano-tucuman",
+    "nombre": "Campero, Mariano",
+    "lugar": "TUCUMAN",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-campitelli-celia-santiago-del-estero",
+    "nombre": "Campitelli, Celia",
+    "lugar": "SANTIAGO DEL ESTERO",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-campo-julieta-marisol-chaco",
+    "nombre": "Campo, Julieta Marisol",
+    "lugar": "CHACO",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-campora-lucia-ciudad-de-buenos-aires",
+    "nombre": "Cámpora, Lucía",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-capozzi-sergio-eduardo-rio-negro",
+    "nombre": "Capozzi, Sergio Eduardo",
+    "lugar": "RIO NEGRO",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-carignano-florencia-santa-fe",
+    "nombre": "Carignano, Florencia",
+    "lugar": "SANTA FE",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-carrancio-alejandro-buenos-aires",
+    "nombre": "Carrancio, Alejandro",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-casas-sergio-guillermo-la-rioja",
+    "nombre": "Casas, Sergio Guillermo",
+    "lugar": "LA RIOJA",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-castagneto-carlos-daniel-buenos-aires",
+    "nombre": "Castagneto, Carlos Daniel",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-castelnuovo-giselle-buenos-aires",
+    "nombre": "Castelnuovo, Giselle",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-chica-jorge-san-juan",
+    "nombre": "Chica, Jorge",
+    "lugar": "SAN JUAN",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-chiconi-abel-san-juan",
+    "nombre": "Chiconi, Abel",
+    "lugar": "SAN JUAN",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-cipolini-gerardo-chaco",
+    "nombre": "Cipolini, Gerardo",
+    "lugar": "CHACO",
+    "bloque": "UCR - UNIÓN CÍVICA RADICAL",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-cisneros-carlos-tucuman",
+    "nombre": "Cisneros, Carlos",
+    "lugar": "TUCUMAN",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-coletta-mariela-ciudad-de-buenos-aires",
+    "nombre": "Coletta, Mariela",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-correa-llano-facundo-mendoza",
+    "nombre": "Correa Llano, Facundo",
+    "lugar": "MENDOZA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-daives-ricardo-santiago-del-estero",
+    "nombre": "Daives, Ricardo",
+    "lugar": "SANTIAGO DEL ESTERO",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-de-andreis-fernando-ciudad-de-buenos-aires",
+    "nombre": "de Andreis, Fernando",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "PRO",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-de-la-rosa-maria-graciela-formosa",
+    "nombre": "de la Rosa, María Graciela",
+    "lugar": "FORMOSA",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-de-la-sota-natalia-cordoba",
+    "nombre": "de la Sota, Natalia",
+    "lugar": "CORDOBA",
+    "bloque": "DEFENDAMOS CÓRDOBA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-de-sensi-maria-florencia-buenos-aires",
+    "nombre": "De Sensi, María Florencia",
+    "lugar": "BUENOS AIRES",
+    "bloque": "PRO",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-del-cano-nicolas-buenos-aires",
+    "nombre": "del Caño, Nicolás",
+    "lugar": "BUENOS AIRES",
+    "bloque": "PTS-FRENTE DE IZQUIERDA Y DE TRABAJADORES UNIDAD",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-del-pla-romina-buenos-aires",
+    "nombre": "Del Plá, Romina",
+    "lugar": "BUENOS AIRES",
+    "bloque": "PARTIDO OBRERO EN EL FRENTE DE IZQUIERDA Y DE TRABAJADORES-UNIDAD",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-diaz-fernanda-buenos-aires",
+    "nombre": "Díaz, Fernanda",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-diez-romina-santa-fe",
+    "nombre": "Diez, Romina",
+    "lugar": "SANTA FE",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-dolce-sergio-chaco",
+    "nombre": "Dolce, Sergio",
+    "lugar": "CHACO",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-emma-nicolas-ciudad-de-buenos-aires",
+    "nombre": "Emma, Nicolás",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-estevez-gabriela-beatriz-cordoba",
+    "nombre": "Estévez, Gabriela Beatriz",
+    "lugar": "CORDOBA",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-falcone-eduardo-buenos-aires",
+    "nombre": "Falcone, Eduardo",
+    "lugar": "BUENOS AIRES",
+    "bloque": "MID - MOVIMIENTO DE INTEGRACIÓN Y DESARROLLO",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-fargosi-alejandro-ciudad-de-buenos-aires",
+    "nombre": "Fargosi, Alejandro",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-farias-pablo-santa-fe",
+    "nombre": "Farías, Pablo",
+    "lugar": "SANTA FE",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-felix-emir-mendoza",
+    "nombre": "Félix, Emir",
+    "lugar": "MENDOZA",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-fernandez-molero-daiana-ciudad-de-buenos-aires",
+    "nombre": "Fernández Molero, Daiana",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "PRO",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-fernandez-elia-marina-tucuman",
+    "nombre": "Fernández, Elia Marina",
+    "lugar": "TUCUMAN",
+    "bloque": "INDEPENDENCIA",
+    "mandato": "2023-2027",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-fernandez-jorge-san-luis",
+    "nombre": "Fernández, Jorge",
+    "lugar": "SAN LUIS",
+    "bloque": "PRIMERO SAN LUIS",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-ferran-abelardo-la-pampa",
+    "nombre": "Ferrán, Abelardo",
+    "lugar": "LA PAMPA",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-ferraro-maximiliano-ciudad-de-buenos-aires",
+    "nombre": "Ferraro, Maximiliano",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "COALICION CIVICA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-ferreyra-alida-ciudad-de-buenos-aires",
+    "nombre": "Ferreyra, Alida",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "31/01/2024",
+    "fechaInicio": "31/01/2024"
+  },
+  {
+    "id": "dip-figliuolo-sergio-buenos-aires",
+    "nombre": "Figliuolo, Sergio",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-finocchiaro-alejandro-buenos-aires",
+    "nombre": "Finocchiaro, Alejandro",
+    "lugar": "BUENOS AIRES",
+    "bloque": "PRO",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-flores-maria-gabriela-salta",
+    "nombre": "Flores, Maria Gabriela",
+    "lugar": "SALTA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-frade-monica-buenos-aires",
+    "nombre": "Frade, Mónica",
+    "lugar": "BUENOS AIRES",
+    "bloque": "COALICION CIVICA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-fregonese-alicia-entre-rios",
+    "nombre": "Fregonese, Alicia",
+    "lugar": "ENTRE RIOS",
+    "bloque": "PRO",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-freites-andrea-tierra-del-fuego",
+    "nombre": "Freites, Andrea",
+    "lugar": "TIERRA DEL FUEGO",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-frias-maira-chubut",
+    "nombre": "Frias, Maira",
+    "lugar": "CHUBUT",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-gallardo-maria-virginia-corrientes",
+    "nombre": "Gallardo, María Virginia",
+    "lugar": "CORRIENTES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-galmarini-sebastian-buenos-aires",
+    "nombre": "Galmarini, Sebastián",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-garcia-aresca-ignacio-cordoba",
+    "nombre": "García Aresca, Ignacio",
+    "lugar": "CORDOBA",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-garcia-alvaro-buenos-aires",
+    "nombre": "García, Álvaro",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-garcia-carlos-chaco",
+    "nombre": "García, Carlos",
+    "lugar": "CHACO",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-garcia-maria-teresa-buenos-aires",
+    "nombre": "García, María Teresa",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-garrido-jose-luis-santa-cruz",
+    "nombre": "Garrido, José Luis",
+    "lugar": "SANTA CRUZ",
+    "bloque": "POR SANTA CRUZ",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-giampieri-antonela-ciudad-de-buenos-aires",
+    "nombre": "Giampieri, Antonela",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "PRO",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-giordano-juan-carlos-buenos-aires",
+    "nombre": "Giordano, Juan Carlos",
+    "lugar": "BUENOS AIRES",
+    "bloque": "IZQUIERDA SOCIALISTA - FRENTE DE IZQUIERDA UNIDAD",
+    "mandato": "2023-2027",
+    "fechaJura": "26/08/2026",
+    "fechaInicio": "26/08/2026"
+  },
+  {
+    "id": "dip-giudici-silvana-ciudad-de-buenos-aires",
+    "nombre": "Giudici, Silvana",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-giuliano-diego-a-santa-fe",
+    "nombre": "Giuliano, Diego A.",
+    "lugar": "SANTA FE",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-glinski-jose-chubut",
+    "nombre": "Glinski, José",
+    "lugar": "CHUBUT",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-goitia-rosario-chaco",
+    "nombre": "Goitia, Rosario",
+    "lugar": "CHACO",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-gomez-jose-santiago-del-estero",
+    "nombre": "Gomez, José",
+    "lugar": "SANTIAGO DEL ESTERO",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-gonzales-alfredo-jujuy",
+    "nombre": "Gonzales, Alfredo",
+    "lugar": "JUJUY",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-gonzalez-estevarena-maria-luisa-buenos-aires",
+    "nombre": "González Estevarena, María Luisa",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-gonzalez-alvaro-ciudad-de-buenos-aires",
+    "nombre": "González, Álvaro",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "PRO",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-gonzalez-diogenes-ignacio-corrientes",
+    "nombre": "González, Diógenes Ignacio",
+    "lugar": "CORRIENTES",
+    "bloque": "UCR - UNIÓN CÍVICA RADICAL",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-gonzalez-gerardo-gustavo-formosa",
+    "nombre": "González, Gerardo Gustavo",
+    "lugar": "FORMOSA",
+    "bloque": "ARGENTINA FEDERAL",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-grabois-juan-buenos-aires",
+    "nombre": "Grabois, Juan",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-gruber-maura-misiones",
+    "nombre": "Gruber, Maura",
+    "lugar": "MISIONES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-gutierrez-carlos-cordoba",
+    "nombre": "Gutiérrez, Carlos",
+    "lugar": "CORDOBA",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-gutierrez-ramiro-buenos-aires",
+    "nombre": "Gutiérrez, Ramiro",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-guzman-jairo-santa-cruz",
+    "nombre": "Guzmán, Jairo",
+    "lugar": "SANTA CRUZ",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-hadad-raul-corrientes",
+    "nombre": "Hadad, Raúl",
+    "lugar": "CORRIENTES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-hagman-itai-ciudad-de-buenos-aires",
+    "nombre": "Hagman, Itai",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-hartfield-diego-misiones",
+    "nombre": "Hartfield, Diego",
+    "lugar": "MISIONES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-herrera-ahuad-oscar-a-misiones",
+    "nombre": "Herrera Ahuad, Oscar A.",
+    "lugar": "MISIONES",
+    "bloque": "ARGENTINA FEDERAL",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-holzman-patricia-ciudad-de-buenos-aires",
+    "nombre": "Holzman, Patricia",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-huesen-gerardo-tucuman",
+    "nombre": "Huesen, Gerardo",
+    "lugar": "TUCUMAN",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-humenuk-gladys-buenos-aires",
+    "nombre": "Humenuk, Gladys",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-ianni-ana-maria-santa-cruz",
+    "nombre": "Ianni, Ana María",
+    "lugar": "SANTA CRUZ",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-ibanez-maria-cecilia-cordoba",
+    "nombre": "Ibañez, María Cecilia",
+    "lugar": "CORDOBA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-jaime-quiroga-carlos-gustavo-san-juan",
+    "nombre": "Jaime Quiroga, Carlos Gustavo",
+    "lugar": "SAN JUAN",
+    "bloque": "PRODUCCION Y TRABAJO",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-juliano-pablo-buenos-aires",
+    "nombre": "Juliano, Pablo",
+    "lugar": "BUENOS AIRES",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-kirchner-maximo-carlos-buenos-aires",
+    "nombre": "Kirchner, Máximo Carlos",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-lanesan-sancho-moira-santa-cruz",
+    "nombre": "Lanesan Sancho, Moira",
+    "lugar": "SANTA CRUZ",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-laumann-andres-ariel-entre-rios",
+    "nombre": "Laumann, Andrés Ariel",
+    "lugar": "ENTRE RIOS",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-leiva-aldo-chaco",
+    "nombre": "Leiva, Aldo",
+    "lugar": "CHACO",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-lemoine-lilia-buenos-aires",
+    "nombre": "Lemoine, Lilia",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-leone-andres-ciudad-de-buenos-aires",
+    "nombre": "Leone, Andrés",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-llano-mercedes-mendoza",
+    "nombre": "Llano, Mercedes",
+    "lugar": "MENDOZA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-lluch-enrique-cordoba",
+    "nombre": "Lluch, Enrique",
+    "lugar": "CORDOBA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-longo-johanna-sabrina-buenos-aires",
+    "nombre": "Longo, Johanna Sabrina",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-lopez-pasquali-cecilia-santiago-del-estero",
+    "nombre": "López Pasquali, Cecilia",
+    "lugar": "SANTIAGO DEL ESTERO",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-lopez-jimena-buenos-aires",
+    "nombre": "López, Jimena",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-lousteau-martin-ciudad-de-buenos-aires",
+    "nombre": "Lousteau, Martín",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-luque-juan-pablo-chubut",
+    "nombre": "Luque, Juan Pablo",
+    "lugar": "CHUBUT",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-macyszyn-lorena-buenos-aires",
+    "nombre": "Macyszyn, Lorena",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-mango-marcelo-rio-negro",
+    "nombre": "Mango, Marcelo",
+    "lugar": "RIO NEGRO",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-manrique-mario-buenos-aires",
+    "nombre": "Manrique, Mario",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-marclay-marianela-entre-rios",
+    "nombre": "Marclay, Marianela",
+    "lugar": "ENTRE RIOS",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-marin-varinia-lis-la-pampa",
+    "nombre": "Marín, Varinia Lis",
+    "lugar": "LA PAMPA",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-marino-juan-buenos-aires",
+    "nombre": "Marino, Juan",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-martinez-alvaro-mendoza",
+    "nombre": "Martínez, Álvaro",
+    "lugar": "MENDOZA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-martinez-german-pedro-santa-fe",
+    "nombre": "Martínez, Germán Pedro",
+    "lugar": "SANTA FE",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-massot-nicolas-buenos-aires",
+    "nombre": "Massot, Nicolás",
+    "lugar": "BUENOS AIRES",
+    "bloque": "ENCUENTRO FEDERAL",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-matzkin-martin-la-pampa",
+    "nombre": "Matzkin, Martín",
+    "lugar": "LA PAMPA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "24/06/2026",
+    "fechaInicio": "24/06/2026"
+  },
+  {
+    "id": "dip-maureira-karina-neuquen",
+    "nombre": "Maureira, Karina",
+    "lugar": "NEUQUEN",
+    "bloque": "LA NEUQUINIDAD",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-mayoraz-nicolas-santa-fe",
+    "nombre": "Mayoraz, Nicolás",
+    "lugar": "SANTA FE",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-medina-gladys-tucuman",
+    "nombre": "Medina, Gladys",
+    "lugar": "TUCUMAN",
+    "bloque": "INDEPENDENCIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-menem-martin-la-rioja",
+    "nombre": "Menem, Martín",
+    "lugar": "LA RIOJA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-metral-asensio-julieta-mendoza",
+    "nombre": "Metral Asensio, Julieta",
+    "lugar": "MENDOZA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-michel-guillermo-entre-rios",
+    "nombre": "Michel, Guillermo",
+    "lugar": "ENTRE RIOS",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-mino-fernanda-buenos-aires",
+    "nombre": "Miño, Fernanda",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-molina-juan-carlos-santa-cruz",
+    "nombre": "Molina, Juan Carlos",
+    "lugar": "SANTA CRUZ",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-molinuevo-soledad-tucuman",
+    "nombre": "Molinuevo, Soledad",
+    "lugar": "TUCUMAN",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-molle-matias-buenos-aires",
+    "nombre": "Molle, Matías",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-mondaca-soledad-neuquen",
+    "nombre": "Mondaca, Soledad",
+    "lugar": "NEUQUEN",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-monguillot-fernando-catamarca",
+    "nombre": "Monguillot, Fernando",
+    "lugar": "CATAMARCA",
+    "bloque": "ELIJO CATAMARCA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-montenegro-guillermo-buenos-aires",
+    "nombre": "Montenegro, Guillermo",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-montenegro-juan-pablo-santa-fe",
+    "nombre": "Montenegro, Juan Pablo",
+    "lugar": "SANTA FE",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-monzon-roxana-buenos-aires",
+    "nombre": "Monzón, Roxana",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-morchio-francisco-entre-rios",
+    "nombre": "Morchio, Francisco",
+    "lugar": "ENTRE RIOS",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-moreau-cecilia-buenos-aires",
+    "nombre": "Moreau, Cecilia",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-moreno-ovalle-julio-salta",
+    "nombre": "Moreno Ovalle, Julio",
+    "lugar": "SALTA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-moyano-hugo-antonio-buenos-aires",
+    "nombre": "Moyano, Hugo Antonio",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-mukdise-jorge-santiago-del-estero",
+    "nombre": "Mukdise, Jorge",
+    "lugar": "SANTIAGO DEL ESTERO",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-munoz-gabriela-luciana-neuquen",
+    "nombre": "Muñoz, Gabriela Luciana",
+    "lugar": "NEUQUEN",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-neder-estela-mary-santiago-del-estero",
+    "nombre": "Neder, Estela Mary",
+    "lugar": "SANTIAGO DEL ESTERO",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-nieri-lisandro-mendoza",
+    "nombre": "Nieri, Lisandro",
+    "lugar": "MENDOZA",
+    "bloque": "UCR - UNIÓN CÍVICA RADICAL",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-niveyro-miriam-buenos-aires",
+    "nombre": "Niveyro, Miriam",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-noblega-sebastian-catamarca",
+    "nombre": "Nóblega, Sebastián",
+    "lugar": "CATAMARCA",
+    "bloque": "ELIJO CATAMARCA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-noguera-javier-tucuman",
+    "nombre": "Noguera, Javier",
+    "lugar": "TUCUMAN",
+    "bloque": "INDEPENDENCIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-nunez-jose-santa-fe",
+    "nombre": "Nuñez, José",
+    "lugar": "SANTA FE",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-ojeda-joaquin-buenos-aires",
+    "nombre": "Ojeda, Joaquín",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-olmos-kelly-ciudad-de-buenos-aires",
+    "nombre": "Olmos, Kelly",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-osuna-blanca-ines-entre-rios",
+    "nombre": "Osuna, Blanca Inés",
+    "lugar": "ENTRE RIOS",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-outes-pablo-salta",
+    "nombre": "Outes, Pablo",
+    "lugar": "SALTA",
+    "bloque": "ARGENTINA FEDERAL",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-pagano-marcela-marina-buenos-aires",
+    "nombre": "Pagano, Marcela Marina",
+    "lugar": "BUENOS AIRES",
+    "bloque": "COHERENCIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-palazzo-sergio-omar-buenos-aires",
+    "nombre": "Palazzo, Sergio Omar",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-palladino-claudia-maria-catamarca",
+    "nombre": "Palladino, Claudia María",
+    "lugar": "CATAMARCA",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-pareja-sebastian-buenos-aires",
+    "nombre": "Pareja, Sebastián",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-parola-maria-graciela-formosa",
+    "nombre": "Parola, María Graciela",
+    "lugar": "FORMOSA",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-patino-brizuela-marcos-cordoba",
+    "nombre": "Patiño Brizuela, Marcos",
+    "lugar": "CORDOBA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-pauli-santiago-tierra-del-fuego",
+    "nombre": "Pauli, Santiago",
+    "lugar": "TIERRA DEL FUEGO",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-paulon-esteban-santa-fe",
+    "nombre": "Paulón, Esteban",
+    "lugar": "SANTA FE",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-pedrali-gabriela-la-rioja",
+    "nombre": "Pedrali, Gabriela",
+    "lugar": "LA RIOJA",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-pellegrini-agustin-santa-fe",
+    "nombre": "Pellegrini, Agustín",
+    "lugar": "SANTA FE",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-pelli-federico-agustin-tucuman",
+    "nombre": "Pelli, Federico Agustín",
+    "lugar": "TUCUMAN",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-peluc-jose-san-juan",
+    "nombre": "Peluc, José",
+    "lugar": "SAN JUAN",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-penacca-paula-andrea-ciudad-de-buenos-aires",
+    "nombre": "Penacca, Paula Andrea",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-petri-luis-mendoza",
+    "nombre": "Petri, Luis",
+    "lugar": "MENDOZA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-petrovich-maria-lorena-buenos-aires",
+    "nombre": "Petrovich, María Lorena",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-picat-luis-albino-cordoba",
+    "nombre": "Picat, Luis Albino",
+    "lugar": "CORDOBA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-pichetto-miguel-angel-buenos-aires",
+    "nombre": "Pichetto, Miguel Ángel",
+    "lugar": "BUENOS AIRES",
+    "bloque": "ENCUENTRO FEDERAL",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-picon-martinez-nancy-viviana-san-juan",
+    "nombre": "Picón Martínez, Nancy Viviana",
+    "lugar": "SAN JUAN",
+    "bloque": "PRODUCCION Y TRABAJO",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-pietragalla-corti-horacio-buenos-aires",
+    "nombre": "Pietragalla Corti, Horacio",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-pokoik-lorena-ciudad-de-buenos-aires",
+    "nombre": "Pokoik, Lorena",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-ponce-maria-celeste-cordoba",
+    "nombre": "Ponce, María Celeste",
+    "lugar": "CORDOBA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-potenza-luciana-buenos-aires",
+    "nombre": "Potenza, Luciana",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-propato-agustina-lucrecia-buenos-aires",
+    "nombre": "Propato, Agustina Lucrecia",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-quintar-manuel-jujuy",
+    "nombre": "Quintar, Manuel",
+    "lugar": "JUJUY",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-rauschenberger-ariel-la-pampa",
+    "nombre": "Rauschenberger, Ariel",
+    "lugar": "LA PAMPA",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-ravera-valentina-santa-fe",
+    "nombre": "Ravera, Valentina",
+    "lugar": "SANTA FE",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-razzini-veronica-santa-fe",
+    "nombre": "Razzini, Verónica",
+    "lugar": "SANTA FE",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-reichardt-karen-buenos-aires",
+    "nombre": "Reichardt, Karen",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-riesco-gaston-neuquen",
+    "nombre": "Riesco, Gastón",
+    "lugar": "NEUQUEN",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-ritondo-cristian-a-buenos-aires",
+    "nombre": "Ritondo, Cristian A.",
+    "lugar": "BUENOS AIRES",
+    "bloque": "PRO",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-rizzotti-jorge-jujuy",
+    "nombre": "Rizzotti, Jorge",
+    "lugar": "JUJUY",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-roberto-santiago-luis-ciudad-de-buenos-aires",
+    "nombre": "Roberto, Santiago Luis",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-roca-gonzalo-cordoba",
+    "nombre": "Roca, Gonzalo",
+    "lugar": "CORDOBA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-rodriguez-machado-laura-elena-cordoba",
+    "nombre": "Rodríguez Machado, Laura Elena",
+    "lugar": "CORDOBA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-rodriguez-miguel-tierra-del-fuego",
+    "nombre": "Rodríguez, Miguel",
+    "lugar": "TIERRA DEL FUEGO",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-rossi-agustin-oscar-santa-fe",
+    "nombre": "Rossi, Agustín Oscar",
+    "lugar": "SANTA FE",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-ruiz-yamila-misiones",
+    "nombre": "Ruíz, Yamila",
+    "lugar": "MISIONES",
+    "bloque": "ARGENTINA FEDERAL",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-salzmann-marina-dorotea-buenos-aires",
+    "nombre": "Salzmann, Marina Dorotea",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-sanchez-wrba-javier-buenos-aires",
+    "nombre": "Sánchez Wrba, Javier",
+    "lugar": "BUENOS AIRES",
+    "bloque": "PRO",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-sand-nancy-corrientes",
+    "nombre": "Sand, Nancy",
+    "lugar": "CORRIENTES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-santillan-juarez-brahim-juliana-buenos-aires",
+    "nombre": "Santillán Juárez Brahim, Juliana",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-santurio-santiago-buenos-aires",
+    "nombre": "Santurio, Santiago",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-scaglia-gisela-santa-fe",
+    "nombre": "Scaglia, Gisela",
+    "lugar": "SANTA FE",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-schiaretti-juan-cordoba",
+    "nombre": "Schiaretti, Juan",
+    "lugar": "CORDOBA",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2025-2029",
+    "fechaJura": "12/02/2026",
+    "fechaInicio": "12/02/2026"
+  },
+  {
+    "id": "dip-schneider-dario-entre-rios",
+    "nombre": "Schneider, Darío",
+    "lugar": "ENTRE RIOS",
+    "bloque": "UCR - UNIÓN CÍVICA RADICAL",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-selva-sabrina-buenos-aires",
+    "nombre": "Selva, Sabrina",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-serquis-adriana-cristina-rio-negro",
+    "nombre": "Serquis, Adriana Cristina",
+    "lugar": "RIO NEGRO",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-siley-vanesa-raquel-buenos-aires",
+    "nombre": "Siley, Vanesa Raquel",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-snopek-guillermo-jujuy",
+    "nombre": "Snopek, Guillermo",
+    "lugar": "JUJUY",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-soldano-laura-cordoba",
+    "nombre": "Soldano, Laura",
+    "lugar": "CORDOBA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-strada-julia-buenos-aires",
+    "nombre": "Strada, Julia",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-taiana-jorge-buenos-aires",
+    "nombre": "Taiana, Jorge",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-tailhade-rodolfo-buenos-aires",
+    "nombre": "Tailhade, Rodolfo",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-tepp-caren-santa-fe",
+    "nombre": "Tepp, Caren",
+    "lugar": "SANTA FE",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-tita-paulo-agustin-tierra-del-fuego",
+    "nombre": "Tita, Paulo Agustín",
+    "lugar": "TIERRA DEL FUEGO",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-todero-pablo-neuquen",
+    "nombre": "Todero, Pablo",
+    "lugar": "NEUQUEN",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-tolosa-paz-victoria-buenos-aires",
+    "nombre": "Tolosa Paz, Victoria",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-tomassoni-yamile-santa-fe",
+    "nombre": "Tomassoni, Yamile",
+    "lugar": "SANTA FE",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-torres-alejandra-cordoba",
+    "nombre": "Torres, Alejandra",
+    "lugar": "CORDOBA",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-torres-ruben-dario-buenos-aires",
+    "nombre": "Torres, Rubén Darío",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-tortoriello-anibal-rio-negro",
+    "nombre": "Tortoriello, Aníbal",
+    "lugar": "RIO NEGRO",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-tournier-jose-federico-corrientes",
+    "nombre": "Tournier, José Federico",
+    "lugar": "CORRIENTES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "14/08/2024",
+    "fechaInicio": "14/08/2024"
+  },
+  {
+    "id": "dip-treffinger-cesar-chubut",
+    "nombre": "Treffinger, César",
+    "lugar": "CHUBUT",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-trotta-nicolas-alfredo-buenos-aires",
+    "nombre": "Trotta, Nicolás Alfredo",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-urien-hernan-buenos-aires",
+    "nombre": "Urien, Hernán",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-valdes-eduardo-felix-ciudad-de-buenos-aires",
+    "nombre": "Valdés, Eduardo Félix",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-vancsik-daniel-misiones",
+    "nombre": "Vancsik, Daniel",
+    "lugar": "MISIONES",
+    "bloque": "ARGENTINA FEDERAL",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-vasquez-patricia-buenos-aires",
+    "nombre": "Vásquez, Patricia",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-vega-yolanda-salta",
+    "nombre": "Vega, Yolanda",
+    "lugar": "SALTA",
+    "bloque": "ARGENTINA FEDERAL",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-velazquez-m-elena-buenos-aires",
+    "nombre": "Velázquez, M. Elena",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-vera-andrea-fernanda-buenos-aires",
+    "nombre": "Vera, Andrea Fernanda",
+    "lugar": "BUENOS AIRES",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-verasay-pamela-fernanda-mendoza",
+    "nombre": "Verasay, Pamela Fernanda",
+    "lugar": "MENDOZA",
+    "bloque": "UCR - UNIÓN CÍVICA RADICAL",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-villaverde-lorena-rio-negro",
+    "nombre": "Villaverde, Lorena",
+    "lugar": "RIO NEGRO",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-visconti-gino-la-rioja",
+    "nombre": "Visconti, Gino",
+    "lugar": "LA RIOJA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-volnovich-luana-buenos-aires",
+    "nombre": "Volnovich, Luana",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-yasky-hugo-buenos-aires",
+    "nombre": "Yasky, Hugo",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-yedlin-pablo-raul-tucuman",
+    "nombre": "Yedlin, Pablo Raúl",
+    "lugar": "TUCUMAN",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-yeza-martin-buenos-aires",
+    "nombre": "Yeza, Martín",
+    "lugar": "BUENOS AIRES",
+    "bloque": "PRO",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-zago-oscar-ciudad-de-buenos-aires",
+    "nombre": "Zago, Oscar",
+    "lugar": "CIUDAD DE BUENOS AIRES",
+    "bloque": "MID - MOVIMIENTO DE INTEGRACIÓN Y DESARROLLO",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-zapata-carlos-raul-salta",
+    "nombre": "Zapata, Carlos Raúl",
+    "lugar": "SALTA",
+    "bloque": "LA LIBERTAD AVANZA",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-zaracho-natalia-buenos-aires",
+    "nombre": "Zaracho, Natalia",
+    "lugar": "BUENOS AIRES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  },
+  {
+    "id": "dip-zigaran-maria-ines-jujuy",
+    "nombre": "Zigarán, María Inés",
+    "lugar": "JUJUY",
+    "bloque": "PROVINCIAS UNIDAS",
+    "mandato": "2025-2029",
+    "fechaJura": "03/12/2025",
+    "fechaInicio": "10/12/2025"
+  },
+  {
+    "id": "dip-zulli-christian-alejandro-corrientes",
+    "nombre": "Zulli, Christian Alejandro",
+    "lugar": "CORRIENTES",
+    "bloque": "UNIÓN POR LA PATRIA",
+    "mandato": "2023-2027",
+    "fechaJura": "07/12/2023",
+    "fechaInicio": "10/12/2023"
+  }
+]

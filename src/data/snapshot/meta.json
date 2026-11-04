@@ -1,0 +1,65 @@
+{
+  "generatedAt": "2026-11-04T01:16:10.763Z",
+  "sources": {
+    "bills": {
+      "fetchedAt": "2026-11-04T01:15:40.160Z",
+      "contentHash": "sha256:10731d5ab764a564a8302025e8337268aec402d2276e791984f450c8a707e6db",
+      "items": 14711,
+      "period": {
+        "desde": "2024-01-03",
+        "hasta": "2026-10-06"
+      }
+    },
+    "committees": {
+      "fetchedAt": "2026-11-04T01:15:40.160Z",
+      "contentHash": "sha256:4d1c6a9a50b76345f8a27db727830732d3306909f1a5f100aadd5ba49576952f",
+      "items": 46,
+      "period": {
+        "desde": "2025-12-10",
+        "hasta": "2026-11-04"
+      }
+    },
+    "deputies": {
+      "fetchedAt": "2026-11-04T01:15:40.160Z",
+      "contentHash": "sha256:850dd1df30fb349d01825408d1e2ba292c6ab81e3825f83feec6baa37bd5bff4",
+      "items": 257
+    },
+    "missions": {
+      "fetchedAt": "2026-11-04T01:15:40.160Z",
+      "contentHash": "sha256:81d67f856bcc3ecf52a0b4197e184ae4dc57d0cbdcbb14618a7057d325f58f0d",
+      "items": 67,
+      "period": {
+        "desde": "2024-03-11",
+        "hasta": "2026-05-09"
+      }
+    },
+    "pay": {
+      "fetchedAt": "2026-11-04T01:15:40.160Z",
+      "contentHash": "sha256:e52132529d3cbe97c0f6eaf5b1f19fd8b02dfbdb8800fe2d10a1689cd3bdd2c1",
+      "items": 5
+    },
+    "senate-votes": {
+      "fetchedAt": "2026-11-04T01:15:40.160Z",
+      "contentHash": "sha256:efd9cf9577d0a76d0ef05396a37cce19c83130c11c08660d58f751bbaef265fd",
+      "items": 345,
+      "period": {
+        "desde": "2024-02-23",
+        "hasta": "2026-10-29"
+      }
+    },
+    "senators": {
+      "fetchedAt": "2026-11-04T01:15:40.160Z",
+      "contentHash": "sha256:81c5867a87a1df2ba07f10ad5a24abf1074ae759e943a0661bb309516b88accd",
+      "items": 72
+    },
+    "travel": {
+      "fetchedAt": "2026-11-04T01:15:40.160Z",
+      "contentHash": "sha256:a3207823aeee39986314a8e858d89b6419d158d901acf5889237931793cff973",
+      "items": 257,
+      "period": {
+        "desde": "2024-07",
+        "hasta": "2026-06"
+      }
+    }
+  }
+}

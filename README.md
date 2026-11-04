@@ -39,7 +39,21 @@ The full build downloads every source once (loaders are memoized) and peaks at a
 
 ## Data updates
 
-The site is static: every build fetches the official sources, so the data is as fresh as the last build.
+The site is static and builds from a committed data snapshot, so the data is as fresh as the last refresh.
+
+### Snapshot
+
+`datos.hcdn.gob.ar` refuses connections from outside Argentina (GitHub runners, cloud hosts), so fetching and building are separate steps:
+
+| Command | `DATA_MODE` | What it does |
+| --- | --- | --- |
+| `npm run build` | `snapshot` (default) | Reads `src/data/snapshot/` and never touches the network. A missing entry stops the build with `Data snapshot missing: <name> — run npm run refresh-data`. |
+| `npm run refresh-data` | `refresh` | Fetches every official source live, rewrites `src/data/snapshot/`, then builds from what it wrote. Needs a network that reaches the official sites. |
+
+- `src/data/snapshot/<name>.json` holds the processed output of each page loader: `deputies`, `pay`, `senators`, `travel`, `committees`, `bills`, `missions`, `senate-votes`. The raw CSVs are not stored. Maps are written as `{"$map": [[key, value], …]}` sorted by key, with one entry per line, so unchanged data gives an unchanged file and a change shows as a small diff.
+- `src/data/snapshot/meta.json`: `generatedAt` is the last refresh run. Under `sources.<name>`, `fetchedAt` is the refresh that last changed that entry, plus `contentHash` (sha256 of the file), `items` and the source `period` when it has one. Pages say "vigente al" with the date of `generatedAt`.
+- Senate votes still use the cache `src/data/senado-actas.json`. A refresh adds the missing actas; a snapshot build reads the cache without fetching.
+- `npm run update-senators` still refreshes `src/data/senadores.json`, the fallback a refresh uses when the Senate API is down.
 
 | Workflow | When | What it does |
 | --- | --- | --- |
@@ -70,7 +84,8 @@ Observed publishing rhythm of the sources: Senate votes after every session; bil
 
 - `src/lib/legislators.ts`: CSV and amount parsing, normalization, filtering. Shared by the build and the browser.
 - `src/lib/view.ts`: what each card and detail dialog shows, formatting helpers and the dataset links.
-- `src/lib/sources.ts`: build-time fetching.
+- `src/lib/sources.ts`: build-time loading, from the snapshot or live (`DATA_MODE`).
+- `src/lib/snapshot.ts`: snapshot serialization (tagged Maps and Sets, stable layout) and `meta.json` updates.
 - `src/lib/legislator-profile.ts`: each legislator's committees, bills, missions and votes.
 - `src/components/`: pay panel, chamber list, travel, missions, bills and Senate votes panels, quality box, source line, detail dialog.
 - `src/pages/index.astro`: the page and its tabs.

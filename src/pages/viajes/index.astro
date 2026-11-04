@@ -1,6 +1,7 @@
 ---
 // Viajes: national trips compared with peers at a similar distance, and official missions abroad.
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { topicDescription } from '../../lib/seo.ts';
 import PageHead from '../../components/home/PageHead.astro';
 import TravelPanel from '../../components/TravelPanel.astro';
 import MissionsPanel from '../../components/MissionsPanel.astro';
@@ -10,7 +11,7 @@ const deputies = await loadDeputies();
 const [entities, travel, missions] = await Promise.all([loadEntities(), loadTravel(deputies), loadMissions(deputies)]);
 ---
 
-<SiteLayout title="Viajes">
+<SiteLayout title="Viajes" description={topicDescription('viajes', entities.topics.numbers.misiones.value)}>
   <div class="page-wrap topic-page">
     <PageHead
       title="Viajes"

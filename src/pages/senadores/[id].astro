@@ -12,6 +12,7 @@ import StatTile from '../../components/ui/StatTile.astro';
 import { surname } from '../../components/home/travel-dots.ts';
 import { buildSenatorProfiles } from '../../lib/legislator-profile.ts';
 import { normalizeText } from '../../lib/legislators.ts';
+import { personJsonLd, senatorDescription } from '../../lib/seo.ts';
 import { loadBills, loadDeputies, loadEntities, loadSenateVotes, loadSenators } from '../../lib/sources.ts';
 import { DATASETS, formatDate, formatNumber, formatShare, STAGE_LABELS } from '../../lib/view.ts';
 
@@ -41,10 +42,21 @@ const listPeriod = snapshotDate ? `copia del listado oficial al ${snapshotDate}`
 const name = surname(senator.nombre);
 const otherSenators = (provincePage?.senators ?? []).map(m => ({ ...m, rel: entities.relations.get(m.id) }));
 const provinceDeputies = (provincePage?.deputies ?? []).map(m => ({ ...m, rel: entities.relations.get(m.id) }));
+const description = senatorDescription({
+  nombre: senator.nombre,
+  provincia: rel.province?.nombre ?? (senator.lugar || null),
+  bloc: rel.bloc.titulo,
+  actas: votes?.actas ?? null,
+  asistencia: votes?.asistencia ?? null,
+  bills: rel.counts.bills,
+});
+const jsonLd = personJsonLd(Astro.site, { camara: 'senado', nombre: senator.nombre, url: rel.url, bloc: rel.bloc, province: rel.province?.nombre ?? null });
 ---
 
 <LegislatorLayout
   title={`${senator.nombre} - Senado`}
+  description={description}
+  jsonLd={jsonLd}
   chamber="senadores"
   nombre={senator.nombre}
   subtitle={`Por ${rel.province?.nombre ?? (senator.lugar || 'N/A')} · Bloque ${rel.bloc.titulo}${senator.mandato ? ` · Mandato ${senator.mandato}` : ''}`}

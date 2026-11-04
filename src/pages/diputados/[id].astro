@@ -14,6 +14,7 @@ import Section from '../../components/ui/Section.astro';
 import StatTile from '../../components/ui/StatTile.astro';
 import { bandsDescription, surname, travelDotRows } from '../../components/home/travel-dots.ts';
 import { buildDeputyProfiles } from '../../lib/legislator-profile.ts';
+import { deputyDescription, personJsonLd } from '../../lib/seo.ts';
 import { loadBills, loadCommittees, loadDeputies, loadEntities, loadMissions, loadPay, loadSenators, loadTravel } from '../../lib/sources.ts';
 import { cargoLabel, DATASETS, formatDate, formatNumber, STAGE_LABELS, travelComparison, travelStatus } from '../../lib/view.ts';
 
@@ -73,10 +74,21 @@ const peers = (provincePage?.deputies ?? [])
   .sort((a, b) => (b.rate ?? -1) - (a.rate ?? -1) || a.nombre.localeCompare(b.nombre, 'es'));
 const provinceSenators = (provincePage?.senators ?? []).map(m => ({ ...m, rel: entities.relations.get(m.id) }));
 const travelPeriod = report.windowLabel;
+const description = deputyDescription({
+  nombre: deputy.nombre,
+  distrito: rel.province?.nombre ?? (deputy.lugar || null),
+  bloc: rel.bloc.titulo,
+  legs: rel.counts.legs,
+  bills: rel.counts.bills,
+  committees: committees.length,
+});
+const jsonLd = personJsonLd(Astro.site, { camara: 'diputados', nombre: deputy.nombre, url: rel.url, bloc: rel.bloc, province: rel.province?.nombre ?? null });
 ---
 
 <LegislatorLayout
   title={`${deputy.nombre} - Diputados`}
+  description={description}
+  jsonLd={jsonLd}
   chamber="diputados"
   nombre={deputy.nombre}
   subtitle={`Por ${rel.province?.nombre ?? (deputy.lugar || 'N/A')} · Bloque ${rel.bloc.titulo}${deputy.mandato ? ` · Mandato ${deputy.mandato}` : ''}`}

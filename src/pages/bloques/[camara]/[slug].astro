@@ -18,6 +18,7 @@ import Pager from '../../../components/ui/Pager.astro';
 import TravelQuality from '../../../components/entity/TravelQuality.astro';
 import { chamberLabel, committeeTitle, flaggedSentence, searchText, TRAVEL_STATUS, travelRows, travelTag } from '../../../components/entity/entity-view.ts';
 import { provinceUrl } from '../../../lib/entities.ts';
+import { blocDescription } from '../../../lib/seo.ts';
 import { loadBills, loadCommittees, loadDeputies, loadEntities, loadMissions, loadSenateVotes, loadSenators, loadTravel } from '../../../lib/sources.ts';
 import { cargoLabel, formatNumber, formatShare, STAGE_LABELS } from '../../../lib/view.ts';
 
@@ -61,7 +62,7 @@ const bodyId = `integrantes-${bloc.camara}-${bloc.slug}`;
 const ordinal = (n: number) => `${n}.º`;
 ---
 
-<SiteLayout title={`${bloc.titulo} (${chamber}) - Bloques`} description={`Bloque ${bloc.titulo} en ${chamber}: integrantes, provincias, comisiones, proyectos y más, con fuente y período.`} current="bloques">
+<SiteLayout title={`${bloc.titulo} (${chamber}) - Bloques`} description={blocDescription(bloc)} current="bloques">
   <div class="page-wrap">
     <EntityHead
       crumbs={[{ label: 'Inicio', href: '/' }, { label: 'Bloques', href: '/bloques/' }, { label: `${bloc.titulo} (${chamber})` }]}

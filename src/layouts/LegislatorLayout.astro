@@ -1,11 +1,15 @@
 ---
 // Shared frame of the per-legislator pages (01, Pantalla 2): site frame, breadcrumb back to the chamber and the
 // province, person header with its key facts (slot "facts", <StatTile>s), then the relation strip and sections.
+// The page passes its own description and the schema.org Person (src/lib/seo.ts), rendered as JSON-LD.
 import SiteLayout from './SiteLayout.astro';
 import Breadcrumb from '../components/ui/Breadcrumb.astro';
+import { jsonLdScript } from '../lib/seo.ts';
 
 interface Props {
   title: string;
+  description: string;
+  jsonLd: Record<string, unknown>;
   chamber: 'diputados' | 'senadores';
   nombre: string;
   subtitle: string;
@@ -13,7 +17,7 @@ interface Props {
   province?: { nombre: string; url: string } | null;
 }
 
-const { title, chamber, nombre, subtitle, foto, province } = Astro.props;
+const { title, description, jsonLd, chamber, nombre, subtitle, foto, province } = Astro.props;
 const chamberLabel = chamber === 'diputados' ? 'Diputados' : 'Senado';
 const chamberHref = chamber === 'diputados' ? '/diputados/' : '/senado/';
 const role = chamber === 'diputados' ? 'Diputado/a nacional' : 'Senador/a nacional';
@@ -28,7 +32,8 @@ const [surname = '', given = ''] = nombre.split(',').map(part => part.trim());
 const initials = `${given.charAt(0)}${surname.charAt(0)}`.toUpperCase();
 ---
 
-<SiteLayout title={title} current={chamber === 'diputados' ? 'diputados' : 'senado'}>
+<SiteLayout title={title} description={description} current={chamber === 'diputados' ? 'diputados' : 'senado'}>
+  <script type="application/ld+json" set:html={jsonLdScript(jsonLd)} />
   <article class="page-wrap legislator" aria-labelledby="legislator-name">
     <Breadcrumb items={crumbs} />
     <header class="who">

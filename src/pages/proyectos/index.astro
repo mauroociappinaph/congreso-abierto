@@ -1,6 +1,7 @@
 ---
 // Proyectos: bills of the deputies in office, how far they got, and who files the most.
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { topicDescription } from '../../lib/seo.ts';
 import PageHead from '../../components/home/PageHead.astro';
 import ProjectsPanel from '../../components/ProjectsPanel.astro';
 import { loadBills, loadDeputies, loadEntities, loadSenators } from '../../lib/sources.ts';
@@ -9,7 +10,7 @@ const [deputies, { senators }] = await Promise.all([loadDeputies(), loadSenators
 const [entities, bills] = await Promise.all([loadEntities(), loadBills(deputies, senators)]);
 ---
 
-<SiteLayout title="Proyectos">
+<SiteLayout title="Proyectos" description={topicDescription('proyectos', entities.topics.numbers.proyectos.value)}>
   <div class="page-wrap topic-page">
     <PageHead
       title="Proyectos"

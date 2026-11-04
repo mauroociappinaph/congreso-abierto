@@ -2,6 +2,7 @@
 // Diputados: the pay every deputy receives and the filterable list of the deputies in office, each row linking
 // to the ficha, the province and the bloc.
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { topicDescription } from '../../lib/seo.ts';
 import PageHead from '../../components/home/PageHead.astro';
 import Section from '../../components/ui/Section.astro';
 import Chamber from '../../components/Chamber.astro';
@@ -36,7 +37,7 @@ const rows = deputies.map(deputy => {
 const asOf = topics.numbers.diputados.provenance.label;
 ---
 
-<SiteLayout title="Diputados">
+<SiteLayout title="Diputados" description={topicDescription('diputados', deputies.length)}>
   <div class="page-wrap topic-page">
     <PageHead
       title="Diputados"

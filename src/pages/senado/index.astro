@@ -1,6 +1,7 @@
 ---
 // Senado: the filterable list of the senators in office and the roll-call votes (bloc cohesion and attendance).
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { topicDescription } from '../../lib/seo.ts';
 import PageHead from '../../components/home/PageHead.astro';
 import Section from '../../components/ui/Section.astro';
 import Chamber from '../../components/Chamber.astro';
@@ -29,7 +30,7 @@ const rows = senators.map(senator => {
 const listPeriod = snapshotDate ? `copia del listado oficial al ${snapshotDate}` : topics.numbers.senadores.provenance.label;
 ---
 
-<SiteLayout title="Senado">
+<SiteLayout title="Senado" description={topicDescription('senado', senators.length, votes.actas)}>
   <div class="page-wrap topic-page">
     <PageHead
       title="Senado"

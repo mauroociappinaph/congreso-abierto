@@ -2,8 +2,7 @@
 // Base document: head, design tokens and shared styles. SiteLayout adds the header, nav and footer.
 import '../styles/tokens.css';
 import '../styles/shared.css';
-
-const SITE_NAME = 'Congreso Abierto';
+import { absoluteUrl, displayName, shareImagePath, SITE_NAME } from '../lib/seo.ts';
 
 interface Props {
   // page name; the site name is appended unless the title already carries it
@@ -20,11 +19,14 @@ const {
 } = Astro.props;
 
 const fullTitle = title.includes(SITE_NAME) ? title : `${title} · ${SITE_NAME}`;
-// Open Graph wants absolute URLs: they need `site` (SITE_URL at build time); without it the paths stay root-relative.
-const site = Astro.site ? new URL(Astro.site.href.endsWith('/') ? Astro.site.href : `${Astro.site.href}/`) : null;
-const absolute = (path: string) => (site ? new URL(path.replace(/^\//, ''), site).href : path);
-const ogImage = absolute('/og.png');
-const pageUrl = site ? absolute(Astro.url.pathname) : null;
+// Open Graph and canonical URLs are absolute under `site` (astro.config.mjs).
+const pageUrl = absoluteUrl(Astro.site, Astro.url.pathname);
+// Legislator pages have their own card (src/pages/og/); every other page shares the site image.
+const ownImage = shareImagePath(Astro.url.pathname);
+const ogImage = absoluteUrl(Astro.site, ownImage ?? '/og.png');
+const ogImageAlt = ownImage
+  ? `Tarjeta de ${displayName(title.replace(/ - (Diputados|Senado)$/, ''))}: iniciales, cámara, distrito, bloque y un dato clave, con el sello de ${SITE_NAME}`
+  : 'Logo de Congreso Abierto junto a una acuarela celeste del Palacio del Congreso de la Nación';
 ---
 
 <!doctype html>
@@ -36,22 +38,23 @@ const pageUrl = site ? absolute(Astro.url.pathname) : null;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="description" content={description} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {noindex ? <meta name="robots" content="noindex, nofollow" /> : <link rel="canonical" href={pageUrl} />}
     <title>{fullTitle}</title>
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE_NAME} />
     <meta property="og:locale" content="es_AR" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    {pageUrl && <meta property="og:url" content={pageUrl} />}
+    <meta property="og:url" content={pageUrl} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Logo de Congreso Abierto junto a una acuarela celeste del Palacio del Congreso de la Nación" />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
   </head>
   <body>
     <slot />

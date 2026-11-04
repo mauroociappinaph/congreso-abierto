@@ -3,6 +3,7 @@
 // bills of its members as first signers (any topic: the source does not tie bills to committees).
 import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { committeeDescription } from '../../lib/seo.ts';
 import QualityBox from '../../components/QualityBox.astro';
 import BarChart from '../../components/ui/BarChart.astro';
 import DataTable from '../../components/ui/DataTable.astro';
@@ -54,7 +55,7 @@ const bodyId = `integrantes-${committee.slug}`;
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 ---
 
-<SiteLayout title={`${title} - Comisiones`} description={`${title}: autoridades, integrantes, bloques y provincias, con fuente y período.`} current="comisiones">
+<SiteLayout title={`${title} - Comisiones`} description={committeeDescription({ titulo: title, tipo: committee.tipo, integrantes: committee.integrantes, blocs: committee.blocMix.length, districts: committee.districts.length })} current="comisiones">
   <div class="page-wrap">
     <EntityHead
       crumbs={[{ label: 'Inicio', href: '/' }, { label: 'Comisiones', href: '/comisiones/' }, { label: title }]}

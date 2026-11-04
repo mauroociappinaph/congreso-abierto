@@ -10,6 +10,7 @@ import BarChart from '../components/ui/BarChart.astro';
 import Funnel from '../components/ui/Funnel.astro';
 import SourceLine from '../components/SourceLine.astro';
 import { formatArs } from '../lib/legislators.ts';
+import { jsonLdScript, siteJsonLd } from '../lib/seo.ts';
 import {
   loadBills, loadCommittees, loadDeputies, loadEntities, loadMissions, loadSenateVotes, loadSenators, loadTravel,
 } from '../lib/sources.ts';
@@ -63,6 +64,10 @@ const senatorUrl = (id: string) => relations.get(id)?.url ?? `/senadores/${id}/`
 // the actas spell names in capitals; the Senate list does not
 const senatorName = (id: string, fallback: string) => senators.find(s => s.id === id)?.nombre ?? fallback;
 
+// Search engines: the site and its publisher (WebSite + Organization).
+const description = 'Congreso Abierto: gastos y trabajo legislativo de diputados y senadores de Argentina, con fuentes oficiales y período en cada dato.';
+const jsonLd = siteJsonLd(Astro.site, description);
+
 // Comisiones
 const largest = topics.committees.largest;
 
@@ -79,7 +84,8 @@ const missionRows = missions.deputies
 
 ---
 
-<SiteLayout title="Congreso Abierto — datos abiertos del Congreso argentino" current="inicio">
+<SiteLayout title="Congreso Abierto — datos abiertos del Congreso argentino" description={description} current="inicio">
+  <script type="application/ld+json" set:html={jsonLdScript(jsonLd)} />
   <script is:inline>
     // Old tab links (/#viajes) now have their own pages.
     (function () {

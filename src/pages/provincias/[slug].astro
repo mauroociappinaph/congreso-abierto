@@ -2,6 +2,7 @@
 // One page per province: its deputies and senators, blocs per chamber, trips against peers and committees.
 import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { provinceDescription } from '../../lib/seo.ts';
 import BarChart from '../../components/ui/BarChart.astro';
 import DataTable from '../../components/ui/DataTable.astro';
 import Section from '../../components/ui/Section.astro';
@@ -36,7 +37,7 @@ const billsLabel = entities.blocs[0]?.provenance.bills.label ?? '';
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 ---
 
-<SiteLayout title={`${province.nombre} - Provincias`} description={`${province.nombre}: sus diputados y senadores, bloques, viajes y comisiones, con fuente y período.`} current="provincias">
+<SiteLayout title={`${province.nombre} - Provincias`} description={provinceDescription({ nombre: province.nombre, deputies: province.deputies.length, senators: province.senators.length })} current="provincias">
   <div class="page-wrap">
     <EntityHead
       crumbs={[{ label: 'Inicio', href: '/' }, { label: 'Provincias', href: '/provincias/' }, { label: province.nombre }]}

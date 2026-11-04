@@ -1,5 +1,5 @@
-// S4 of odd/tasks/paginacion-ci.md: the weekly job keeps src/data/senadores.json only when the senators
-// changed, under the `bash -eo pipefail` GitHub uses for `run:` steps. Runs the filter line of the workflow.
+// The weekly refresh (scripts/weekly-refresh.sh) keeps src/data/senadores.json only when the senators
+// changed, under the `set -euo pipefail` that script runs with. Runs the filter line of that script.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
@@ -7,7 +7,7 @@ import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-const workflow = readFileSync(new URL('../.github/workflows/weekly-data.yml', import.meta.url), 'utf8');
+const workflow = readFileSync(new URL('./weekly-refresh.sh', import.meta.url), 'utf8');
 const filter = workflow
   .split('\n')
   .find(line => line.includes('src/data/senadores.json') && line.trim().startsWith('if '))!

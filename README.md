@@ -55,19 +55,22 @@ The site is static and builds from a committed data snapshot, so the data is as 
 - Senate votes still use the cache `src/data/senado-actas.json`. A refresh adds the missing actas; a snapshot build reads the cache without fetching.
 - `npm run update-senators` still refreshes `src/data/senadores.json`, the fallback a refresh uses when the Senate API is down.
 
-| Workflow | When | What it does |
+### Weekly refresh
+
+The refresh runs on the owner's Mac, which reaches the official sites; GitHub only tests, builds and watches freshness.
+
+| Piece | When | What it does |
 | --- | --- | --- |
-| `.github/workflows/ci.yml` | Every push and pull request | `npm ci`, `npm test`, `npm run check`, `npm run build` with live data |
-| `.github/workflows/weekly-data.yml` | Mondays 09:00 UTC (06:00 in Argentina), or manually from the Actions tab | Runs the tests, refreshes the Senate snapshot, builds with live data, uploads `dist/` as the `site` artifact (14 days), and commits `src/data/senado-actas.json` / `src/data/senadores.json` when their content changed |
+| `scripts/weekly-refresh.sh` | Mondays 06:00 (launchd) or by hand | In a separate worktree on `origin/main` (`.refresh-worktree/`, ignored): `npm ci`, `npm run update-senators`, `npm run refresh-data`, `npm test`, `npm run build`, then commits `src/data/` and pushes to `main`. Your working copy is never touched. `senadores.json` is kept only when the senators changed, not just its date. |
+| `scripts/install-weekly-refresh.sh` | Once | Installs the launchd agent `ar.congreso-abierto.weekly-refresh` (`~/Library/LaunchAgents/`), log in `~/Library/Logs/congreso-abierto/weekly-refresh.log`. A run missed while the Mac sleeps starts on wake. Remove it with `--uninstall`; run it now with `launchctl kickstart -k gui/$(id -u)/ar.congreso-abierto.weekly-refresh`. |
+| `.github/workflows/ci.yml` | Every push and pull request | `npm ci`, `npm test`, `npm run check`, `npm run build` from the snapshot (no network) |
+| `.github/workflows/weekly-data.yml` | Mondays 15:00 UTC (12:00 in Argentina), or manually | `node scripts/snapshot-age.ts 14`: fails when `meta.json` is older than 14 days, so a stopped Mac refresh gets noticed |
 
 Notes:
 
-- GitHub runs scheduled workflows only on the default branch, and only once the repository is on GitHub.
-- The weekly job pushes with the built-in `GITHUB_TOKEN`; protected branches must allow `github-actions[bot]` to push, or the commit step fails.
-- A red weekly run means `npm ci` or the tests failed, an HCDN source was down (the build fails loudly), or the push was rejected (including a rebase conflict with a commit pushed during the run); a Senate outage falls back to the committed cache, and the run summary reports whether the snapshot refresh failed.
-- GitHub disables scheduled workflows in public repositories after 60 days without activity; re-enable it from the Actions tab.
-- The weekly job keeps `src/data/senadores.json` only when the senators changed, not just its date; `scripts/weekly-workflow.test.ts` (part of `npm test`) runs that rule under `bash -eo pipefail` as GitHub does.
-- Deploying the built site is not wired yet: pick a host (GitHub Pages, Vercel, Netlify) and add its deploy step after the build.
+- The push uses the Mac's git credentials (here `gh auth git-credential`); the commit author is the Mac's git identity.
+- GitHub disables scheduled workflows in public repositories after 60 days without activity; the weekly refresh commits keep it active.
+- `scripts/weekly-refresh.test.ts` checks the senators-date rule under `set -euo pipefail`; `scripts/snapshot-age.test.ts` checks the freshness rule. Both run with `npm test`.
 
 Observed publishing rhythm of the sources: Senate votes after every session; bills and movements frequently; committees and blocs when they change; pay when the amounts change; domestic trips and official missions once per semester, about two months after it ends.
 

@@ -1,86 +1,24 @@
-name: Weekly data refresh
+name: Weekly snapshot freshness
 
-# Rebuilds the site every week with the latest official data, commits the refreshed data caches
-# and keeps the built site as an artifact. Scheduled runs use the default branch.
+# datos.hcdn.gob.ar refuses connections from GitHub's runners, so the data is refreshed on the owner's Mac
+# (scripts/weekly-refresh.sh via launchd, Mondays 06:00 Argentina) and pushed as a snapshot. This job runs
+# later that day and fails when the snapshot is older than 14 days, so a stopped refresh gets noticed.
 on:
   schedule:
-    - cron: '0 9 * * 1' # Mondays 09:00 UTC (06:00 in Argentina)
+    - cron: '0 15 * * 1' # Mondays 15:00 UTC (12:00 in Argentina)
   workflow_dispatch:
 
 permissions:
-  contents: write
-
-concurrency:
-  group: weekly-data
-  cancel-in-progress: false
+  contents: read
 
 jobs:
-  refresh:
+  freshness:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-    env:
-      # Parsing the 32 MB bills file peaks around 1.5 GB.
-      NODE_OPTIONS: --max-old-space-size=4096
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
-        with:
-          # The write token is used only by the commit step below, not by npm or the build.
-          persist-credentials: false
       - uses: actions/setup-node@v7
         with:
           node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm test
-
-      # The snapshot is only the fallback for a Senate outage, so a failure here must not stop the build.
-      - name: Refresh the Senate snapshot
-        id: snapshot
-        run: npm run update-senators
-        continue-on-error: true
-
-      # Fails loudly when an HCDN source is down; new Senate actas are appended to src/data/senado-actas.json.
-      - name: Build with current official data
-        run: npm run build
-
-      - name: Upload the built site
-        uses: actions/upload-artifact@v7
-        with:
-          name: site
-          path: dist
-          retention-days: 14
-
-      - name: Commit refreshed data caches
-        # A manual run started from a tag has no branch to push to.
-        if: github.ref_type == 'branch'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # The snapshot rewrites its date on every run; keep it only when the senators themselves changed.
-          # (git's own -I check, not a grep pipeline: under pipefail a large diff made `grep -q` drop real changes.)
-          if git diff --quiet -I'"fecha"' -- src/data/senadores.json; then
-            git checkout -- src/data/senadores.json
-          fi
-          git add src/data/senado-actas.json src/data/senadores.json
-          if git diff --cached --quiet; then
-            echo "No data changes to commit."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore(data): refresh Senate actas and senators snapshot"
-          remote="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          # Someone may have pushed while the job ran.
-          git pull --rebase "$remote" "$GITHUB_REF_NAME"
-          git push "$remote" "HEAD:$GITHUB_REF_NAME"
-
-      - name: Summary
-        if: always()
-        run: |
-          {
-            echo "## Weekly data refresh"
-            echo "- Pages built: $(find dist -name index.html 2>/dev/null | wc -l)"
-            echo "- Senate actas cached: $(node -e 'console.log(Object.keys(require("./src/data/senado-actas.json").actas).length)')"
-            echo "- Senate snapshot refresh: ${{ steps.snapshot.outcome }}"
-            echo "- Senators snapshot date: $(node -e 'console.log(require("./src/data/senadores.json").fecha)')"
-          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Check the data snapshot age
+        run: node scripts/snapshot-age.ts 14 | tee -a "$GITHUB_STEP_SUMMARY"

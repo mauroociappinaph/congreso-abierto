@@ -10,12 +10,13 @@
       "implementedAt": null
     },
     "03-sello.html": {
-      "status": "in_progress",
+      "status": "implemented",
       "queued": false,
       "sentAt": "2026-11-04T01:37:28.574Z",
       "startedAt": "2026-11-04T01:37:37.299Z",
-      "implementedAt": null,
-      "note": "User switched to the monochrome seal variants (screenshot). Header: simple seal; favicon: simple seal; og: horizontal mono lockup on ink; watercolor stays as home hero."
+      "implementedAt": "2026-11-04T01:48:25.430Z",
+      "note": "Monochrome seal in header (simple), footer (full), favicon, apple-touch-icon, og.png; watercolor hero on home. Commit b18e810, CI green.",
+      "previewUrl": "http://localhost:4321/"
     }
   }
 }

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createDeputyPolicy, createSenatePolicy, institutionalOrigin, policyStatus, senateIdentities } from './link-policy.ts';
+import { createDeputyPolicy, createSenatePolicy, institutionalOrigin, linkBillAuthor, policyStatus, senateIdentities, type PolicyLinker } from './link-policy.ts';
 import { parseRoster } from './roster.ts';
 
 // Trimmed real roster rows (diputados2.1.csv); PEREZ rows are synthetic, two people with one name.
@@ -217,4 +217,29 @@ test('an institutional author is never linked to a legislator with the same name
   assert.equal(policyStatus(policy.link('SANTILLI, DIEGO')), 'matched-current');
   const quality = policy.quality();
   assert.deepEqual([quality.rows.total, quality.names.total, quality.institutional?.rows], [1, 1, 1]);
+});
+
+test('bill authors: Executive bills of either chamber are institutional, never credited to a legislator with that name', () => {
+  const calls: string[] = [];
+  const stub = (chamber: string): PolicyLinker => ({
+    link: () => { throw new Error('unused'); },
+    linkFn: rawName => { calls.push(`${chamber} person ${rawName}`); return { status: 'matched', deputyId: `${chamber}-id`, confidence: 1, candidates: [] }; },
+    linkInstitutional: (rawName, origen) => { calls.push(`${chamber} institutional ${rawName} ${origen}`); return { status: 'unmatched', deputyId: null, confidence: 0, candidates: [] }; },
+    quality: () => { throw new Error('unused'); },
+  });
+  const diputados = stub('dip');
+  const senado = stub('sen');
+  // Real cases: Santilli and Petri were or are deputies, but these expedientes were filed by the Executive.
+  assert.equal(linkBillAuthor('SANTILLI, DIEGO', { camaraOrigen: 'Diputados', expediente: '0012-PE-2026' }, diputados, senado).deputyId, null);
+  assert.equal(linkBillAuthor('PETRI, LUIS ALFONSO', { camaraOrigen: 'Diputados', expediente: '0003-JGM-2025' }, diputados, senado).deputyId, null);
+  assert.equal(linkBillAuthor('YEDLIN, PABLO RAUL', { camaraOrigen: 'Diputados', expediente: '4981-D-2026' }, diputados, senado).deputyId, 'dip-id');
+  assert.equal(linkBillAuthor('MILEI, JAVIER GERARDO', { camaraOrigen: 'Senado', expediente: '0223-PE-2026' }, diputados, senado).deputyId, null);
+  assert.equal(linkBillAuthor('ABAD, MAXIMILIANO', { camaraOrigen: 'Senado', expediente: '0096-S-2026' }, diputados, senado).deputyId, 'sen-id');
+  assert.deepEqual(calls, [
+    'dip institutional SANTILLI, DIEGO Poder Ejecutivo',
+    'dip institutional PETRI, LUIS ALFONSO Jefatura de Gabinete de Ministros',
+    'dip person YEDLIN, PABLO RAUL',
+    'sen institutional MILEI, JAVIER GERARDO Poder Ejecutivo',
+    'sen person ABAD, MAXIMILIANO',
+  ]);
 });

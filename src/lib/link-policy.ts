@@ -94,6 +94,19 @@ export function institutionalOrigin(expediente: string): string | null {
   return (code && INSTITUTIONAL_ORIGINS[code]) || null;
 }
 
+// Bills filed by the Executive or official bodies (PE, JGM, OV expedientes) are institutional in either chamber:
+// a minister who is also a former or current legislator ("SANTILLI, DIEGO") must not get the Executive's bills.
+export function linkBillAuthor(
+  autor: string,
+  bill: { camaraOrigen: string; expediente: string },
+  diputados: PolicyLinker,
+  senado: PolicyLinker,
+): LinkResult {
+  const policy = bill.camaraOrigen === 'Senado' ? senado : diputados;
+  const origen = institutionalOrigin(bill.expediente);
+  return origen ? policy.linkInstitutional(autor, origen) : policy.linkFn(autor);
+}
+
 // "DIP. TAIANA JORGE", "DIPUTADA NACIONAL ...", "SEN. ...", "SENADORA ..."
 const PREFIX = /^\s*(?:dip(?:utad[oa](?:\/a)?)?|sen(?:ador(?:a|\/a)?)?)\.?\s+(?:nacional\s+)?/i;
 const stripPrefix = (rawName: string) => rawName.replace(PREFIX, '').trim();

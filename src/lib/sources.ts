@@ -21,7 +21,7 @@ import {
   type Row,
   type Senator,
 } from './legislators.ts';
-import { createDeputyPolicy, createSenatePolicy, institutionalOrigin, senateIdentities, type LinkQuality, type PolicyLinker } from './link-policy.ts';
+import { createDeputyPolicy, createSenatePolicy, linkBillAuthor, senateIdentities, type LinkQuality, type PolicyLinker } from './link-policy.ts';
 import { normalizeMissionRows, summarizeMissions, type DeputyMissions, type Mission } from './misiones.ts';
 import { billsByAuthor, furthestStages, parseBills, type AuthorBills } from './proyectos.ts';
 import { mapCurrentToHistoric, parseRoster, type RosterPerson } from './roster.ts';
@@ -327,12 +327,8 @@ export function loadBills(deputies: Deputy[], senators: Senator[]): Promise<Bill
     const diputados = await deputyPolicy(deputies, period.desde, period.hasta);
     // Former senators of the period are known from the vote records.
     const senado = createSenatePolicy(senators, senateIdentities(latestVotes((await loadSenateActas()).actas), senators).former);
-    // Senate bills filed by the Executive or official bodies are institutional: outside the senators' link rate.
-    const { byLegislator, quality } = billsByAuthor(bills, stages, (autor, bill) => {
-      if (bill.camaraOrigen !== 'Senado') return diputados.linkFn(autor);
-      const origen = institutionalOrigin(bill.expediente);
-      return origen ? senado.linkInstitutional(autor, origen) : senado.linkFn(autor);
-    });
+    // Bills filed by the Executive or official bodies are institutional: outside each chamber's link rate.
+    const { byLegislator, quality } = billsByAuthor(bills, stages, (autor, bill) => linkBillAuthor(autor, bill, diputados, senado));
     return {
       byLegislator,
       quality: { diputados: diputados.quality(), senado: senado.quality() },

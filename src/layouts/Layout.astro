@@ -27,6 +27,8 @@ const ogImage = absoluteUrl(Astro.site, ownImage ?? '/og.png');
 const ogImageAlt = ownImage
   ? `Tarjeta de ${displayName(title.replace(/ - (Diputados|Senado)$/, ''))}: iniciales, cámara, distrito, bloque y un dato clave, con el sello de ${SITE_NAME}`
   : 'Logo de Congreso Abierto junto a una acuarela celeste del Palacio del Congreso de la Nación';
+// Vercel Web Analytics: cookieless page views, only in builds made by Vercel (it sets VERCEL=1).
+const analytics = process.env.VERCEL === '1';
 ---
 
 <!doctype html>
@@ -55,6 +57,8 @@ const ogImageAlt = ownImage
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
     <meta name="twitter:image:alt" content={ogImageAlt} />
+    {analytics && <script is:inline>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>}
+    {analytics && <script is:inline defer src="/_vercel/insights/script.js"></script>}
   </head>
   <body>
     <slot />

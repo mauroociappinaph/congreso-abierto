@@ -28,7 +28,7 @@ Read until `## Log`. Technical artifacts in English; UI copy in Spanish (Argenti
 | E2 | S3 | worker + parent | done | feat(ui): add the methodology page |
 | E3 | S4 | worker | done | 7c3c27a |
 | E4 | S5 (Senate linkage) | worker + parent | done | 951ffdb + fix(bills): never credit Executive bills |
-| E5 | S5 (analytics) | parent | done, needs owner to enable in Vercel | feat(analytics) |
+| E5 | S5 (analytics) | parent | done | feat(analytics) + dashboard enable |
 | E6 | S6, S7 | worker, after E1 and E3 | pending | |
 
 ## Log
@@ -40,3 +40,4 @@ Read until `## Log`. Technical artifacts in English; UI copy in Spanish (Argenti
 - L5 (evidence, E4): no real Senate linkage misses: 24/24 person authors linked; the 29 unlinked bills are Milei (14, PE), Santilli (2, PE) and Asuntos Constitucionales (13, OV) → institutional, Senate rows 31/31. Parent extended it to Diputados: 85 PE/JGM/OV bills (Milei, Francos, Adorni, Santilli, Posse, Petri, Presti, committee) now institutional; Santilli no longer credited, Petri keeps only his 2 -D- 2026 bills. Diputados rows linked 99.7 %.
 - L6 (evidence, E3): official accented names for 45 committees from hcdn.gob.ar page titles; test fails on a new committee. Blocs "Coalicion Civica" and "Produccion y Trabajo" stay unaccented: no official accented spelling found.
 - L7 (evidence, live): sitemap 442 URLs (443 with /metodologia/), robots, per-page descriptions, JSON-LD, 329 share PNGs (57–72 KB) live; /metodologia/ live. Parent changes to E2: the regional-method table shows district instead of names (the regional flag was a method error); description shortened to 141 characters. Analytics script ships only in Vercel builds; /_vercel/insights/script.js returns 404 until Web Analytics is enabled in the Vercel project (owner action).
+- L8 (evidence, E5 closed): Web Analytics enabled in the Vercel dashboard (Hobby plan, included; Pro not selected) via Chrome DevTools on the owner's session, as asked ("activar la analítica en el panel de Vercel vos", "Hacelo desde chrome dev tool"). Redeployed; /_vercel/insights/script.js 200; a real visit sent POST /_vercel/insights/view 200 and the dashboard showed 1 visitor, 1 page view.

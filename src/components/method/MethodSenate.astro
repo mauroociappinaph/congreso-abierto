@@ -1,0 +1,116 @@
+---
+// Votaciones del Senado: attendance, bloc loyalty and the Rice index, with a worked example and the tie rule.
+import Section from '../ui/Section.astro';
+import DataTable from '../ui/DataTable.astro';
+import StatTile from '../ui/StatTile.astro';
+import type { SourcePeriod } from '../../lib/sources.ts';
+import { DATASETS, formatNumber } from '../../lib/view.ts';
+import { riceIndex } from './method.ts';
+
+interface Props {
+  actas: number;
+  period: SourcePeriod;
+  blocs: number;
+  singleMemberBlocs: number;
+  votes: number;
+}
+
+const { actas, period, blocs, singleMemberBlocs, votes } = Astro.props;
+// Worked example with made-up votes: three actas of one bloc.
+const EXAMPLE = [
+  { acta: 'Acta A', yes: 10, no: 2 },
+  { acta: 'Acta B', yes: 12, no: 0 },
+  { acta: 'Acta C', yes: 6, no: 6 },
+].map(row => ({ ...row, rice: riceIndex(row.yes, row.no)! }));
+const average = EXAMPLE.reduce((sum, row) => sum + row.rice, 0) / EXAMPLE.length;
+const n2 = (value: number) => value.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+---
+
+<Section title="Votaciones del Senado" id="senado" links={[DATASETS.actas]} period={period}>
+  <p>
+    El Senado publica, para cada votación nominal, un acta con el voto de cada senador: afirmativo, negativo, abstención o ausente. El sitio
+    lee las páginas oficiales de las actas desde 2024, descarta las canceladas y guarda una copia para no volver a pedir las ya leídas.
+  </p>
+  <dl class="stat-grid">
+    <StatTile label="Actas nominales" value={formatNumber(actas)} size="md" />
+    <StatTile label="Votos individuales" value={formatNumber(votes)} size="md" />
+    <StatTile label="Bloques que votaron" value={formatNumber(blocs)} size="md" note={`${formatNumber(singleMemberBlocs)} de un solo senador`} />
+  </dl>
+
+  <h3>Asistencia</h3>
+  <p class="formula">asistencia = (actas en el cargo − ausencias) / actas en el cargo</p>
+  <p>Una abstención cuenta como presente: la persona estaba y decidió no votar a favor ni en contra.</p>
+
+  <h3>Lealtad al bloque</h3>
+  <p>
+    En cada acta se busca el voto mayoritario del bloque entre afirmativo, negativo y abstención (las ausencias no cuentan). La lealtad de
+    un senador es la parte de sus votos emitidos que coincide con esa mayoría. Si el bloque empata (por ejemplo, 6 a favor y 6 en contra) no
+    hay mayoría y esa acta no se cuenta para nadie del bloque. Junto a cada porcentaje se muestra cuántas actas se contaron.
+  </p>
+
+  <h3>Índice de Rice (cohesión del bloque)</h3>
+  <p class="formula">Rice = |afirmativos − negativos| / (afirmativos + negativos)</p>
+  <p>
+    Vale 1 cuando todo el bloque vota igual y 0 cuando se divide por la mitad. Se calcula en cada acta donde el bloque emitió al menos un voto
+    afirmativo o negativo, y se promedia. Las abstenciones y ausencias no entran en la cuenta.
+  </p>
+  <DataTable caption="Ejemplo con votos inventados (no son datos reales): un bloque de 12 senadores en tres actas" dense>
+    <thead>
+      <tr><th scope="col">Acta</th><th scope="col" class="num">Afirmativos</th><th scope="col" class="num">Negativos</th><th scope="col" class="num">Rice</th></tr>
+    </thead>
+    <tbody>
+      {
+        EXAMPLE.map(row => (
+          <tr>
+            <td>{row.acta}</td>
+            <td class="num">{row.yes}</td>
+            <td class="num">{row.no}</td>
+            <td class="num">|{row.yes} − {row.no}| / {row.yes + row.no} = {n2(row.rice)}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+    <tfoot>
+      {
+        [average].map(value => (
+          <tr>
+            <th scope="row" colspan="3">Promedio del bloque</th>
+            <td class="num total">{n2(value)}</td>
+          </tr>
+        ))
+      }
+    </tfoot>
+  </DataTable>
+  <p>
+    En el Acta C el bloque empata: su Rice es 0 y, como no hay mayoría, esa acta no suma ni resta lealtad a sus integrantes. Un bloque de un
+    solo senador siempre tiene Rice 1, por eso el sitio muestra la cantidad de senadores y de actas al lado del índice.
+  </p>
+</Section>
+
+<style>
+  h3 {
+    font-size: var(--text-md);
+    margin: var(--space-5) 0 var(--space-2);
+  }
+
+  .formula {
+    font-family: var(--mono);
+    font-size: var(--text-md);
+    background: var(--paper);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    padding: var(--space-2) var(--space-3);
+    overflow-wrap: anywhere;
+  }
+
+  .total {
+    font-weight: 700;
+  }
+
+  th[scope='row'] {
+    text-transform: none;
+    font-size: var(--text-sm);
+    color: var(--ink);
+    letter-spacing: 0;
+  }
+</style>

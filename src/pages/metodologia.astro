@@ -1,0 +1,374 @@
+---
+// Metodología: where the data comes from, how names are matched, how trips, votes and bills are measured, the
+// source defects we found and the limits. Every figure is read from this build's data or marked as an example.
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHead from '../components/home/PageHead.astro';
+import Section from '../components/ui/Section.astro';
+import MethodSources, { type SourceRow } from '../components/method/MethodSources.astro';
+import MethodLinkage, { type LinkExample, type QualityRow } from '../components/method/MethodLinkage.astro';
+import MethodTravel from '../components/method/MethodTravel.astro';
+import MethodSenate from '../components/method/MethodSenate.astro';
+import MethodBills from '../components/method/MethodBills.astro';
+import MethodDefects, { type Defect } from '../components/method/MethodDefects.astro';
+import { jaroSteps, regionalOutliers } from '../components/method/method.ts';
+import type { LinkQuality } from '../lib/link-policy.ts';
+import { createLinker, repairMojibake } from '../lib/linkage.ts';
+import { normalizeText } from '../lib/legislators.ts';
+import { actaDetailUrl } from '../lib/senado-votos.ts';
+import {
+  loadBills,
+  loadCommittees,
+  loadDeputies,
+  loadEntities,
+  loadMissions,
+  loadSenateActas,
+  loadSenateVotes,
+  loadSenators,
+  loadTravel,
+  type SourcePeriod,
+} from '../lib/sources.ts';
+import { DATASETS, formatDate, formatNumber } from '../lib/view.ts';
+
+const REPO = 'https://github.com/mauroociappinaph/congreso-abierto';
+const ISSUES = `${REPO}/issues`;
+
+const deputies = await loadDeputies();
+const { senators } = await loadSenators();
+const [entities, travel, committees, bills, missions, votes, senateActas] = await Promise.all([
+  loadEntities(),
+  loadTravel(deputies),
+  loadCommittees(deputies),
+  loadBills(deputies, senators),
+  loadMissions(deputies),
+  loadSenateVotes(senators),
+  loadSenateActas(),
+]);
+const { topics } = entities;
+const asOf = topics.numbers.diputados.provenance.label;
+const range = (period: SourcePeriod) => `del ${formatDate(period.desde)} al ${formatDate(period.hasta)}`;
+const deputyName = new Map(deputies.map(d => [d.id, d.nombre]));
+const deputyDistrict = new Map(deputies.map(d => [d.id, d.lugar]));
+const nameKey = (value: string) => normalizeText(value).replace(/\s+/g, ' ').trim();
+const relationUrl = (id: string) => entities.relations.get(id)?.url ?? `/diputados/${id}/`;
+
+// --- Fuentes ---------------------------------------------------------------------------
+
+const sourceRows: SourceRow[] = [
+  {
+    links: [DATASETS.legisladores],
+    contents: `Composición actual de la Cámara (${formatNumber(deputies.length)} diputados: distrito, bloque, mandato) y el padrón histórico con las fechas de cada mandato, que se usa solo para emparejar nombres.`,
+    period: asOf,
+    rhythm: 'Cuando cambia la composición o un bloque.',
+  },
+  {
+    links: [DATASETS.dietas],
+    contents: 'Dieta, gastos de representación, descuentos y adicionales. Son montos generales, iguales para todos: no hay gastos por persona.',
+    period: asOf,
+    rhythm: 'Cuando cambian los montos.',
+  },
+  {
+    links: [DATASETS.viajes],
+    contents: 'Cada tramo de viaje nacional pagado por la Cámara: diputado/a, mes, avión o micro, origen y destino.',
+    period: travel.windowLabel,
+    rhythm: 'Una vez por semestre, unos dos meses después de terminado.',
+  },
+  {
+    links: [DATASETS.misiones],
+    contents: `Viajes oficiales al exterior: fechas, lugar, motivo, institución que invita y viáticos (${formatNumber(missions.missions)} misiones).`,
+    period: range(missions.period),
+    rhythm: 'Una vez por semestre.',
+  },
+  {
+    links: [DATASETS.comisiones],
+    contents: `Comisiones permanentes (${formatNumber(committees.committees.size)}), sus integrantes y autoridades.`,
+    period: `composición al ${formatDate(committees.period.hasta)}`,
+    rhythm: 'Cuando cambian.',
+  },
+  {
+    links: [DATASETS.proyectos, DATASETS.movimientos],
+    contents: `Proyectos presentados (${formatNumber(bills.bills.total)} desde 2024: tipo, título, cámara de origen, primer firmante) y sus movimientos en el recinto.`,
+    period: range(bills.period),
+    rhythm: 'Con frecuencia, varias veces por mes.',
+  },
+  {
+    links: [DATASETS.senadores],
+    contents: `Senadores en funciones (${formatNumber(senators.length)}): provincia, bloque, mandato, contacto. No incluye dietas ni gastos.`,
+    period: topics.numbers.senadores.provenance.label,
+    rhythm: 'Cuando cambia la composición.',
+  },
+  {
+    links: [DATASETS.actas],
+    contents: `Actas de votación nominal del Senado (${formatNumber(votes.actas)}), con el voto de cada senador.`,
+    period: range(votes.period),
+    rhythm: 'Después de cada sesión.',
+  },
+];
+
+// --- Emparejamiento ----------------------------------------------------------------------
+
+const linker = createLinker(deputies);
+const example = (raw: string, where: string, explanation: string, input = raw): LinkExample => {
+  const result = linker.link(input);
+  return {
+    raw,
+    where,
+    explanation,
+    result: { status: result.status, nombre: result.deputyId ? (deputyName.get(result.deputyId) ?? null) : null, confidence: result.confidence },
+  };
+};
+const aguirres = deputies.filter(d => nameKey(d.nombre.split(',')[0]) === 'aguirre').map(d => d.nombre);
+const examples: LinkExample[] = [
+  example('CHICONI RICARDO ABEL', 'Viajes nacionales', 'La Cámara lo nombra «Chiconi, Abel». La fuente agrega un segundo nombre: sobra una palabra, pero el apellido y el nombre coinciden.'),
+  example('HERRERA AHUAD OSCAR ALBERTO', 'Viajes nacionales', 'En la Cámara figura «Herrera Ahuad, Oscar A.»: la inicial «A.» acepta «ALBERTO», con algo menos de puntaje que una palabra completa.'),
+  example('DIP. TAIANA JORGE', 'Misiones oficiales', 'Antes de comparar se quita el prefijo «DIP.».', 'TAIANA JORGE'),
+  example('PAGANO, MARCELA MARINA', 'Proyectos', 'La coma de la fuente marca dónde termina el apellido, así «MARCELA» no puede leerse como el apellido Marclay (ver el cálculo más abajo).'),
+  example('VERONICA KARINA BANFI', 'Misiones oficiales', 'Viene con el nombre primero. Solo se prueba ese orden si el habitual no encuentra a nadie, y se descuenta un poco de confianza.'),
+  example('BORGATTA ALEJANDRINA BELÃ‰N', 'Viajes nacionales', `Texto con la codificación rota: se recupera «${repairMojibake('BELÃ‰N')}» antes de comparar.`),
+  example(
+    'AGUIRRE MANUEL IGNACIO',
+    'Viajes nacionales, un exdiputado',
+    aguirres.length
+      ? `En la Cámara actual el apellido Aguirre solo coincide con ${aguirres.map(n => `«${n}»`).join(', ')}, y ningún nombre de pila coincide: no se asigna a nadie.`
+      : 'Nadie en la Cámara actual tiene ese apellido: no se asigna a nadie.',
+  ),
+];
+
+const policyRow = (source: QualityRow['source'], q: LinkQuality, against: string, rowsLabel: string, period: string, note?: string): QualityRow => ({
+  source,
+  against,
+  rowsLabel,
+  period,
+  note,
+  names: { matched: q.names.matchedCurrent, former: q.names.matchedFormer, doubtful: q.names.doubtful, unmatched: q.names.unmatched, total: q.names.total },
+  rows: { linked: q.rows.matchedCurrent + q.rows.matchedFormer, total: q.rows.total, percent: q.rows.linkedPercent },
+});
+// Bills filed by the Executive or official bodies, when the build records them apart (optional field).
+type Institutional = { names: number; rows: number; authors: { nombre: string; origen: string; rows: number }[] };
+const institutional = (bills.quality.senado as LinkQuality & { institutional?: Institutional }).institutional;
+const deputiesInPeriod = 'diputados/as en funciones en el período';
+const quality: QualityRow[] = [
+  {
+    source: DATASETS.viajes,
+    against: 'la composición actual',
+    rowsLabel: 'tramos',
+    period: travel.windowLabel,
+    note: `En el último semestre (${travel.latestLabel}) se emparejó el ${formatNumber(travel.quality.latest.percent)} % de los nombres; los que no se emparejan son sobre todo exdiputados.`,
+    names: { matched: travel.quality.overall.matched, former: null, doubtful: travel.quality.overall.doubtful, unmatched: travel.quality.overall.unmatched, total: travel.quality.overall.total },
+    rows: travel.quality.legs,
+  },
+  policyRow(DATASETS.comisiones, committees.quality, deputiesInPeriod, 'integrantes', `composición al ${formatDate(committees.period.hasta)}`),
+  policyRow(DATASETS.misiones, missions.quality, deputiesInPeriod, 'participaciones', range(missions.period)),
+  policyRow(DATASETS.proyectos, bills.quality.diputados, deputiesInPeriod, 'proyectos de Diputados', range(bills.period)),
+  policyRow(
+    { label: 'HCDN - Proyectos iniciados en el Senado', href: DATASETS.proyectos.href },
+    bills.quality.senado,
+    'senadores actuales y anteriores',
+    'proyectos del Senado',
+    range(bills.period),
+    institutional ? `No incluye ${formatNumber(institutional.rows)} proyectos del Poder Ejecutivo u organismos oficiales.` : undefined,
+  ),
+  policyRow(DATASETS.actas, votes.quality, 'senadores actuales y anteriores', 'votos', range(votes.period)),
+];
+
+// --- Viajes --------------------------------------------------------------------------
+
+const travelDeputies = travel.analysis.deputies;
+const regional = regionalOutliers(travelDeputies).map(d => ({
+  // No names: the regional flag was a method error, not a fact about these people.
+  distrito: deputyDistrict.get(d.deputyId) ?? 'N/A',
+  region: d.region ?? 'N/A',
+  z: d.z,
+  homeKm: d.homeKm,
+  route: d.topRoute ? `${d.topRoute.origen} ↔ ${d.topRoute.destino}` : 'Sin tramos',
+  stillFlagged: d.flaggedByBand,
+}));
+
+// --- Senado --------------------------------------------------------------------------
+
+const blocs = votes.summary.blocs;
+
+// --- Defectos -------------------------------------------------------------------------
+
+const repeatedActas = votes.summary.inconsistencias.actasConFilasRepetidas.flatMap(id => {
+  const acta = senateActas.actas.find(a => a.id === id);
+  return acta ? [acta] : [];
+});
+const defects: Defect[] = [];
+for (const acta of repeatedActas) {
+  const people = new Set(acta.votos.map(v => nameKey(v.nombre))).size;
+  const totals = acta.totales ? acta.totales.afirmativo + acta.totales.negativo + acta.totales.abstencion + acta.totales.ausente : null;
+  defects.push({
+    title: `El acta ${acta.id} del Senado repite a todos los senadores`,
+    found: `El acta ${acta.id}${acta.numero !== null ? ` (n.º ${acta.numero} de ${acta.fecha?.slice(0, 4) ?? 's/f'})` : ''}, del ${formatDate(acta.fecha)} («${acta.titulo}»), tiene ${formatNumber(acta.votos.length)} filas para ${formatNumber(people)} senadores: cada uno aparece repetido${totals !== null ? `, y los totales de la propia acta suman ${formatNumber(totals)}` : ''}.`,
+    handling: `Si las filas repetidas dicen lo mismo se cuentan una vez; si se contradicen, ese voto no se usa (en esta versión se descartaron ${formatNumber(votes.summary.inconsistencias.votosDescartados)}).`,
+    href: actaDetailUrl(acta.id),
+    hrefLabel: 'Ver el acta oficial',
+  });
+}
+defects.push({
+  title: 'Letras rotas por la codificación',
+  found: `Algunos archivos de viajes traen nombres con caracteres mal codificados, como «BELÃ‰N» o «BRÃœGGE», o con signos de pregunta en lugar de letras, como «BELA?N».`,
+  handling: `Cuando se puede, se recupera el texto original («BELÃ‰N» pasa a «${repairMojibake('BELÃ‰N')}», «BRÃœGGE» a «${repairMojibake('BRÃœGGE')}»). Lo que no se puede recuperar se compara tal cual y, si no alcanza para estar seguros, queda como dudoso: en los viajes de esta versión hay ${formatNumber(travel.quality.overall.doubtful)} nombres dudosos.`,
+  href: '/viajes/',
+  hrefLabel: 'Ver la calidad de los viajes',
+});
+for (const id of committees.unknownCommittees) {
+  const members = committees.committees.get(id)?.miembros;
+  defects.push({
+    title: `Una comisión sin nombre: ${id}`,
+    found: `La lista de integrantes incluye la comisión ${id}${members ? ` con ${formatNumber(members)} integrantes` : ''}, pero la lista de comisiones no tiene ese código, así que no sabemos cómo se llama.`,
+    handling: `Se muestra como «Comisión sin nombre publicado (${id})», sin inventarle un nombre.`,
+    href: '/comisiones/',
+    hrefLabel: 'Ver las comisiones',
+  });
+}
+const named = [...committees.committees.values()].filter(c => !committees.unknownCommittees.includes(c.id));
+const plainNames = named.filter(c => !/[áéíóúÁÉÍÓÚ]/.test(c.nombre));
+const sample = named.find(c => nameKey(c.nombre) === 'accion social y salud publica') ?? plainNames[0];
+const samplePage = sample && entities.committees.find(c => c.id === sample.id);
+if (sample) {
+  defects.push({
+    title: 'Nombres de comisiones sin tildes',
+    found: `La fuente publica los nombres en mayúsculas y sin tildes: ${formatNumber(plainNames.length)} de ${formatNumber(named.length)} no llevan ninguna, por ejemplo «${sample.nombre}».`,
+    handling:
+      samplePage && samplePage.titulo !== sample.nombre && /[áéíóú]/i.test(samplePage.titulo)
+        ? `El sitio muestra los nombres corregidos con una tabla hecha a mano, por ejemplo «${samplePage.titulo}». Las tildes no se adivinan: un nombre que no está en la tabla queda como lo publica la fuente.`
+        : `El sitio los muestra con mayúscula inicial${samplePage ? ` («${samplePage.titulo}»)` : ''}. Las tildes no se adivinan a partir del texto.`,
+  });
+}
+const funnelBy = new Map(topics.bills.funnel.map(f => [f.stage, f.count]));
+defects.push({
+  title: 'Los movimientos de proyectos no registran el trabajo en comisión',
+  found: `El archivo de movimientos tiene las acciones del recinto y de la Presidencia, no el giro habitual a comisión ni el dictamen. De los ${formatNumber(topics.bills.total)} proyectos de diputados en funciones, ${formatNumber(funnelBy.get('con dictamen') ?? 0)} figuran «con dictamen» y ${formatNumber(funnelBy.get('presentado') ?? 0)} «presentado».`,
+  handling: '«Presentado» se explica como «sin movimientos que muestren avance» y no se usa para medir el trabajo de nadie.',
+  href: '#proyectos',
+  hrefLabel: 'Ver Proyectos y etapas',
+});
+const zeroLegs = travelDeputies.filter(d => d.eligible && d.legs === 0);
+const cisneros = zeroLegs.find(d => nameKey(deputyName.get(d.deputyId) ?? '').startsWith('cisneros'));
+defects.push({
+  title: 'Diputados sin ningún tramo de viaje',
+  found: `${formatNumber(zeroLegs.length)} diputados/as comparables no tienen ningún tramo en los archivos de viajes del período.${cisneros ? ` Uno es ${deputyName.get(cisneros.deputyId)}, de un distrito a ${formatNumber(cisneros.homeKm ?? 0)} km estimados de Buenos Aires: revisamos todos los archivos de viajes publicados y no hay ningún nombre parecido al suyo, así que no es un error de emparejamiento. O no viajó con pasajes de la Cámara, o la fuente no lo registra.` : ''}`,
+  handling: 'No se lo presenta como «en línea con sus pares»: se dice «Sin tramos registrados en el período».',
+  ...(cisneros && { href: relationUrl(cisneros.deputyId), hrefLabel: 'Ver su ficha' }),
+});
+const senateRows = bills.quality.senado.rows;
+defects.push({
+  title: 'Proyectos del Senado firmados por el Poder Ejecutivo',
+  found: institutional
+    ? `Entre los proyectos iniciados en el Senado, ${formatNumber(institutional.rows)} vienen del Poder Ejecutivo u organismos oficiales. La fuente pone como autor a quien los firma o a la comisión que los recibe: ${institutional.authors.map(a => `«${a.nombre}» (${a.origen})`).join(', ')}.`
+    : `De los ${formatNumber(senateRows.total)} proyectos iniciados en el Senado, ${formatNumber(senateRows.unmatched)} no se emparejan con un senador. La fuente pone como autor a quien firma por el Poder Ejecutivo o a la comisión que los recibe: ${bills.quality.senado.unmatched.map(u => `«${u.nombre}»`).join(', ')}.`,
+  handling: institutional
+    ? 'Se cuentan aparte como proyectos institucionales y no entran en la tasa de emparejamiento de senadores.'
+    : 'No se asignan a ningún senador y se informan como sin emparejar.',
+});
+
+const description =
+  'Cómo funciona Congreso Abierto: fuentes oficiales, emparejamiento de nombres, viajes por distancia, índice de Rice y defectos de las fuentes.';
+---
+
+<SiteLayout title="Metodología" description={description}>
+  <div class="page-wrap topic-page">
+    <PageHead
+      title="Metodología"
+      eyebrow="Cómo se hace este sitio"
+      lede="De dónde salen los datos, cómo se une cada registro con su legislador, cómo se calculan las comparaciones y qué errores encontramos en las fuentes oficiales."
+    />
+    <nav class="toc" aria-label="En esta página">
+      <a href="#fuentes">Fuentes</a>
+      <a href="#emparejamiento">Emparejamiento</a>
+      <a href="#viajes">Viajes</a>
+      <a href="#senado">Votaciones del Senado</a>
+      <a href="#proyectos">Proyectos</a>
+      <a href="#defectos">Defectos de las fuentes</a>
+      <a href="#limites">Límites</a>
+      <a href="#codigo">Código abierto</a>
+    </nav>
+
+    <MethodSources rows={sourceRows} asOf={asOf} />
+    <MethodLinkage examples={examples} jaro={jaroSteps('marclay', 'marcela')} surnameThreshold={0.93} quality={quality} />
+    <MethodTravel
+      bands={travel.analysis.bands}
+      windowLabel={travel.windowLabel}
+      flaggedNow={travelDeputies.filter(d => d.flagged).length}
+      compared={travelDeputies.filter(d => d.eligible && d.z !== null).length}
+      regional={regional}
+    />
+    <MethodSenate
+      actas={votes.actas}
+      period={votes.period}
+      blocs={blocs.length}
+      singleMemberBlocs={blocs.filter(b => b.senators === 1).length}
+      votes={votes.quality.rows.total}
+    />
+    <MethodBills funnel={topics.bills.funnel} total={topics.bills.total} periodLabel={topics.bills.provenance.label} />
+    <MethodDefects defects={defects} />
+
+    <Section title="Límites: qué no dice el sitio" id="limites">
+      <ul class="limits">
+        <li>
+          <strong>No juzga.</strong> Viajar más que los pares, faltar a votaciones o votar distinto al bloque tiene muchas explicaciones posibles.
+          El sitio describe números; no habla de abuso ni de irregularidades.
+        </li>
+        <li><strong>No hay costos de viajes nacionales.</strong> La fuente publica tramos, no lo que costó cada uno.</li>
+        <li>
+          <strong>No hay gastos por persona.</strong> Dieta y gastos de representación son montos generales, iguales para todos los diputados. El
+          Senado no publica dietas en sus datos abiertos.
+        </li>
+        <li>
+          <strong>No hay votaciones nominales de Diputados recientes.</strong> El conjunto de datos oficial de votaciones de Diputados termina en
+          enero de 2020; por eso solo se analizan las del Senado.
+        </li>
+        <li><strong>La distancia es una estimación</strong> a partir de los tramos, no un domicilio declarado.</li>
+        <li>
+          <strong>El emparejamiento puede fallar.</strong> Un caso dudoso nunca se asigna, pero un emparejamiento aceptado podría ser incorrecto.
+          Cada página muestra la calidad de su fuente y la lista de dudosos.
+        </li>
+        <li>
+          <strong>Los datos tienen la fecha de la última copia</strong> ({asOf}). Un cambio en las fuentes aparece en el sitio recién después
+          de la siguiente actualización semanal.
+        </li>
+      </ul>
+    </Section>
+
+    <Section title="Código abierto y cómo avisar un error" id="codigo">
+      <p>
+        Todo el código del sitio, los algoritmos y sus pruebas están publicados en
+        <a href={REPO} target="_blank" rel="noopener">github.com/mauroociappinaph/congreso-abierto</a>. Cualquiera puede revisar cómo se
+        calcula cada número y repetir el cálculo con los mismos datos.
+      </p>
+      <p>
+        Si encontrás un dato mal asignado, un nombre mal emparejado o un error en esta explicación, abrí un aviso en
+        <a href={ISSUES} target="_blank" rel="noopener">la página de issues del proyecto</a>. Ayuda mucho indicar la página, el dato y, si
+        podés, la fuente oficial que lo muestra distinto.
+      </p>
+    </Section>
+  </div>
+</SiteLayout>
+
+<style>
+  .topic-page {
+    padding-top: var(--space-7);
+  }
+
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin: 0 0 var(--space-5);
+    font-size: var(--text-sm);
+  }
+
+  .topic-page :global(.section) {
+    max-width: 100%;
+  }
+
+  .topic-page :global(.section p),
+  .topic-page :global(.section li) {
+    max-width: 78ch;
+  }
+
+  .limits li {
+    margin-bottom: var(--space-2);
+  }
+</style>

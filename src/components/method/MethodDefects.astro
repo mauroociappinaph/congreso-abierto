@@ -1,0 +1,65 @@
+---
+// Defectos de las fuentes que encontramos: each problem seen in the official data, how the site handles it,
+// with the figures read from this build.
+import Section from '../ui/Section.astro';
+
+export interface Defect {
+  title: string;
+  // what the source does
+  found: string;
+  // what the site does about it
+  handling: string;
+  href?: string;
+  hrefLabel?: string;
+}
+
+interface Props {
+  defects: Defect[];
+}
+
+const { defects } = Astro.props;
+---
+
+<Section title="Defectos de las fuentes que encontramos" id="defectos">
+  <p>
+    Los datos oficiales tienen errores. No los corregimos en silencio: cuando un dato no se puede arreglar con seguridad se informa y no se
+    usa, y cuando se arregla, se dice cómo.
+  </p>
+  <ol class="defects">
+    {
+      defects.map(d => (
+        <li>
+          <h3>{d.title}</h3>
+          <p>{d.found}</p>
+          <p class="handling"><strong>Qué hace el sitio:</strong> {d.handling}{d.href && <> <a href={d.href}>{d.hrefLabel}</a>.</>}</p>
+        </li>
+      ))
+    }
+  </ol>
+</Section>
+
+<style>
+  .defects {
+    margin: 0;
+    padding-left: var(--space-5);
+  }
+
+  .defects li {
+    margin-bottom: var(--space-4);
+  }
+
+  h3 {
+    font-size: var(--text-md);
+    margin: 0 0 4px;
+  }
+
+  .defects p {
+    margin: 0 0 4px;
+    overflow-wrap: anywhere;
+  }
+
+  .handling {
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+</style>

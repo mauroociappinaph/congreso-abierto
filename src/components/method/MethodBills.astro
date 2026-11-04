@@ -1,0 +1,68 @@
+---
+// Proyectos y etapas: the ordered stages, how a movement advances a bill, the movements gap and "sancionado" ≠ "es ley".
+import Section from '../ui/Section.astro';
+import DataTable from '../ui/DataTable.astro';
+import type { Stage } from '../../lib/proyectos.ts';
+import { DATASETS, formatNumber, formatShare, STAGE_LABELS } from '../../lib/view.ts';
+
+interface Props {
+  // bills whose furthest stage is this one
+  funnel: { stage: Stage; count: number }[];
+  total: number;
+  periodLabel: string;
+}
+
+const { funnel, total, periodLabel } = Astro.props;
+const MEANING: Record<Stage, string> = {
+  presentado: 'Ningún movimiento registrado muestra avance. No quiere decir que no haya pasado por una comisión.',
+  'en comisión': 'La Presidencia cambió el giro a comisiones, o se pidió emplazar a una comisión para que trate el proyecto.',
+  'con dictamen': 'Un movimiento en el recinto menciona el dictamen de una comisión.',
+  'media sanción': 'Una de las dos cámaras lo aprobó (también «pasa al Senado» o «vuelve a Diputados»).',
+  sancionado: 'Sanción definitiva, o insistencia y veto, que solo existen después de una sanción.',
+};
+---
+
+<Section title="Proyectos y etapas" id="proyectos" links={[DATASETS.proyectos, DATASETS.movimientos]} periodLabel={periodLabel}>
+  <p>
+    Cada proyecto se cuenta para su primer firmante, desde el 1 de enero de 2024. Su etapa es la más avanzada que muestran sus movimientos,
+    en este orden: presentado, en comisión, con dictamen, media sanción y sancionado. Un movimiento que no se reconoce no hace avanzar al
+    proyecto. Las resoluciones y declaraciones son actos de una sola cámara: aprobadas, cuentan como sancionadas.
+  </p>
+  <DataTable caption={`Etapa más avanzada de los ${formatNumber(total)} proyectos de diputados en funciones`}>
+    <thead>
+      <tr><th scope="col">Etapa</th><th scope="col" class="num">Proyectos</th><th scope="col" class="num">Parte</th><th scope="col">Qué significa acá</th></tr>
+    </thead>
+    <tbody>
+      {
+        funnel.map(row => (
+          <tr>
+            <td>{STAGE_LABELS[row.stage]}</td>
+            <td class="num">{formatNumber(row.count)}</td>
+            <td class="num">{formatShare(total ? row.count / total : null)}</td>
+            <td>{MEANING[row.stage]}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </DataTable>
+  <h3>El hueco de los movimientos</h3>
+  <p>
+    El archivo de movimientos registra acciones del recinto y de la Presidencia, pero no el giro habitual a comisión ni el dictamen de la
+    comisión. Por eso casi ningún proyecto aparece «con dictamen» y la mayoría figura como «presentado»: es un límite de la fuente, no una
+    medida de trabajo en comisión.
+  </p>
+  <p class="callout"><strong>«Sancionado» no es lo mismo que «es ley».</strong> Después de la sanción, el Poder Ejecutivo puede promulgarla o
+    vetarla, y la fuente no siempre registra ese paso. Además, una declaración o resolución sancionada no es una ley.</p>
+</Section>
+
+<style>
+  h3 {
+    font-size: var(--text-md);
+    margin: var(--space-5) 0 var(--space-2);
+  }
+
+  .callout {
+    border-left: 3px solid var(--accent);
+    padding-left: var(--space-3);
+  }
+</style>

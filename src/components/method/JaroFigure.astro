@@ -1,0 +1,106 @@
+---
+// Jaro-Winkler worked example as a small SVG: the two words letter by letter, a line for each matched pair
+// (crossed lines are the transpositions) and the common prefix marked, followed by the arithmetic.
+import { formatNumber } from '../../lib/view.ts';
+import type { JaroSteps } from './method.ts';
+
+interface Props {
+  steps: JaroSteps;
+}
+
+const { steps } = Astro.props;
+const CELL = 30;
+const PAD = 16;
+const TOP = 34;
+const BOTTOM = 112;
+const width = Math.max(steps.a.length, steps.b.length) * CELL + PAD * 2;
+const x = (i: number) => PAD + i * CELL + CELL / 2;
+const crossed = (i: number, j: number) => steps.pairs.some(([k, l]) => (k < i && l > j) || (k > i && l < j));
+const n3 = (value: number) => value.toLocaleString('es-AR', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+const { a, b, matches, transpositions, prefix } = steps;
+---
+
+<figure class="jaro">
+  <svg viewBox={`0 0 ${width} 146`} width={width} height="146" role="img" aria-labelledby="jaro-desc">
+    <desc id="jaro-desc">
+      Las letras de «{a}» arriba y de «{b}» abajo, unidas cuando coinciden: {matches} coincidencias, {formatNumber(transpositions)}
+      transposiciones y {prefix} letras de prefijo común.
+    </desc>
+    <rect x={PAD - 4} y={TOP - 22} width={prefix * CELL + 8} height={BOTTOM - TOP + 34} rx="5" class="prefix" />
+    {steps.pairs.map(([i, j]) => <line x1={x(i)} y1={TOP + 8} x2={x(j)} y2={BOTTOM - 18} class:list={{ cross: crossed(i, j) }} />)}
+    {[...a].map((ch, i) => <text x={x(i)} y={TOP} class:list={{ hit: steps.aMatched[i] }}>{ch.toUpperCase()}</text>)}
+    {[...b].map((ch, j) => <text x={x(j)} y={BOTTOM} class:list={{ hit: steps.bMatched[j] }}>{ch.toUpperCase()}</text>)}
+    <text x={PAD} y="140" class="key">Prefijo común: {prefix}</text>
+  </svg>
+  <figcaption>
+    <ol>
+      <li>Dos letras iguales coinciden si están a no más de {steps.window} posiciones de distancia: <strong>m = {matches}</strong>.</li>
+      <li>Coincidencias en distinto orden (líneas cruzadas) divididas por 2: <strong>t = {formatNumber(transpositions)}</strong>.</li>
+      <li>
+        Jaro = (m/{a.length} + m/{b.length} + (m − t)/m) / 3 = ({matches}/{a.length} + {matches}/{b.length} + {formatNumber(matches - transpositions)}/{matches}) / 3 =
+        <strong>{n3(steps.jaro)}</strong>.
+      </li>
+      <li>
+        Jaro-Winkler suma un premio por el prefijo común (ℓ = {prefix}, hasta 4 letras): Jaro + ℓ × 0,1 × (1 − Jaro) =
+        <strong>{n3(steps.jw)}</strong>.
+      </li>
+    </ol>
+  </figcaption>
+</figure>
+
+<style>
+  .jaro {
+    margin: var(--space-3) 0 var(--space-4);
+  }
+
+  svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    font-family: var(--mono);
+  }
+
+  text {
+    font-size: 18px;
+    text-anchor: middle;
+    fill: var(--muted);
+  }
+
+  text.hit {
+    fill: var(--accent);
+    font-weight: 700;
+  }
+
+  text.key {
+    font-family: var(--sans);
+    font-size: 12px;
+    text-anchor: start;
+  }
+
+  line {
+    stroke: var(--chart-muted);
+    stroke-width: 1.5;
+  }
+
+  line.cross {
+    stroke: var(--flag);
+    stroke-width: 2;
+  }
+
+  .prefix {
+    fill: var(--accent-soft);
+  }
+
+  figcaption {
+    font-size: var(--text-sm);
+  }
+
+  ol {
+    margin: var(--space-2) 0 0;
+    padding-left: var(--space-5);
+  }
+
+  li {
+    margin-bottom: 4px;
+  }
+</style>

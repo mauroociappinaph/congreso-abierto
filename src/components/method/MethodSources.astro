@@ -1,0 +1,78 @@
+---
+// Fuentes: every official dataset the site reads, with its link, contents, period in this build and update rhythm.
+import Section from '../ui/Section.astro';
+import DataTable from '../ui/DataTable.astro';
+import { formatNumber, type SourceLink } from '../../lib/view.ts';
+
+export interface SourceRow {
+  links: SourceLink[];
+  contents: string;
+  period: string;
+  rhythm: string;
+}
+
+interface Props {
+  rows: SourceRow[];
+  // "vigente al 04/11/2026"
+  asOf: string;
+}
+
+const { rows, asOf } = Astro.props;
+---
+
+<Section title="Fuentes" id="fuentes" tag={`${formatNumber(rows.length)} conjuntos de datos oficiales`}>
+  <p>
+    Todo lo que muestra el sitio sale de datos publicados por la Cámara de Diputados (HCDN) y el Senado de la Nación. No hay datos
+    cargados a mano ni de terceros. Cada número del sitio indica, debajo, de qué fuente sale y qué período cubre.
+  </p>
+  <DataTable caption="Fuentes oficiales, contenido, período en esta versión y ritmo de publicación">
+    <thead>
+      <tr><th scope="col">Fuente</th><th scope="col">Qué trae</th><th scope="col">Período en el sitio</th><th scope="col">Se publica</th></tr>
+    </thead>
+    <tbody>
+      {
+        rows.map(row => (
+          <tr>
+            <th scope="row">
+              {row.links.map((link, i) => <>{i > 0 && <br />}<a href={link.href} target="_blank" rel="noopener">{link.label}</a></>)}
+            </th>
+            <td>{row.contents}</td>
+            <td>{row.period}</td>
+            <td>{row.rhythm}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </DataTable>
+  <h3>Cómo se actualiza</h3>
+  <p>
+    El sitio es estático: no consulta las fuentes cada vez que alguien lo abre. Una vez por semana, los lunes, una computadora en
+    Argentina descarga todas las fuentes, guarda una copia procesada de los datos (snapshot) en el repositorio y el sitio se vuelve a
+    generar a partir de esa copia. Se hace así porque el portal de datos de Diputados (datos.hcdn.gob.ar) rechaza las conexiones desde
+    servidores fuera del país, como los de GitHub o los de cualquier proveedor de hosting. Datos de esta versión: {asOf}.
+  </p>
+  <p class="note">
+    Si la copia tiene más de 14 días, un control automático en GitHub falla y avisa. Los ritmos de publicación son los observados en las
+    fuentes, no un compromiso oficial.
+  </p>
+</Section>
+
+<style>
+  h3 {
+    font-size: var(--text-md);
+    margin: var(--space-4) 0 var(--space-2);
+  }
+
+  td {
+    min-width: 9rem;
+  }
+
+  th[scope='row'] {
+    text-transform: none;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 0;
+    min-width: 150px;
+  }
+</style>

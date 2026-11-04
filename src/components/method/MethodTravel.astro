@@ -1,0 +1,160 @@
+---
+// Viajes y comparación por distancia: the fair metric, the estimated home, the bands, the robust z with a worked
+// example, and why regions were replaced (recomputed from this build's data).
+import Section from '../ui/Section.astro';
+import DataTable from '../ui/DataTable.astro';
+import BarChart from '../ui/BarChart.astro';
+import { MIN_HOME_LEGS } from '../../lib/distance.ts';
+import { BAND_LIMITS, MIN_BAND_PEERS, MIN_MONTHS, Z_THRESHOLD, type BandSummary } from '../../lib/viajes.ts';
+import { DATASETS, formatNumber } from '../../lib/view.ts';
+import { zSteps } from './method.ts';
+
+export interface RegionalRow {
+  distrito: string;
+  region: string;
+  z: number;
+  homeKm: number | null;
+  route: string;
+  stillFlagged: boolean;
+}
+
+interface Props {
+  bands: BandSummary[];
+  windowLabel: string;
+  flaggedNow: number;
+  compared: number;
+  regional: RegionalRow[];
+}
+
+const { bands, windowLabel, flaggedNow, compared, regional } = Astro.props;
+const EXAMPLE = [1, 2, 2, 3, 3, 4, 12];
+const example = zSteps(EXAMPLE);
+const z = (value: number) => value.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const limits = BAND_LIMITS.map(km => formatNumber(km)).join(', ');
+const stillFlagged = regional.filter(r => r.stillFlagged).length;
+---
+
+<Section title="Viajes y comparación por distancia" id="viajes" links={[DATASETS.viajes]} periodLabel={windowLabel}>
+  <h3>La medida: tramos por mes en el cargo</h3>
+  <p>
+    La fuente publica tramos de viaje (cada ida o vuelta en avión o micro), no viajes completos ni su costo. Para cada diputado/a se cuentan
+    los tramos de los últimos 4 semestres publicados y se dividen por los meses que estuvo en el cargo dentro de ese período. Quien tiene
+    menos de {MIN_MONTHS} meses en el período se muestra pero no se compara.
+  </p>
+
+  <h3>Casa estimada y distancia</h3>
+  <p>
+    Un diputado de Jujuy viaja más que uno de la Ciudad de Buenos Aires, y es esperable. Para comparar con justicia se estima dónde vive
+    cada uno: el punto de su propia provincia (aeropuerto o terminal) que más aparece en sus tramos, si aparece al menos {MIN_HOME_LEGS}
+    veces; si no, la capital de la provincia. Las terminales de Buenos Aires (Aeroparque, Ezeiza, Retiro, Liniers) nunca cuentan como casa.
+    La distancia es la línea recta desde ese punto hasta el Obelisco. Es una estimación, y el sitio la presenta así.
+  </p>
+
+  <h3>Grupos por distancia</h3>
+  <p>
+    Cada diputado/a se compara con quienes viven a una distancia parecida, en grupos que cortan en {limits} km. Si un grupo queda con menos de
+    {MIN_BAND_PEERS} personas comparables se une al grupo vecino. Así quedaron los grupos en esta versión:
+  </p>
+  <BarChart
+    title="Mediana de tramos por mes en cada grupo de distancia"
+    titleHidden={false}
+    labelWidth="110px"
+    bars={bands.map(b => ({
+      label: b.band,
+      value: b.medianLegsPerMonth,
+      valueLabel: `${formatNumber(b.medianLegsPerMonth)} por mes`,
+      detail: `${formatNumber(b.deputies)} diputados · mediana ${formatNumber(b.medianKm)} km`,
+    }))}
+  />
+
+  <h3>Cuánto se aparta cada uno: z robusto</h3>
+  <p>
+    Dentro de cada grupo se calcula la mediana de tramos por mes y el <strong>desvío absoluto mediano</strong> (MAD): la mediana de las
+    distancias de cada persona a esa mediana. Con eso se obtiene el z modificado de Iglewicz y Hoaglin:
+  </p>
+  <p class="formula">z = 0,6745 × (x − mediana) / MAD</p>
+  <p>
+    A diferencia del promedio y el desvío estándar, la mediana y el MAD casi no se mueven por un par de casos extremos, así que la vara no
+    depende de quién viaja muchísimo. Si el MAD da 0 se usa el desvío absoluto promedio (multiplicado por 1,253314); si también da 0, z = 0.
+  </p>
+  <div class="box example">
+    <p><strong>Ejemplo con valores inventados</strong> (no son datos reales): un grupo de {EXAMPLE.length} personas con
+      {EXAMPLE.map(v => formatNumber(v)).join(', ')} tramos por mes.</p>
+    <ul>
+      <li>Mediana = {formatNumber(example.median)}.</li>
+      <li>Distancias a la mediana: {example.deviations.map(v => formatNumber(v)).join(', ')}. Su mediana, el MAD, = {formatNumber(example.mad)}.</li>
+      <li>
+        Para quien hace {formatNumber(EXAMPLE.at(-1)!)} por mes: z = 0,6745 × ({formatNumber(EXAMPLE.at(-1)!)} − {formatNumber(example.median)}) /
+        {formatNumber(example.mad)} = <strong>{z(example.z.at(-1)!)}</strong>, por encima de {formatNumber(Z_THRESHOLD)}.
+      </li>
+    </ul>
+  </div>
+  <p>
+    Con z mayor que <strong>{formatNumber(Z_THRESHOLD)}</strong> (el umbral que proponen Iglewicz y Hoaglin) el sitio dice «viaja bastante más
+    que sus pares». Solo se marca el lado alto. En esta versión, {formatNumber(flaggedNow)} de {formatNumber(compared)} diputados comparados
+    quedan marcados: <a href="/viajes/#tabla">ver la tabla de viajes</a>.
+  </p>
+  <p class="callout"><strong>Más tramos no implica irregularidad.</strong> Un viaje puede responder a la agenda legislativa, a la familia o a la
+    distancia; el sitio solo describe cuánto se aparta alguien de sus pares, no juzga los motivos.</p>
+
+  <h3>Por qué se dejó de comparar por región</h3>
+  <p>
+    La primera versión comparaba por región (Ciudad de Buenos Aires, provincia de Buenos Aires, Centro, Cuyo, NOA, NEA, Patagonia). Recalculado con los datos de esta versión, por región
+    quedarían marcados {formatNumber(regional.length)} diputados/as; con los grupos por distancia, {formatNumber(stillFlagged)} de ellos siguen
+    marcados. Varios eran de la provincia de Buenos Aires con casa lejos de la Capital, como Mar del Plata o Necochea: viajaban a su casa,
+    como cualquier diputado del interior, pero se los comparaba con quienes viven a pocos kilómetros.
+  </p>
+  <DataTable caption="Marcados si se comparara por región (recalculado con los datos de esta versión)" dense>
+    <thead>
+      <tr>
+        <th scope="col">Distrito</th><th scope="col">Región</th><th scope="col" class="num">z por región</th>
+        <th scope="col" class="num">Distancia estimada</th><th scope="col">Ruta más frecuente</th><th scope="col">Por distancia</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        regional.map(r => (
+          <tr>
+            <td>{r.distrito}</td>
+            <td>{r.region}</td>
+            <td class="num">{z(r.z)}</td>
+            <td class="num">{r.homeKm === null ? 'N/A' : `${formatNumber(r.homeKm)} km`}</td>
+            <td>{r.route}</td>
+            <td>{r.stillFlagged ? 'Viaja bastante más que sus pares' : 'En línea con sus pares'}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </DataTable>
+  <p class="note">No nombramos a estas personas: la marca por región era un error del método, no un dato sobre ellas. El z por región se recalcula con los tramos por mes redondeados a dos decimales: es una aproximación cercana a aquella versión.</p>
+</Section>
+
+<style>
+  h3 {
+    font-size: var(--text-md);
+    margin: var(--space-5) 0 var(--space-2);
+  }
+
+  h3:first-of-type {
+    margin-top: 0;
+  }
+
+  .formula {
+    font-family: var(--mono);
+    font-size: var(--text-md);
+    background: var(--paper);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    padding: var(--space-2) var(--space-3);
+    overflow-wrap: anywhere;
+  }
+
+  .example {
+    background: var(--paper);
+  }
+
+  .callout {
+    border-left: 3px solid var(--accent);
+    padding-left: var(--space-3);
+  }
+</style>

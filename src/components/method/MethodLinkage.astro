@@ -1,0 +1,225 @@
+---
+// Emparejamiento de nombres: how a source name becomes a legislator, with real names run through the site's
+// linker at build time, a Jaro-Winkler worked example and the current quality of every source.
+import Section from '../ui/Section.astro';
+import DataTable from '../ui/DataTable.astro';
+import JaroFigure from './JaroFigure.astro';
+import { formatNumber, type SourceLink } from '../../lib/view.ts';
+import type { JaroSteps } from './method.ts';
+
+export interface LinkExample {
+  // name as it appears in the source
+  raw: string;
+  where: string;
+  result: { status: 'matched' | 'doubtful' | 'unmatched'; nombre: string | null; confidence: number };
+  explanation: string;
+}
+
+export interface QualityRow {
+  source: SourceLink;
+  against: string;
+  rowsLabel: string;
+  period: string;
+  names: { matched: number; former: number | null; doubtful: number; unmatched: number; total: number };
+  rows: { linked: number; total: number; percent: number };
+  note?: string;
+}
+
+interface Props {
+  examples: LinkExample[];
+  jaro: JaroSteps;
+  // the surname threshold the linker uses, to read the example against
+  surnameThreshold: number;
+  quality: QualityRow[];
+}
+
+const { examples, jaro, surnameThreshold, quality } = Astro.props;
+const STATUS = { matched: 'Emparejado', doubtful: 'Dudoso', unmatched: 'Sin emparejar' } as const;
+const n3 = (value: number) => value.toLocaleString('es-AR', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+const pct = (value: number) => `${formatNumber(value)} %`;
+---
+
+<Section title="Emparejamiento de nombres" id="emparejamiento">
+  <p>
+    Las fuentes no comparten un identificador de persona: cada archivo escribe el nombre a su manera. Para saber a qué diputado o senador
+    corresponde cada viaje, proyecto, comisión o voto, el sitio compara nombres. Estos son nombres reales de las fuentes, pasados por el
+    mismo algoritmo al generar esta página, contra la composición actual de la Cámara:
+  </p>
+  <ul class="examples" aria-label="Ejemplos reales de nombres de las fuentes y su resultado">
+    {
+      examples.map(e => (
+        <li>
+          <p class="raw"><code>{e.raw}</code> <span class="muted">{e.where}</span></p>
+          <p class="outcome">
+            <span class:list={['tag', { ok: e.result.status === 'matched', flag: e.result.status !== 'matched' }]}>{STATUS[e.result.status]}</span>
+            {e.result.nombre && <strong>{e.result.nombre}</strong>}
+            <span class="muted">confianza {n3(e.result.confidence)}</span>
+          </p>
+          <p>{e.explanation}</p>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h3>Paso 1: normalizar</h3>
+  <p>
+    Se pasa todo a minúsculas, se quitan tildes y signos, se separa en palabras y se descartan partículas («de», «del», «la», «las», «los»,
+    «y»), apodos entre comillas y prefijos como «DIP.» o «SEN.». Si el texto llegó con la codificación rota (por ejemplo
+    <code>BELÃ‰N</code>), se intenta recuperar la palabra original. En la composición de la Cámara el nombre viene como «Apellido,
+    Nombres»: la coma separa el apellido de los nombres.
+  </p>
+
+  <h3>Paso 2: comparar palabra por palabra con Jaro-Winkler</h3>
+  <p>
+    Jaro-Winkler mide cuánto se parecen dos palabras, de 0 (nada) a 1 (iguales). Cuenta letras en común cercanas, penaliza las que están en
+    otro orden y premia un comienzo igual, porque los errores de tipeo suelen estar al final. Este es el cálculo, hecho por el sitio, entre
+    el apellido «Marclay» y el nombre «Marcela»:
+  </p>
+  <JaroFigure steps={jaro} />
+  <p>
+    El resultado ({n3(jaro.jw)}) supera el mínimo que se pide a un apellido ({formatNumber(surnameThreshold)}). Por eso, en una primera
+    versión, «PAGANO, MARCELA MARINA» quedaba dudoso entre Pagano y Marclay: el algoritmo tomaba «MARCELA» como si fuera el apellido
+    Marclay. La corrección fue usar la coma de la fuente, cuando la hay, como límite del apellido.
+  </p>
+
+  <h3>Paso 3: posición del apellido y puntaje de confianza</h3>
+  <ul>
+    <li>
+      Cada palabra del apellido tiene que coincidir con una de las primeras palabras del nombre de la fuente (similitud de al menos
+      {formatNumber(surnameThreshold)}). Los archivos de viajes escriben «APELLIDO NOMBRES», así que un apellido que aparece al final no se
+      acepta en la primera pasada.
+    </li>
+    <li>
+      Cada nombre de pila tiene que coincidir con una palabra distinta que quede libre (similitud de al menos 0,9), o como inicial: «Oscar A.»
+      acepta «OSCAR ALBERTO». Si la persona tiene nombres de pila y ninguno coincide, no hay candidato.
+    </li>
+    <li>
+      Solo cuando la primera pasada no encuentra a nadie se prueba el orden «Nombres Apellido» («VERONICA KARINA BANFI»), con exigencias más
+      altas y un descuento en el puntaje.
+    </li>
+    <li>
+      Confianza = (parte del nombre que coincidió + similitud promedio) / 2. El apellido pesa el doble que cada nombre de pila.
+    </li>
+  </ul>
+
+  <h3>Paso 4: emparejado, dudoso o sin emparejar</h3>
+  <ul>
+    <li><strong>Emparejado</strong>: el mejor candidato tiene confianza de 0,9 o más y le saca al menos 0,05 al segundo.</li>
+    <li>
+      <strong>Dudoso</strong>: el mejor tiene 0,75 o más pero no cumple lo anterior, por ejemplo dos personas con el mismo apellido y nombres
+      parecidos. Un caso dudoso <strong>nunca se asigna</strong>: se muestra en la página de la fuente para revisarlo. Si la fila trae la
+      provincia, solo compiten los legisladores de esa provincia, y una provincia distinta también lo vuelve dudoso.
+    </li>
+    <li><strong>Sin emparejar</strong>: no hay candidato razonable (por ejemplo, alguien que ya no está en la Cámara).</li>
+  </ul>
+  <p>
+    Para no contar como «sin emparejar» a quien ya dejó el cargo, comisiones, misiones y proyectos se comparan contra el padrón histórico de
+    Diputados (con las fechas de cada mandato), limitado a quienes estaban en funciones en el período de la fuente. Las votaciones del Senado y
+    los proyectos iniciados en el Senado se comparan contra los senadores actuales más los anteriores que figuran en las actas. Los viajes
+    nacionales se comparan solo contra la composición actual, porque el sitio solo los analiza para quienes están hoy en el cargo.
+  </p>
+
+  <h3>Calidad actual, por fuente</h3>
+  <p>Estos números se calculan al generar el sitio con los datos de esta versión.</p>
+  <DataTable caption="Calidad del emparejamiento por fuente en esta versión">
+    <thead>
+      <tr>
+        <th scope="col">Fuente</th>
+        <th scope="col" class="num">Filas asignadas</th>
+        <th scope="col" class="num">Nombres emparejados</th>
+        <th scope="col" class="num">Dudosos</th>
+        <th scope="col" class="num">Sin emparejar</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        quality.map(q => (
+          <tr>
+            <th scope="row">
+              <a href={q.source.href} target="_blank" rel="noopener">{q.source.label}</a>
+              <span class="muted">{q.period}. Contra {q.against}.{q.note && ` ${q.note}`}</span>
+            </th>
+            <td class="num">
+              <strong>{pct(q.rows.percent)}</strong>
+              <span class="muted">{formatNumber(q.rows.linked)} de {formatNumber(q.rows.total)} {q.rowsLabel}</span>
+            </td>
+            <td class="num">
+              {formatNumber(q.names.matched + (q.names.former ?? 0))} de {formatNumber(q.names.total)}
+              {q.names.former !== null && <span class="muted">{formatNumber(q.names.former)} ya no están en el cargo</span>}
+            </td>
+            <td class="num">{formatNumber(q.names.doubtful)}</td>
+            <td class="num">{formatNumber(q.names.unmatched)}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </DataTable>
+  <p class="note">
+    Filas asignadas: registros de la fuente (un voto, un proyecto, un tramo) atribuidos a una persona. Nombres: nombres distintos; si un
+    nombre aparece con resultados distintos, cuenta el peor. En los proyectos, los autores que no se emparejan son sobre todo comisiones,
+    la propia Cámara o el Poder Ejecutivo, que no son legisladores.
+  </p>
+</Section>
+
+<style>
+  h3 {
+    font-size: var(--text-md);
+    margin: var(--space-5) 0 var(--space-2);
+  }
+
+  .examples {
+    list-style: none;
+    margin: 0 0 var(--space-3);
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: var(--space-3);
+  }
+
+  .examples li {
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    padding: var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  .examples p {
+    margin: 0 0 6px;
+  }
+
+  .examples p:last-child {
+    margin: 0;
+  }
+
+  .outcome {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 8px;
+  }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.92em;
+    overflow-wrap: anywhere;
+  }
+
+  td .muted,
+  th .muted {
+    display: block;
+    font-weight: 400;
+  }
+
+  th[scope='row'] {
+    text-transform: none;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 0;
+    min-width: 180px;
+  }
+
+  td.num .muted {
+    white-space: normal;
+  }
+</style>

@@ -12,6 +12,7 @@ import StatTile from '../../components/ui/StatTile.astro';
 import EntityGrid from '../../components/entity/EntityGrid.astro';
 import EntityHead from '../../components/entity/EntityHead.astro';
 import MemberFilter from '../../components/entity/MemberFilter.astro';
+import Pager from '../../components/ui/Pager.astro';
 import StackedBar from '../../components/entity/StackedBar.astro';
 import { blocSegments, committeeTitle, searchText } from '../../components/entity/entity-view.ts';
 import { provinceOf, provinceUrl, titleCase } from '../../lib/entities.ts';
@@ -117,6 +118,7 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
             ))}
           </tbody>
         </DataTable>
+        <Pager label="integrantes de la comisión" target={bodyId} />
         <p class="note">
           «Proyectos»: como primer firmante, de todos los temas; la fuente no indica qué proyectos trató esta comisión.
           {committee.unlinked > 0 && ` ${plural(committee.unlinked, 'integrante publicado no quedó emparejado', 'integrantes publicados no quedaron emparejados')} con un diputado/a en funciones y no ${committee.unlinked === 1 ? 'figura' : 'figuran'} en la tabla.`}

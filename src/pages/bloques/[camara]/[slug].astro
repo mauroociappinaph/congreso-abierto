@@ -14,6 +14,7 @@ import ChamberSwitch from '../../../components/entity/ChamberSwitch.astro';
 import EntityGrid from '../../../components/entity/EntityGrid.astro';
 import EntityHead from '../../../components/entity/EntityHead.astro';
 import MemberFilter from '../../../components/entity/MemberFilter.astro';
+import Pager from '../../../components/ui/Pager.astro';
 import TravelQuality from '../../../components/entity/TravelQuality.astro';
 import { chamberLabel, committeeTitle, flaggedSentence, searchText, TRAVEL_STATUS, travelRows, travelTag } from '../../../components/entity/entity-view.ts';
 import { provinceUrl } from '../../../lib/entities.ts';
@@ -202,6 +203,7 @@ const ordinal = (n: number) => `${n}.º`;
             )
           }
         </DataTable>
+        <Pager label="integrantes del bloque" target={bodyId} />
         <p class="note">
           {isDeputies
             ? '«Proyectos»: como primer firmante, de cualquier tema. «Comparación»: tramos por mes frente a la mediana de los diputados a distancia similar de Buenos Aires.'

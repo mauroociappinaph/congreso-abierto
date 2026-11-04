@@ -1,8 +1,9 @@
 ---
 // Viajes nacionales: methodology, distance-band medians, every compared deputy against the band median, the
 // per-deputy table (linking to the ficha, the province and the bloc) and the linkage quality (S5).
-// The table is rendered at build time; the script only filters rows.
+// The table is rendered at build time; the script only filters rows and shows a page of them at a time.
 import Section from './ui/Section.astro';
+import Pager from './ui/Pager.astro';
 import BarChart from './ui/BarChart.astro';
 import DataTable from './ui/DataTable.astro';
 import DotPlot from './ui/DotPlot.astro';
@@ -137,7 +138,7 @@ const period = report.windowLabel;
       </label>
       <label class="check"><input type="checkbox" data-only-flagged /> Solo quienes viajan bastante más que sus pares ({flagged.length})</label>
     </div>
-    <p class="count" aria-live="polite" data-count>{rows.length} de {rows.length} diputados</p>
+    <p class="count" data-count>{rows.length} de {rows.length} diputados</p>
     <DataTable caption="Tramos de viajes nacionales por diputado/a" captionHidden dense>
       <thead>
         <tr>
@@ -184,6 +185,7 @@ const period = report.windowLabel;
         }
       </tbody>
     </DataTable>
+    <Pager label="viajes por diputado/a" />
   </div>
 
   <div slot="after" class="box quality">
@@ -230,25 +232,26 @@ const period = report.windowLabel;
 
 <script>
   import { normalizeText } from '../lib/legislators.ts';
+  import { mountPager } from './ui/pagination.ts';
 
   for (const root of document.querySelectorAll<HTMLElement>('[data-travel]')) {
     const query = root.querySelector<HTMLInputElement>('[data-query]')!;
     const onlyFlagged = root.querySelector<HTMLInputElement>('[data-only-flagged]')!;
     const count = root.querySelector<HTMLElement>('[data-count]')!;
     const rows = [...root.querySelectorAll<HTMLElement>('tbody tr[data-text]')];
+    const pager = mountPager(root.querySelector('[data-pager]'), root.querySelector('[role="region"]'));
 
-    const update = () => {
+    const update = (reset = true) => {
       const q = normalizeText(query.value).trim();
-      let visible = 0;
-      for (const row of rows) {
-        row.hidden = (onlyFlagged.checked && row.dataset.flagged !== 'true') || (!!q && !row.dataset.text!.includes(q));
-        if (!row.hidden) visible++;
-      }
-      count.textContent = `${visible} de ${rows.length} diputados`;
+      const matched = rows.filter(row => (!onlyFlagged.checked || row.dataset.flagged === 'true') && (!q || row.dataset.text!.includes(q)));
+      if (pager) pager.show(rows, matched, { reset });
+      else for (const row of rows) row.hidden = !matched.includes(row);
+      count.textContent = `${matched.length} de ${rows.length} diputados`;
     };
 
-    query.addEventListener('input', update);
-    onlyFlagged.addEventListener('change', update);
+    update(false);
+    query.addEventListener('input', () => update());
+    onlyFlagged.addEventListener('change', () => update());
   }
 </script>
 

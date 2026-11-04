@@ -1,7 +1,8 @@
 ---
 // One chamber's list: text search, bloc and province chips, and a table whose names link to each ficha.
-// The rows are rendered at build time; the script below only hides and shows them.
+// The rows are rendered at build time; the script below only hides and shows them, a page of the filtered rows at a time.
 import DataTable from './ui/DataTable.astro';
+import Pager from './ui/Pager.astro';
 import { normalizeText } from '../lib/legislators.ts';
 
 interface Ref {
@@ -67,7 +68,7 @@ const provinces = countBy(rows.flatMap(r => (r.provincia ? [r.provincia] : [])))
       </div>
     </fieldset>
   </div>
-  <p class="count" aria-live="polite" data-count>{rows.length} de {rows.length} {noun}</p>
+  <p class="count" data-count>{rows.length} de {rows.length} {noun}</p>
   <DataTable caption={caption} captionHidden dense>
     {
       // as an expression: a mapped <th> in a literal <thead> makes the compiler close the slot early (Astro 6.4)
@@ -101,10 +102,12 @@ const provinces = countBy(rows.flatMap(r => (r.provincia ? [r.provincia] : [])))
     </tbody>
   </DataTable>
   <p class="empty" hidden data-empty>No hay {noun} que coincidan con el filtro.</p>
+  <Pager label={noun} />
 </div>
 
 <script>
   import { normalizeText } from '../lib/legislators.ts';
+  import { mountPager } from './ui/pagination.ts';
 
   for (const root of document.querySelectorAll<HTMLElement>('[data-chamber]')) {
     const query = root.querySelector<HTMLInputElement>('[data-query]')!;
@@ -112,22 +115,24 @@ const provinces = countBy(rows.flatMap(r => (r.provincia ? [r.provincia] : [])))
     const empty = root.querySelector<HTMLElement>('[data-empty]')!;
     const rows = [...root.querySelectorAll<HTMLElement>('tr[data-row]')];
     const selected: Record<string, string> = { bloc: '', provincia: '' };
+    const pager = mountPager(root.querySelector('[data-pager]'), root.querySelector('[role="region"]'));
 
-    const update = () => {
+    const update = (reset = true) => {
       const q = normalizeText(query.value).trim();
-      let visible = 0;
-      for (const row of rows) {
-        row.hidden =
-          (!!selected.bloc && row.dataset.bloc !== selected.bloc) ||
-          (!!selected.provincia && row.dataset.provincia !== selected.provincia) ||
-          (!!q && !row.dataset.text!.includes(q));
-        if (!row.hidden) visible++;
-      }
-      empty.hidden = visible > 0;
-      count.textContent = `${visible} de ${rows.length} ${root.dataset.noun}`;
+      const matched = rows.filter(
+        row =>
+          (!selected.bloc || row.dataset.bloc === selected.bloc) &&
+          (!selected.provincia || row.dataset.provincia === selected.provincia) &&
+          (!q || row.dataset.text!.includes(q)),
+      );
+      if (pager) pager.show(rows, matched, { reset });
+      else for (const row of rows) row.hidden = !matched.includes(row);
+      empty.hidden = matched.length > 0;
+      count.textContent = `${matched.length} de ${rows.length} ${root.dataset.noun}`;
     };
 
-    query.addEventListener('input', update);
+    update(false);
+    query.addEventListener('input', () => update());
     for (const group of root.querySelectorAll<HTMLElement>('[data-filter]')) {
       group.addEventListener('click', event => {
         const chip = (event.target as HTMLElement).closest<HTMLButtonElement>('button');

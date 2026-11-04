@@ -1,0 +1,118 @@
+---
+// Page controls for a filtered list, driven by mountPager (./pagination.ts) from the list's own script.
+// Hidden until that script runs: without JavaScript every row stays visible.
+interface Props {
+  // what the list holds, e.g. "diputados": names the landmark "Paginación de diputados"
+  label: string;
+  pageSize?: 25 | 50 | 100;
+  // id of the <tbody> it pages, when the pager sits outside the list's own element
+  target?: string;
+}
+
+const { label, pageSize = 25, target } = Astro.props;
+const sizes = [25, 50, 100];
+---
+
+<nav class="pager" aria-label={`Paginación de ${label}`} data-pager data-for={target} hidden>
+  <p class="status" aria-live="polite" data-pager-status></p>
+  <div class="pages">
+    <button type="button" class="step" data-pager-prev>Anterior</button>
+    <span class="items" data-pager-items></span>
+    <button type="button" class="step" data-pager-next>Siguiente</button>
+  </div>
+  <label class="size">
+    Por página
+    <select data-pager-size>
+      {sizes.map(s => <option value={s} selected={s === pageSize}>{s}</option>)}
+      <option value="0">Todos</option>
+    </select>
+  </label>
+</nav>
+
+<style>
+  .pager {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    align-items: center;
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  .pager[hidden] {
+    display: none;
+  }
+
+  .status {
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--muted);
+    flex: 1 1 100%;
+  }
+
+  .pages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+  }
+
+  /* the numbered buttons wrap in the same row as Anterior and Siguiente */
+  .items {
+    display: contents;
+  }
+
+  .pages :global(button) {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 4px 8px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--text-sm);
+    cursor: pointer;
+  }
+
+  .pages :global(button:hover) {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .pages :global(button[aria-current='page']) {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--surface);
+    font-weight: 600;
+  }
+
+  .pages :global(button[aria-disabled='true']) {
+    color: var(--placeholder);
+    border-color: var(--line-soft);
+    background: var(--surface);
+    cursor: default;
+  }
+
+  .items :global(.gap) {
+    padding: 0 2px;
+    color: var(--muted);
+  }
+
+  .size {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    font-size: var(--text-xs);
+  }
+
+  .size select {
+    font: inherit;
+    font-size: var(--text-sm);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 4px 8px;
+    background: var(--surface);
+    color: var(--ink);
+  }
+</style>

@@ -1,8 +1,11 @@
 ---
-// Proyectos tab: bills filed by the deputies in office, by type and stage, the top 15 authors and the linkage quality.
+// Proyectos: bills filed by the deputies in office, by type and stage, the top authors (linking to the ficha,
+// the province and the bloc) and the linkage quality.
 import BillsSummary from './BillsSummary.astro';
 import QualityBox from './QualityBox.astro';
-import SourceLine from './SourceLine.astro';
+import Section from './ui/Section.astro';
+import DataTable from './ui/DataTable.astro';
+import type { LegislatorRelations } from '../lib/entities.ts';
 import { billsProfile } from '../lib/legislator-profile.ts';
 import type { Deputy } from '../lib/legislators.ts';
 import { STAGES } from '../lib/proyectos.ts';
@@ -12,89 +15,74 @@ import { DATASETS, formatDate, formatNumber, mergeBills, STAGE_LABELS } from '..
 interface Props {
   bills: BillsData;
   deputies: Deputy[];
+  relations: Map<string, LegislatorRelations>;
 }
 
 const TOP = 15;
-const { bills, deputies } = Astro.props;
+const { bills, deputies, relations } = Astro.props;
 const withBills = deputies.flatMap(deputy => {
   const own = bills.byLegislator.get(deputy.id);
-  return own ? [{ deputy, own }] : [];
+  return own ? [{ deputy, own, rel: relations.get(deputy.id) }] : [];
 });
 const overall = billsProfile(mergeBills(withBills.map(d => d.own)));
 const top = [...withBills]
   .sort((a, b) => b.own.total - a.own.total || a.deputy.nombre.localeCompare(b.deputy.nombre, 'es'))
   .slice(0, TOP);
 const quality = bills.quality.diputados;
+const sources = [DATASETS.proyectos, DATASETS.movimientos];
 ---
 
-<div class="box method">
-  <h2>Proyectos presentados por diputados y diputadas en funciones</h2>
+<Section title="Proyectos de diputados y diputadas en funciones" id="resumen" tag={`${formatNumber(overall.total)} proyectos`} links={sources} period={bills.period}>
   <p>
-    Proyectos publicados por la Cámara de Diputados entre el {formatDate(bills.period.desde)} y el
-    {formatDate(bills.period.hasta)}, asignados a su autor (el primer firmante). Para cada proyecto tomamos la etapa más
-    avanzada que muestran sus movimientos registrados.
+    Proyectos publicados por la Cámara de Diputados entre el {formatDate(bills.period.desde)} y el {formatDate(bills.period.hasta)},
+    asignados a su autor (el primer firmante). Para cada proyecto tomamos la etapa más avanzada que muestran sus movimientos
+    registrados. Son {formatNumber(overall.total)} proyectos de {withBills.length} diputados/as en funciones, de
+    {formatNumber(bills.bills.total)} publicados en el período (el resto es de exdiputados, del Senado, de comisiones o del Poder
+    Ejecutivo).
   </p>
-  <p>
-    {formatNumber(overall.total)} proyectos de {withBills.length} diputados/as en funciones, de {formatNumber(bills.bills.total)}
-    proyectos publicados en el período (el resto es de exdiputados, del Senado, de comisiones o del Poder Ejecutivo).
-  </p>
-</div>
+  <BillsSummary bills={overall} of="de diputados en funciones" />
+</Section>
 
-<BillsSummary bills={overall} />
-
-<h3>Los {TOP} diputados/as con más proyectos</h3>
-<div class="table-wrap">
-  <table class="data-table">
+<Section title={`Los ${TOP} diputados/as con más proyectos`} id="firmantes" links={sources} period={bills.period}>
+  <DataTable caption={`Los ${TOP} diputados/as con más proyectos como primer firmante`} captionHidden dense>
     <thead>
       <tr>
-        <th>Nombre</th><th>Distrito</th><th>Bloque</th><th class="num">Proyectos</th>
-        {STAGES.map(stage => <th class="num">{STAGE_LABELS[stage]}</th>)}
+        <th scope="col">Nombre</th><th scope="col">Provincia</th><th scope="col">Bloque</th><th scope="col" class="num">Proyectos</th>
+        {STAGES.map(stage => <th scope="col" class="num">{STAGE_LABELS[stage]}</th>)}
       </tr>
     </thead>
     <tbody>
       {
-        top.map(({ deputy, own }) => (
+        top.map(({ deputy, own, rel }) => (
           <tr>
-            <td><a href={`/diputados/${deputy.id}/`}>{deputy.nombre}</a></td>
-            <td>{deputy.lugar}</td>
-            <td>{deputy.bloque}</td>
+            <td><a href={rel?.url ?? `/diputados/${deputy.id}/`}>{deputy.nombre}</a></td>
+            <td>{rel?.province ? <a href={rel.province.url}>{rel.province.nombre}</a> : deputy.lugar}</td>
+            <td>{rel ? <a href={rel.bloc.url}>{rel.bloc.titulo}</a> : deputy.bloque}</td>
             <td class="num">{formatNumber(own.total)}</td>
             {STAGES.map(stage => <td class="num">{formatNumber(own.stages[stage])}</td>)}
           </tr>
         ))
       }
     </tbody>
-  </table>
-</div>
-<p class="note">
-  Presentar más proyectos no significa trabajar más ni mejor: incluye pedidos de informes, declaraciones de interés y
-  proyectos de ley de distinto alcance.
-</p>
-<SourceLine links={[DATASETS.proyectos, DATASETS.movimientos]} period={bills.period} />
-
-<QualityBox
-  title="Calidad del emparejamiento de autores"
-  quality={quality}
-  period={bills.period}
-  rowsLabel="proyectos iniciados en Diputados"
-  against="diputados/as en funciones durante el período (actuales y anteriores)"
->
+  </DataTable>
   <p class="note">
-    Los autores sin emparejar son en su mayoría comisiones, la propia Cámara y el Poder Ejecutivo, no personas. Los proyectos
-    iniciados en el Senado se emparejan con los senadores: {formatNumber(bills.quality.senado.rows.linkedPercent)} % asignados
-    ({formatNumber(bills.quality.senado.rows.matchedCurrent + bills.quality.senado.rows.matchedFormer)} de
-    {formatNumber(bills.quality.senado.rows.total)}).
+    Etapa: la más avanzada registrada de cada proyecto. Presentar más proyectos no significa trabajar más ni mejor: incluye pedidos
+    de informes, declaraciones de interés y proyectos de ley de distinto alcance.
   </p>
-</QualityBox>
 
-<style>
-  h2 {
-    margin: 0 0 8px;
-    font-size: 18px;
-  }
-
-  h3 {
-    font-size: 16px;
-    margin: 0 0 8px;
-  }
-</style>
+  <QualityBox
+    slot="after"
+    title="Calidad del emparejamiento de autores"
+    quality={quality}
+    period={bills.period}
+    rowsLabel="proyectos iniciados en Diputados"
+    against="diputados/as en funciones durante el período (actuales y anteriores)"
+  >
+    <p class="note">
+      Los autores sin emparejar son en su mayoría comisiones, la propia Cámara y el Poder Ejecutivo, no personas. Los proyectos
+      iniciados en el Senado se emparejan con los senadores: {formatNumber(bills.quality.senado.rows.linkedPercent)} % asignados
+      ({formatNumber(bills.quality.senado.rows.matchedCurrent + bills.quality.senado.rows.matchedFormer)} de
+      {formatNumber(bills.quality.senado.rows.total)}).
+    </p>
+  </QualityBox>
+</Section>

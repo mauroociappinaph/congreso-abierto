@@ -1,97 +1,73 @@
 ---
+// Remuneración: the single monthly amounts the Chamber publishes for every deputy, and the extras that depend on each one.
+import Section from './ui/Section.astro';
+import StatTile from './ui/StatTile.astro';
 import { formatArs } from '../lib/legislators.ts';
 import type { PayData } from '../lib/sources.ts';
+import { DATASETS, formatDate } from '../lib/view.ts';
 
 interface Props {
   pay: PayData;
+  // YYYY-MM-DD of the amounts in force
+  asOf: string | null;
+  // number of deputies in office, for the tag
+  deputies?: number;
+  id?: string;
+  level?: 2 | 3;
+  title?: string;
 }
 
-const { summary, adicionales } = Astro.props.pay;
+const { pay, asOf, deputies, id = 'remuneracion', level = 2, title = 'Remuneración mensual de cada diputado/a' } = Astro.props;
+const { summary, adicionales } = pay;
 const stats = [
   { label: 'Dieta', value: summary.dieta },
   { label: 'Gastos de representación', value: summary.gastosRepresentacion },
   { label: 'Total bruto', value: summary.bruto },
   { label: 'Descuentos', value: summary.descuentos },
-  { label: 'Neto estimado', value: summary.neto, net: true },
+  { label: 'Neto estimado', value: summary.neto, tone: 'ok' as const },
 ];
 ---
 
-<div class="pay-panel">
-  <h2>Remuneración mensual de cada diputado/a</h2>
+<Section
+  title={title}
+  id={id}
+  level={level}
+  tag={deputies ? `Igual para los ${deputies}` : 'Igual para todos'}
+  links={[DATASETS.dietas]}
+  periodLabel={`montos vigentes al ${formatDate(asOf)}`}
+>
+  <dl class="stat-grid">
+    {stats.map(stat => <StatTile label={stat.label} value={formatArs(stat.value)} size="md" tone={stat.tone} />)}
+  </dl>
   <p class="note">
-    La Cámara publica montos únicos, iguales para todos los diputados; no publica gastos individuales por legislador.
+    La Cámara publica montos únicos, iguales para todos los diputados; no son gastos individuales. El Senado no publica dietas
+    en sus datos abiertos.
   </p>
-  <div class="pay-grid">
-    {
-      stats.map(stat => (
-        <div class:list={['pay-stat', { net: stat.net }]}>
-          <span>{stat.label}</span>
-          <strong>{formatArs(stat.value)}</strong>
-        </div>
-      ))
-    }
-  </div>
   {
     adicionales.length > 0 && (
-      <div class="pay-extra">
-        Adicionales según corresponda a cada legislador:
+      <details>
+        <summary>Adicionales según corresponda a cada diputado/a ({adicionales.length})</summary>
         <ul>
           {adicionales.map(c => <li>{c.concepto}: {formatArs(c.importe)}</li>)}
         </ul>
-      </div>
+      </details>
     )
   }
-</div>
+</Section>
 
 <style>
-  .pay-panel {
-    border: 1px solid #d6e4fb;
-    background: #f3f8ff;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
+  details {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
   }
 
-  h2 {
-    margin: 0 0 4px;
-    font-size: 18px;
+  summary {
+    color: var(--accent);
+    cursor: pointer;
   }
 
-  .pay-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 10px;
-    margin: 12px 0;
-  }
-
-  .pay-stat {
-    background: white;
-    border-radius: 6px;
-    padding: 10px;
-  }
-
-  .pay-stat span {
-    display: block;
-    font-size: 12px;
-    color: #666;
-  }
-
-  .pay-stat strong {
-    font-size: 18px;
-    color: #1a73e8;
-  }
-
-  .pay-stat.net strong {
-    color: #2e7d32;
-  }
-
-  .pay-extra {
-    font-size: 13px;
-    color: #555;
-  }
-
-  .pay-extra ul {
-    margin: 4px 0 0;
-    padding-left: 20px;
+  ul {
+    margin: var(--space-2) 0 0;
+    padding-left: var(--space-5);
   }
 </style>

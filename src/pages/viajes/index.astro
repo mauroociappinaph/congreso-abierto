@@ -1,0 +1,44 @@
+---
+// Viajes: national trips compared with peers at a similar distance, and official missions abroad.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageHead from '../../components/home/PageHead.astro';
+import TravelPanel from '../../components/TravelPanel.astro';
+import MissionsPanel from '../../components/MissionsPanel.astro';
+import { loadDeputies, loadEntities, loadMissions, loadTravel } from '../../lib/sources.ts';
+
+const deputies = await loadDeputies();
+const [entities, travel, missions] = await Promise.all([loadEntities(), loadTravel(deputies), loadMissions(deputies)]);
+---
+
+<SiteLayout title="Viajes - Gastos y trabajo legislativo">
+  <div class="page-wrap topic-page">
+    <PageHead
+      title="Viajes"
+      eyebrow="Diputados · viajes nacionales y misiones oficiales"
+      lede="Cuántos tramos de viaje registra cada diputado/a por mes, frente a sus pares a distancia similar de Buenos Aires, y las misiones oficiales al exterior con sus viáticos."
+    />
+    <nav class="toc" aria-label="En esta página">
+      <a href="#metodo">Cómo se compara</a>
+      <a href="#grupos">Por distancia</a>
+      <a href="#comparacion">Frente a su grupo</a>
+      <a href="#tabla">Tabla</a>
+      <a href="#misiones">Misiones</a>
+    </nav>
+    <TravelPanel report={travel} deputies={deputies} relations={entities.relations} />
+    <MissionsPanel missions={missions} deputies={deputies} relations={entities.relations} />
+  </div>
+</SiteLayout>
+
+<style>
+  .topic-page {
+    padding-top: var(--space-7);
+  }
+
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin: 0 0 var(--space-5);
+    font-size: var(--text-sm);
+  }
+</style>

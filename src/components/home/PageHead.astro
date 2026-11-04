@@ -1,0 +1,33 @@
+---
+// Head of a topic page (/diputados/, /senado/, /viajes/, /proyectos/): breadcrumb, eyebrow, title and lede.
+import Breadcrumb from '../ui/Breadcrumb.astro';
+
+interface Props {
+  title: string;
+  eyebrow?: string;
+  lede?: string;
+}
+
+const { title, eyebrow, lede } = Astro.props;
+---
+
+<Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: title }]} />
+{eyebrow && <p class="eyebrow">{eyebrow}</p>}
+<h1>{title}</h1>
+{lede && <p class="lede">{lede}</p>}
+<slot />
+
+<style>
+  h1 {
+    margin: 0;
+    font-size: clamp(28px, 5vw, var(--text-4xl));
+    line-height: var(--leading-tight);
+  }
+
+  .lede {
+    max-width: 720px;
+    color: var(--muted);
+    font-size: var(--text-lg);
+    margin: 10px 0 var(--space-6);
+  }
+</style>

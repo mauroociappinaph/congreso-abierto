@@ -1,20 +1,28 @@
 ---
-// Shared frame of the per-legislator pages: site frame, breadcrumb back to the chamber, person header.
+// Shared frame of the per-legislator pages (01, Pantalla 2): site frame, breadcrumb back to the chamber and the
+// province, person header with its key facts (slot "facts", <StatTile>s), then the relation strip and sections.
 import SiteLayout from './SiteLayout.astro';
 import Breadcrumb from '../components/ui/Breadcrumb.astro';
 
 interface Props {
   title: string;
-  // index tab to return to
   chamber: 'diputados' | 'senadores';
   nombre: string;
   subtitle: string;
   foto?: string;
+  province?: { nombre: string; url: string } | null;
 }
 
-const { title, chamber, nombre, subtitle, foto } = Astro.props;
-const chamberLabel = chamber === 'diputados' ? 'Diputados' : 'Senadores';
+const { title, chamber, nombre, subtitle, foto, province } = Astro.props;
+const chamberLabel = chamber === 'diputados' ? 'Diputados' : 'Senado';
+const chamberHref = chamber === 'diputados' ? '/diputados/' : '/senado/';
 const role = chamber === 'diputados' ? 'Diputado/a nacional' : 'Senador/a nacional';
+const crumbs = [
+  { label: 'Inicio', href: '/' },
+  { label: chamberLabel, href: chamberHref },
+  ...(province ? [{ label: province.nombre, href: province.url }] : []),
+  { label: nombre },
+];
 // "Yedlin, Pablo Raúl" -> "PY"
 const [surname = '', given = ''] = nombre.split(',').map(part => part.trim());
 const initials = `${given.charAt(0)}${surname.charAt(0)}`.toUpperCase();
@@ -22,18 +30,19 @@ const initials = `${given.charAt(0)}${surname.charAt(0)}`.toUpperCase();
 
 <SiteLayout title={title} current={chamber === 'diputados' ? 'diputados' : 'senado'}>
   <article class="page-wrap legislator" aria-labelledby="legislator-name">
-    <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: chamberLabel, href: `/#${chamber}` }, { label: nombre }]} />
+    <Breadcrumb items={crumbs} />
     <header class="who">
       {foto ? <img class="photo" src={foto} alt="" /> : <span class="photo initials" aria-hidden="true">{initials}</span>}
-      <div>
+      <div class="name">
         <p class="eyebrow">{role}</p>
         <h1 id="legislator-name">{nombre}</h1>
         <p class="sub">{subtitle}</p>
       </div>
+      {Astro.slots.has('facts') && <dl class="keyfacts" aria-label="Datos clave"><slot name="facts" /></dl>}
     </header>
     <slot />
   </article>
-  <p slot="footer"><a href={`/#${chamber}`}>Volver a {chamberLabel}</a></p>
+  <p slot="footer"><a href={chamberHref}>Volver a {chamberLabel}</a></p>
 </SiteLayout>
 
 <style>
@@ -43,9 +52,22 @@ const initials = `${given.charAt(0)}${surname.charAt(0)}`.toUpperCase();
 
   .who {
     display: flex;
-    gap: var(--space-5);
+    flex-wrap: wrap;
+    gap: var(--space-4) var(--space-5);
     align-items: center;
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-2);
+  }
+
+  .name {
+    flex: 1 1 260px;
+    min-width: 0;
+  }
+
+  .keyfacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-6);
+    margin: 0;
   }
 
   .photo {
@@ -78,17 +100,24 @@ const initials = `${given.charAt(0)}${surname.charAt(0)}`.toUpperCase();
     color: var(--muted);
   }
 
-  .legislator :global(section) {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 18px 20px;
-    margin-bottom: var(--space-5);
+  .legislator :global(.grid2) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: 0 var(--space-5);
+    align-items: start;
   }
 
-  .legislator :global(h2) {
-    margin: 0 0 var(--space-2);
-    font-size: var(--text-xl);
+  .legislator :global(.toc) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin: 0 0 var(--space-5);
+    font-size: var(--text-sm);
+  }
+
+  .legislator :global(h3.sub-title) {
+    font-size: var(--text-lg);
+    margin: var(--space-4) 0 var(--space-2);
   }
 
   .legislator :global(.facts) {

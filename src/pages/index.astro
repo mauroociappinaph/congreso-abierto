@@ -1,169 +1,378 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Chamber from '../components/Chamber.astro';
-import DetailDialog from '../components/DetailDialog.astro';
-import PayPanel from '../components/PayPanel.astro';
-import TravelPanel from '../components/TravelPanel.astro';
-import MissionsPanel from '../components/MissionsPanel.astro';
-import ProjectsPanel from '../components/ProjectsPanel.astro';
-import SenateVotesPanel from '../components/SenateVotesPanel.astro';
-import { loadBills, loadDeputies, loadMissions, loadPay, loadSenateVotes, loadSenators, loadTravel } from '../lib/sources.ts';
-import { DATASETS, toDeputyItem, toSenatorItem } from '../lib/view.ts';
+// Home: search first (01, Pantalla 1) with entry chips by bloc, province and committee, then one card per topic
+// (02, Pantalla 1), each with its key finding, a small chart, its source and period, and a link to its page.
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Chip from '../components/ui/Chip.astro';
+import SearchBox from '../components/ui/SearchBox.astro';
+import StatTile from '../components/ui/StatTile.astro';
+import TopicCard from '../components/ui/TopicCard.astro';
+import BarChart from '../components/ui/BarChart.astro';
+import Funnel from '../components/ui/Funnel.astro';
+import SourceLine from '../components/SourceLine.astro';
+import { formatArs } from '../lib/legislators.ts';
+import {
+  loadBills, loadCommittees, loadDeputies, loadEntities, loadMissions, loadSenateVotes, loadSenators, loadTravel,
+} from '../lib/sources.ts';
+import { DATASETS, formatDate, formatNumber, formatShare, STAGE_LABELS } from '../lib/view.ts';
 
-const [deputies, pay, { senators, snapshotDate }] = await Promise.all([loadDeputies(), loadPay(), loadSenators()]);
-const [travel, missions, bills, senateVotes] = await Promise.all([
-  loadTravel(deputies), loadMissions(deputies), loadBills(deputies, senators), loadSenateVotes(senators),
+const [deputies, { senators }] = await Promise.all([loadDeputies(), loadSenators()]);
+const [entities, travel, missions, bills, committees, votes] = await Promise.all([
+  loadEntities(), loadTravel(deputies), loadMissions(deputies), loadBills(deputies, senators), loadCommittees(deputies), loadSenateVotes(senators),
 ]);
-const footerSources = Object.values(DATASETS);
-const travelById = new Map(travel.analysis.deputies.map(t => [t.deputyId, t]));
-const deputyItems = deputies.map(deputy => toDeputyItem(deputy, pay.summary, travelById.get(deputy.id)));
-const senatorItems = senators.map(toSenatorItem);
-const builtAt = new Date().toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });
+const { topics, blocs, provinces, relations } = entities;
+const { numbers } = topics;
+const pct = (value: number) => `${formatNumber(value)} %`;
+const plural = (count: number, one: string, many: string) => `${formatNumber(count)} ${count === 1 ? one : many}`;
+const linkedLabel = (value: number) => ({ label: `${pct(value)} asignado`, tone: value >= 90 ? ('ok' as const) : ('warn' as const) });
+
+// Entry chips: the largest blocs of each chamber (separate entities), provinces and committees.
+const deputyBlocs = blocs.filter(b => b.camara === 'diputados');
+const senateBlocs = blocs.filter(b => b.camara === 'senado');
+const blocChips = [
+  ...deputyBlocs.slice(0, 5).map(b => ({ label: b.titulo, href: b.url, meta: `${b.seats} dip.` })),
+  ...senateBlocs.slice(0, 3).map(b => ({ label: b.titulo, href: b.url, meta: `${b.seats} sen.` })),
+];
+const provinceChips = [...provinces]
+  .sort((a, b) => b.deputies.length - a.deputies.length || a.nombre.localeCompare(b.nombre, 'es'))
+  .slice(0, 6)
+  .map(p => ({ label: p.nombre, href: p.url, meta: `${p.deputies.length} dip. · ${p.senators.length} sen.` }));
+const committeeChips = topics.committees.largest.slice(0, 4).map(c => ({ label: c.titulo, href: c.url, meta: plural(c.integrantes, 'integrante', 'integrantes') }));
+
+// Viajes: band medians, nearest band first.
+const bands = topics.travel.bands;
+const rising = bands.every((b, i) => i === 0 || b.median >= bands[i - 1].median);
+const travelTitle =
+  bands.length > 1 && rising
+    ? `Cuanto más lejos de Buenos Aires, más tramos: de ${formatNumber(bands[0].median)} a ${formatNumber(bands.at(-1)!.median)} por mes`
+    : 'Tramos por mes según la distancia a Buenos Aires';
+const flagged = topics.travel.flagged;
+
+// Remuneración
+const { pay } = topics;
+
+// Proyectos
+const funnel = topics.bills.funnel;
+const sanctioned = funnel.at(-1);
+const stageLabel = (i: number) => (i === 0 || i === funnel.length - 1 ? STAGE_LABELS[funnel[i].stage] : `${STAGE_LABELS[funnel[i].stage]} o más`);
+
+// Votaciones del Senado
+const senate = topics.senate;
+const riceBlocs = senate.blocs.filter(b => b.riceMedio !== null);
+const bigTogether = riceBlocs.slice(0, 2).length === 2 && riceBlocs.slice(0, 2).every(b => b.riceMedio! >= 0.9);
+const senatorUrl = (id: string) => relations.get(id)?.url ?? `/senadores/${id}/`;
+// the actas spell names in capitals; the Senate list does not
+const senatorName = (id: string, fallback: string) => senators.find(s => s.id === id)?.nombre ?? fallback;
+
+// Comisiones
+const largest = topics.committees.largest;
+
+// Misiones: only deputies in office today (L8), never the published total.
+const missionRows = missions.deputies
+  .filter(m => m.count > 0 && relations.has(m.deputyId))
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 5)
+  .map(m => {
+    const rel = relations.get(m.deputyId)!;
+    const deputy = deputies.find(d => d.id === m.deputyId)!;
+    return { label: deputy.nombre, value: m.count, href: rel.url, detail: rel.province?.nombre };
+  });
+
 ---
 
-<Layout title="Gastos de Diputados y Senadores - Argentina">
-  <header>
-    <h1>Gastos de Diputados y Senadores</h1>
-    <p>Argentina - Datos Abiertos</p>
-  </header>
+<SiteLayout title="Gastos y trabajo legislativo - Diputados y Senado de Argentina" current="inicio">
+  <script is:inline>
+    // Old tab links (/#viajes) now have their own pages.
+    (function () {
+      var pages = { diputados: '/diputados/', senadores: '/senado/', viajes: '/viajes/', proyectos: '/proyectos/' };
+      var target = pages[location.hash.slice(1)];
+      if (target) location.replace(target);
+    })();
+  </script>
 
-  <main class="container">
-    <div class="tabs" role="tablist">
-      <button class="tab active" role="tab" aria-selected="true" aria-controls="diputados" data-tab="diputados">Diputados</button>
-      <button class="tab" role="tab" aria-selected="false" aria-controls="senadores" data-tab="senadores">Senadores</button>
-      <button class="tab" role="tab" aria-selected="false" aria-controls="viajes" data-tab="viajes">Viajes</button>
-      <button class="tab" role="tab" aria-selected="false" aria-controls="proyectos" data-tab="proyectos">Proyectos</button>
+  <div class="page-wrap home">
+    <section class="hero" aria-labelledby="inicio-titulo">
+      <div class="hero-main">
+        <p class="eyebrow">{numbers.diputados.value} diputados · {numbers.senadores.value} senadores · datos actualizados al {formatDate(numbers.diputados.provenance.hasta)}</p>
+        <h1 id="inicio-titulo">¿A quién querés conocer? Buscá un legislador, su provincia, su bloque o una comisión.</h1>
+        <p class="lede">
+          Cada ficha reúne lo que publican las Cámaras sobre esa persona y te lleva a todo lo que se relaciona con ella: su bloque,
+          sus pares de provincia, sus comisiones, sus proyectos, sus viajes y sus votaciones.
+        </p>
+        <SearchBox
+          label="Buscar por nombre, provincia, bloque o comisión"
+          size="hero"
+          placeholder="Ej.: Yedlin, Tucumán, Presupuesto y Hacienda"
+          hint="Los resultados aparecen mientras escribís. Probá «tucu», «salud» o «patria»."
+          indexUrl="/search-index.json"
+        />
+
+        <div class="entry">
+          <h2>Entrar por bloque</h2>
+          <ul class="chip-list">
+            {blocChips.map(c => <li><Chip {...c} /></li>)}
+            <li><Chip label="Todos los bloques" href="/bloques/" meta={`${deputyBlocs.length} en Diputados · ${senateBlocs.length} en el Senado`} /></li>
+          </ul>
+        </div>
+        <div class="entry">
+          <h2>Entrar por provincia</h2>
+          <ul class="chip-list">
+            {provinceChips.map(c => <li><Chip {...c} /></li>)}
+            <li><Chip label={`Las ${provinces.length} jurisdicciones`} href="/provincias/" /></li>
+          </ul>
+        </div>
+        <div class="entry">
+          <h2>Entrar por comisión (Diputados)</h2>
+          <ul class="chip-list">
+            {committeeChips.map(c => <li><Chip {...c} /></li>)}
+            <li><Chip label={`Las ${topics.committees.total} comisiones`} href="/comisiones/" /></li>
+          </ul>
+        </div>
+      </div>
+
+      <aside class="facts" aria-labelledby="iguales-titulo">
+        <h2 id="iguales-titulo" class="eyebrow">Lo que es igual para todos</h2>
+        <dl>
+          <StatTile label="Dieta mensual de cada diputado/a" value={formatArs(pay.dieta)} size="md" note={`Monto único publicado por la Cámara; no es un gasto individual. HCDN, ${pay.provenance.label}.`} />
+          <StatTile label="Gastos de representación" value={formatArs(pay.gastosRepresentacion)} size="md" note={`Mismo monto para los ${numbers.diputados.value}. HCDN, ${pay.provenance.label}.`} />
+          <StatTile label="Actas de votación del Senado" value={formatNumber(numbers.actas.value)} size="md" note={`Votaciones nominales del ${formatDate(votes.period.desde)} al ${formatDate(votes.period.hasta)}.`} />
+        </dl>
+        <SourceLine links={[DATASETS.dietas, DATASETS.actas]} />
+        <p class="note">El Senado no publica dietas ni gastos en sus datos abiertos.</p>
+        <p class="quality-line">
+          <strong>Calidad de los cruces de datos:</strong> comisiones {pct(committees.quality.rows.linkedPercent)} · misiones
+          {pct(missions.quality.rows.linkedPercent)} · proyectos {pct(bills.quality.diputados.rows.linkedPercent)} · votos del
+          Senado {pct(votes.quality.rows.linkedPercent)} asignados a una persona. Los nombres dudosos se informan y no se asignan.
+        </p>
+      </aside>
+    </section>
+
+    <h2 class="topics-title">Hallazgos por tema</h2>
+    <p class="topics-lede">Cada tarjeta indica su fuente y su período, y lleva a la página del tema; de ahí, a la ficha de cada legislador.</p>
+    <div class="topic-grid">
+      <TopicCard
+        span={4}
+        id="tema-viajes"
+        topic="Viajes nacionales"
+        title={travelTitle}
+        lede="Mediana de tramos por mes de cada grupo de distancia estimada a Buenos Aires. Cada diputado/a se compara solo con sus pares a distancia similar."
+        href="/viajes/"
+        linkLabel="Ver ranking por grupo de distancia"
+        links={[DATASETS.viajes]}
+        periodLabel={topics.travel.provenance.label}
+        quality={{ label: `Tramos: ${pct(travel.quality.legs.percent)} asignado`, tone: travel.quality.legs.percent >= 90 ? 'ok' : 'warn' }}
+      >
+        <BarChart
+          title="Mediana de tramos por mes por distancia estimada a Buenos Aires"
+          labelWidth="120px"
+          bars={bands.map(b => ({ label: b.band, value: b.median, detail: plural(b.deputies, 'diputado', 'diputados') }))}
+        />
+        <div slot="note">
+          {
+            flagged.length > 0 && (
+              <p class="note">
+                {flagged.length === 1 ? 'Viaja' : 'Viajan'} bastante más que sus pares:{' '}
+                {flagged.map((f, i) => (
+                  <>
+                    {i > 0 && (i === flagged.length - 1 ? ' y ' : ', ')}
+                    <a href={f.url}>{f.nombre}</a> ({f.band}){i === flagged.length - 1 && '.'}
+                  </>
+                ))}
+              </p>
+            )
+          }
+          <p class="note">Más tramos no implica irregularidad: depende de la distancia, la agenda y los traslados a la provincia.</p>
+        </div>
+      </TopicCard>
+
+      <TopicCard
+        span={2}
+        id="tema-remuneracion"
+        topic="Remuneración"
+        title={`El mismo monto para los ${numbers.diputados.value} diputados`}
+        keyNumber={formatArs(pay.bruto)}
+        keyNote={`bruto mensual · neto estimado ${formatArs(pay.neto)}`}
+        href="/diputados/#remuneracion"
+        linkLabel="Ver adicionales y descuentos"
+        links={[DATASETS.dietas]}
+        periodLabel={`montos vigentes al ${formatDate(pay.provenance.hasta)}`}
+      >
+        <BarChart
+          title="Composición del bruto mensual"
+          labelWidth="110px"
+          max={pay.bruto}
+          bars={[
+            { label: 'Dieta', value: pay.dieta ?? 0, valueLabel: formatShare(pay.shares.dieta), detail: formatArs(pay.dieta) },
+            { label: 'Representación', value: pay.gastosRepresentacion ?? 0, valueLabel: formatShare(pay.shares.gastosRepresentacion), detail: formatArs(pay.gastosRepresentacion) },
+          ]}
+        />
+        <p slot="note" class="note">Son montos generales publicados por la Cámara, no gastos individuales.</p>
+      </TopicCard>
+
+      <TopicCard
+        span={3}
+        id="tema-proyectos"
+        topic="Proyectos"
+        title={sanctioned ? `De ${formatNumber(topics.bills.total)} proyectos, ${formatShare(sanctioned.share)} llegó a sancionarse en una Cámara` : 'Proyectos de diputados en funciones'}
+        href="/proyectos/"
+        linkLabel="Ranking de firmantes"
+        links={[DATASETS.proyectos, DATASETS.movimientos]}
+        periodLabel={topics.bills.provenance.label}
+        quality={linkedLabel(bills.quality.diputados.rows.linkedPercent)}
+      >
+        <Funnel
+          title="Proyectos de diputados en funciones que llegaron al menos a cada etapa"
+          stages={funnel.map((f, i) => ({ label: stageLabel(i), value: f.alcanzado }))}
+          highlightLast
+        />
+        <p slot="note" class="note">«Sancionado» no significa «es ley»: resoluciones y declaraciones se aprueban en una sola Cámara. Presentar más no significa trabajar más ni mejor.</p>
+      </TopicCard>
+
+      <TopicCard
+        span={3}
+        id="tema-senado"
+        topic="Votaciones del Senado"
+        title={bigTogether ? 'Los bloques grandes votan casi siempre juntos' : 'Cuánto vota junto cada bloque del Senado'}
+        href="/senado/"
+        linkLabel="Cohesión y asistencia"
+        links={[DATASETS.actas]}
+        periodLabel={senate.provenance.label}
+        quality={linkedLabel(votes.quality.rows.linkedPercent)}
+      >
+        <BarChart
+          title="Índice de Rice medio por bloque del Senado (1 = votan todos igual)"
+          max={1}
+          labelWidth="150px"
+          bars={riceBlocs.map(b => ({ label: b.titulo, href: b.url ?? undefined, value: b.riceMedio!, detail: plural(b.senators, 'senador', 'senadores') }))}
+        />
+        <div slot="note">
+          {
+            senate.attendance && (
+              <p class="note">
+                Asistencia de los senadores en funciones: de {formatShare(senate.attendance.min.value)}
+                (<a href={senatorUrl(senate.attendance.min.id)}>{senatorName(senate.attendance.min.id, senate.attendance.min.nombre)}</a>) a {formatShare(senate.attendance.max.value)}
+                (<a href={senatorUrl(senate.attendance.max.id)}>{senatorName(senate.attendance.max.id, senate.attendance.max.nombre)}</a>). El acta no dice el motivo de una ausencia.
+              </p>
+            )
+          }
+        </div>
+      </TopicCard>
+
+      <TopicCard
+        span={3}
+        id="tema-comisiones"
+        topic="Comisiones"
+        title={largest[0] ? `${largest[0].titulo} es la comisión más numerosa` : 'Comisiones de Diputados'}
+        href="/comisiones/"
+        linkLabel={`Ver las ${topics.committees.total} comisiones`}
+        links={[DATASETS.comisiones]}
+        periodLabel={topics.committees.provenance.label}
+        quality={linkedLabel(committees.quality.rows.linkedPercent)}
+      >
+        <BarChart
+          title="Integrantes de las comisiones más numerosas"
+          labelWidth="190px"
+          bars={largest.map(c => ({ label: c.titulo, href: c.url, value: c.integrantes }))}
+        />
+        <p slot="note" class="note">Cada comisión tiene su página con autoridades, integrantes por bloque y provincia, y los proyectos de sus integrantes.</p>
+      </TopicCard>
+
+      <TopicCard
+        span={3}
+        id="tema-misiones"
+        topic="Misiones oficiales"
+        title={`${formatNumber(numbers.misiones.value)} misiones al exterior de diputados en funciones`}
+        keyNumber={formatNumber(numbers.misiones.value)}
+        keyNote={`misiones oficiales ${numbers.misiones.sub}, ${numbers.misiones.provenance.label}`}
+        href="/viajes/#misiones"
+        linkLabel="Ver las misiones"
+        links={[DATASETS.misiones]}
+        periodLabel={numbers.misiones.provenance.label}
+        quality={linkedLabel(missions.quality.rows.linkedPercent)}
+      >
+        <BarChart title="Diputados en funciones con más misiones" labelWidth="190px" bars={missionRows} />
+        <p slot="note" class="note">Una misión oficial es una actividad institucional; el número de misiones no implica irregularidad.</p>
+      </TopicCard>
     </div>
+  </div>
+</SiteLayout>
 
-    <section class="content" id="diputados" role="tabpanel">
-      <PayPanel pay={pay} />
-      <Chamber id="diputados" items={deputyItems} noun="diputados" searchPlaceholder="Buscar por nombre o distrito..." />
-    </section>
+<style>
+  .home {
+    padding-top: var(--space-7);
+  }
 
-    <section class="content" id="senadores" role="tabpanel" hidden>
-      <p class="note source-note">
-        {
-          snapshotDate
-            ? `La API del Senado no respondió al generar el sitio; se muestra la copia del listado oficial al ${snapshotDate}.`
-            : 'Listado oficial del Senado de la Nación.'
-        }
-      </p>
-      <Chamber id="senadores" items={senatorItems} noun="senadores" searchPlaceholder="Buscar por nombre o provincia..." />
-      <SenateVotesPanel votes={senateVotes} senators={senators} />
-    </section>
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+    gap: var(--space-6) var(--space-8);
+    align-items: start;
+    margin-bottom: var(--space-8);
+  }
 
-    <section class="content" id="viajes" role="tabpanel" hidden>
-      <TravelPanel report={travel} deputies={deputies} />
-      <MissionsPanel missions={missions} deputies={deputies} />
-    </section>
-
-    <section class="content" id="proyectos" role="tabpanel" hidden>
-      <ProjectsPanel bills={bills} deputies={deputies} />
-    </section>
-  </main>
-
-  <footer>
-    Datos actualizados al {builtAt}. Fuentes:
-    {footerSources.map((source, i) => <>{i > 0 && ', '}<a href={source.href} target="_blank" rel="noopener">{source.label}</a></>)}.
-  </footer>
-
-  <DetailDialog />
-</Layout>
-
-<script>
-  const tabs = [...document.querySelectorAll<HTMLButtonElement>('.tab')];
-
-  function show(name: string) {
-    if (!tabs.some(tab => tab.dataset.tab === name)) name = 'diputados';
-    for (const tab of tabs) {
-      const active = tab.dataset.tab === name;
-      tab.classList.toggle('active', active);
-      tab.setAttribute('aria-selected', String(active));
-      document.getElementById(tab.dataset.tab!)!.hidden = !active;
+  @media (max-width: 960px) {
+    .hero {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 
-  tabs.forEach(tab => tab.addEventListener('click', () => {
-    history.replaceState(null, '', `#${tab.dataset.tab}`);
-    show(tab.dataset.tab!);
-  }));
-  show(location.hash.slice(1));
-</script>
-
-<style>
-  header {
-    background: #1a73e8;
-    color: white;
-    padding: 20px;
-    text-align: center;
-  }
-
-  header h1 {
+  h1 {
     margin: 0;
-    font-size: 24px;
+    font-size: clamp(26px, 4.4vw, var(--text-4xl));
+    line-height: var(--leading-tight);
+    max-width: 820px;
   }
 
-  header p {
-    margin: 5px 0 0;
-    opacity: 0.9;
+  .lede {
+    max-width: 720px;
+    color: var(--muted);
+    font-size: var(--text-lg);
+    margin: var(--space-3) 0 var(--space-5);
   }
 
-  .container {
-    display: block;
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 0 20px;
+  .entry {
+    margin-top: var(--space-5);
   }
 
-  .tabs {
-    display: flex;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  .entry h2 {
+    font-family: var(--sans);
+    font-size: var(--text-sm);
+    margin: 0 0 var(--space-2);
   }
 
-  .tab {
-    flex: 1;
-    padding: 12px;
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: #666;
-    font-size: 14px;
-    cursor: pointer;
+  .facts {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 20px;
   }
 
-  .tab.active {
-    color: #1a73e8;
-    border-bottom-color: #1a73e8;
+  .facts dl {
+    display: grid;
+    gap: var(--space-4);
+    margin: var(--space-2) 0 var(--space-3);
   }
 
-  .tab:hover:not(.active) {
-    color: #1a73e8;
+  .quality-line {
+    margin: var(--space-3) 0 0;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--quality-line);
+    background: var(--quality-soft);
+    border-radius: var(--radius);
+    font-size: var(--text-xs);
   }
 
-  .content {
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  .quality-line strong {
+    color: var(--quality);
   }
 
-  .source-note {
-    margin: 0 0 12px;
+  .topics-title {
+    margin: 0;
+    font-size: var(--text-2xl);
   }
 
-  footer {
-    max-width: 1200px;
-    margin: 0 auto 30px;
-    padding: 0 20px;
-    font-size: 12px;
-    color: #777;
-  }
-
-  footer a {
-    color: #1a73e8;
+  .topics-lede {
+    margin: var(--space-1) 0 var(--space-4);
+    color: var(--muted);
+    font-size: var(--text-sm);
   }
 </style>

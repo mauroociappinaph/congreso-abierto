@@ -1,128 +1,197 @@
 ---
-// Viajes tab: methodology, distance-band medians, the per-deputy table and the linkage quality (S5).
+// Viajes nacionales: methodology, distance-band medians, every compared deputy against the band median, the
+// per-deputy table (linking to the ficha, the province and the bloc) and the linkage quality (S5).
 // The table is rendered at build time; the script only filters rows.
+import Section from './ui/Section.astro';
+import BarChart from './ui/BarChart.astro';
+import DataTable from './ui/DataTable.astro';
+import DotPlot from './ui/DotPlot.astro';
+import { bandsDescription, travelDotRows } from './home/travel-dots.ts';
+import type { LegislatorRelations } from '../lib/entities.ts';
 import { normalizeText, type Deputy } from '../lib/legislators.ts';
 import { semesterLabel, type TravelReport } from '../lib/travel-report.ts';
 import { MIN_BAND_PEERS, MIN_MONTHS, Z_THRESHOLD } from '../lib/viajes.ts';
-import { formatNumber } from '../lib/view.ts';
+import { DATASETS, formatNumber, travelComparison, travelStatus } from '../lib/view.ts';
 
 interface Props {
   report: TravelReport;
   deputies: Deputy[];
+  relations: Map<string, LegislatorRelations>;
 }
 
-const { report, deputies } = Astro.props;
+const { report, deputies, relations } = Astro.props;
 const { quality } = report;
 const byId = new Map(deputies.map(d => [d.id, d]));
+const nombreById = new Map(deputies.map(d => [d.id, d.nombre]));
 const rows = report.analysis.deputies
-  .map(travel => ({ travel, deputy: byId.get(travel.deputyId)! }))
+  .flatMap(travel => {
+    const deputy = byId.get(travel.deputyId);
+    return deputy ? [{ travel, deputy, rel: relations.get(deputy.id) }] : [];
+  })
   .sort((a, b) => b.travel.legsPerMonth - a.travel.legsPerMonth || a.deputy.nombre.localeCompare(b.deputy.nombre, 'es'));
-const flaggedCount = rows.filter(r => r.travel.flagged).length;
+const flagged = rows.filter(r => r.travel.flagged);
+const compared = report.analysis.bands.reduce((t, b) => t + b.deputies, 0);
 const pct = (value: number) => `${formatNumber(value)} %`;
 const orDash = (value: number | null) => (value === null ? '—' : formatNumber(value));
+const dotRows = travelDotRows(report.analysis, nombreById);
+const maxRate = Math.max(1, ...rows.filter(r => r.travel.eligible).map(r => r.travel.legsPerMonth));
+const period = report.windowLabel;
 ---
 
-<div class="travel" data-travel>
-  <div class="box method">
-    <h2>Viajes nacionales: cómo se compara</h2>
+<Section title="Cómo se compara" id="metodo" eyebrow="Viajes nacionales" links={[DATASETS.viajes]} periodLabel={period}>
+  <div class="method">
     <p>
       Contamos los tramos de viaje (cada vuelo o pasaje terrestre) que la Cámara publica para cada diputado/a entre el
-      {semesterLabel(report.semesters[0])} y el {report.latestLabel}, y los dividimos por los meses en el cargo dentro de ese período: así, quien asumió hace poco no
-      queda en desventaja.
+      {semesterLabel(report.semesters[0])} y el {report.latestLabel}, y los dividimos por los meses en el cargo dentro de ese
+      período: así, quien asumió hace poco no queda en desventaja.
     </p>
     <p>
-      No es lo mismo viajar desde Jujuy que desde la Ciudad de Buenos Aires, ni desde Mar del Plata que desde el conurbano.
-      Por eso cada diputado/a se compara con sus pares a distancia similar de Buenos Aires. Usamos una distancia estimada a partir
-      de su ruta más frecuente o de la capital de su provincia; es una estimación: tomamos la terminal o el aeropuerto de su
-      provincia que más aparece en sus tramos (al menos 3) y, si no hay, la capital provincial, y medimos la distancia en
-      línea recta hasta el Obelisco. Con esa distancia armamos grupos (menos de 100 km, 100–400, 400–800, 800–1200 y
-      1200 km o más); un grupo con menos de {MIN_BAND_PEERS} diputados comparables se une al grupo vecino más cercano a Buenos Aires
-      (el primero, al siguiente).
+      No es lo mismo viajar desde Jujuy que desde la Ciudad de Buenos Aires, ni desde Mar del Plata que desde el conurbano. Por
+      eso cada diputado/a se compara con sus pares a distancia similar de Buenos Aires. Usamos una distancia estimada a partir de
+      su ruta más frecuente o de la capital de su provincia: tomamos la terminal o el aeropuerto de su provincia que más aparece
+      en sus tramos (al menos 3) y, si no hay, la capital provincial, y medimos la distancia en línea recta hasta el Obelisco.
+      Con esa distancia armamos grupos (menos de 100 km, 100–400, 400–800, 800–1200 y 1200 km o más); un grupo con menos de
+      {MIN_BAND_PEERS} diputados comparables se une al grupo vecino más cercano a Buenos Aires (el primero, al siguiente).
     </p>
     <p>
-      Medimos cuánto se aparta cada uno de la mediana de su grupo usando el desvío absoluto mediano, una medida
-      robusta: un par de casos extremos no mueven la comparación. Cuando ese puntaje (z robusto) supera {formatNumber(Z_THRESHOLD)}
-      decimos que <strong>viaja bastante más que sus pares</strong>. Quienes tienen menos de {MIN_MONTHS} meses en el cargo
-      dentro del período se muestran, pero no se comparan.
-    </p>
-    <p class="note">
-      Más tramos no implica irregularidad: depende de la distancia, la agenda y los traslados a la provincia.
+      Medimos cuánto se aparta cada uno de la mediana de su grupo usando el desvío absoluto mediano, una medida robusta: un par
+      de casos extremos no mueven la comparación. Cuando ese puntaje (z robusto) supera {formatNumber(Z_THRESHOLD)} decimos que
+      <strong>viaja bastante más que sus pares</strong>. Quienes tienen menos de {MIN_MONTHS} meses en el cargo dentro del período
+      se muestran, pero no se comparan.
     </p>
   </div>
+  <p class="note">Más tramos no implica irregularidad: depende de la distancia, la agenda y los traslados a la provincia.</p>
+</Section>
 
-  <h3>Mediana por distancia a Buenos Aires</h3>
-  <table class="bands">
-    <thead>
-      <tr><th>Grupo</th><th>Diputados comparados</th><th>Mediana de tramos por mes</th><th>Mediana de distancia estimada</th></tr>
-    </thead>
-    <tbody>
-      {
-        report.analysis.bands.map(b => (
-          <tr>
-            <td>{b.band}</td><td class="num">{b.deputies}</td><td class="num">{formatNumber(b.medianLegsPerMonth)}</td>
-            <td class="num">{formatNumber(b.medianKm)} km</td>
-          </tr>
-        ))
-      }
-    </tbody>
-  </table>
-
-  <h3>Tramos por diputado/a</h3>
-  <div class="controls">
-    <input type="search" class="search-box" placeholder="Buscar por nombre o distrito..." aria-label="Buscar por nombre o distrito" />
-    <label><input type="checkbox" class="only-flagged" /> Solo destacados ({flaggedCount})</label>
-  </div>
-  <div class="result-count" aria-live="polite">{rows.length} de {rows.length} diputados</div>
-  <div class="table-wrap">
-    <table class="deputies">
+<div class="grid2">
+  <Section title="Mediana por distancia a Buenos Aires" id="grupos" tag={`${compared} diputados comparados`} links={[DATASETS.viajes]} periodLabel={period}>
+    <BarChart
+      title="Mediana de tramos por mes según la distancia estimada a Buenos Aires"
+      labelWidth="120px"
+      bars={report.analysis.bands.map(b => ({ label: b.band, value: b.medianLegsPerMonth, detail: `${b.deputies} diputados` }))}
+    />
+    <DataTable caption="Grupos por distancia estimada" captionHidden dense>
       <thead>
-        <tr>
-          <th>Nombre</th><th>Distrito</th><th>Región</th><th>Distancia estimada</th><th>Grupo</th><th>Tramos</th><th>Meses</th>
-          <th>Tramos por mes</th><th>Mediana del grupo</th><th>z robusto</th><th>Comparación</th><th>Ruta más frecuente</th>
-        </tr>
+        <tr><th scope="col">Grupo</th><th scope="col" class="num">Comparados</th><th scope="col" class="num">Mediana tramos/mes</th><th scope="col" class="num">Mediana de distancia</th></tr>
       </thead>
       <tbody>
         {
-          rows.map(({ travel, deputy }) => (
-            <tr data-search={normalizeText(`${deputy.nombre} ${deputy.lugar}`)} data-flagged={String(travel.flagged)}>
-              <td>{deputy.nombre}</td>
-              <td>{deputy.lugar}</td>
-              <td>{travel.region ?? '—'}</td>
-              <td class="num">
-                {travel.homeKm === null ? '—' : `${formatNumber(travel.homeKm)} km`}
-                {travel.homeSource && <span class="muted"> ({travel.homeSource === 'ruta' ? 'ruta' : 'capital'})</span>}
-              </td>
-              <td>{travel.band ?? '—'}</td>
-              <td class="num">{travel.legs}</td>
-              <td class="num">{travel.months}</td>
-              <td class="num">{formatNumber(travel.legsPerMonth)}</td>
-              <td class="num">{orDash(travel.bandMedian)}</td>
-              <td class="num">{orDash(travel.z)}</td>
-              <td>
-                {travel.flagged ? (
-                  <span class="badge">Viaja bastante más que sus pares</span>
-                ) : travel.eligible ? (
-                  ''
-                ) : (
-                  <span class="muted">No comparado</span>
-                )}
-              </td>
-              <td class="route">
-                {travel.topRoute ? `${travel.topRoute.origen} ↔ ${travel.topRoute.destino} (${travel.topRoute.count})` : '—'}
-              </td>
+          report.analysis.bands.map(b => (
+            <tr>
+              <td>{b.band}</td><td class="num">{b.deputies}</td><td class="num">{formatNumber(b.medianLegsPerMonth)}</td>
+              <td class="num">{formatNumber(b.medianKm)} km</td>
             </tr>
           ))
         }
       </tbody>
-    </table>
+    </DataTable>
+  </Section>
+
+  <Section
+    title="Viajan bastante más que sus pares"
+    id="destacados"
+    tag={`${flagged.length} de ${compared}`}
+    tagTone={flagged.length ? 'flag' : 'ok'}
+    links={[DATASETS.viajes]}
+    periodLabel={period}
+  >
+    {
+      flagged.length > 0 ? (
+        <ul class="flagged">
+          {flagged.map(({ travel, deputy, rel }) => (
+            <li>
+              <a href={rel?.url ?? `/diputados/${deputy.id}/`}>{deputy.nombre}</a>
+              {rel?.province && <> · <a href={rel.province.url}>{rel.province.nombre}</a></>}
+              <span class="muted"> · {travel.band}: {formatNumber(travel.legsPerMonth)} tramos por mes (mediana {orDash(travel.bandMedian)})</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>Nadie supera el umbral en el período.</p>
+      )
+    }
+    <p class="note">Solo un z robusto mayor a {formatNumber(Z_THRESHOLD)} se describe así; es una comparación, no una evaluación de los viajes.</p>
+  </Section>
+</div>
+
+<Section title="Cada diputado/a frente a su grupo" id="comparacion" links={[DATASETS.viajes]} periodLabel={period}>
+  <div class="dots">
+    <DotPlot
+      title="Tramos por mes de los diputados comparados, por distancia estimada a Buenos Aires"
+      desc={`Cada punto es un diputado/a y la raya vertical es la mediana de su grupo. ${bandsDescription(report.analysis)}. Destacados: ${flagged.map(r => `${r.deputy.nombre}, ${formatNumber(r.travel.legsPerMonth)}`).join('; ') || 'ninguno'}.`}
+      rows={dotRows}
+      unit="tramos por mes"
+      max={Math.ceil(maxRate)}
+      medianLabel="mediana del grupo"
+    />
+  </div>
+  <p class="note">Comparar dentro de cada fila, nunca entre filas: la distancia explica buena parte de la diferencia.</p>
+</Section>
+
+<Section title="Tramos por diputado/a" id="tabla" tag={`${rows.length} diputados`} links={[DATASETS.viajes]} periodLabel={period}>
+  <div class="travel" data-travel>
+    <div class="controls">
+      <label class="query">
+        <span>Filtrar por nombre o provincia</span>
+        <input type="search" autocomplete="off" spellcheck="false" placeholder="Ej.: Yedlin, Tucumán" data-query />
+      </label>
+      <label class="check"><input type="checkbox" data-only-flagged /> Solo quienes viajan bastante más que sus pares ({flagged.length})</label>
+    </div>
+    <p class="count" aria-live="polite" data-count>{rows.length} de {rows.length} diputados</p>
+    <DataTable caption="Tramos de viajes nacionales por diputado/a" captionHidden dense>
+      <thead>
+        <tr>
+          <th scope="col">Nombre</th><th scope="col">Provincia</th><th scope="col">Bloque</th><th scope="col" class="num">Distancia estimada</th>
+          <th scope="col">Grupo</th><th scope="col" class="num">Tramos</th><th scope="col" class="num">Meses</th>
+          <th scope="col" class="num">Tramos por mes</th><th scope="col" class="num">Mediana del grupo</th><th scope="col" class="num">z robusto</th>
+          <th scope="col">Comparación</th><th scope="col">Ruta más frecuente</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map(({ travel, deputy, rel }) => {
+            const status = travelStatus(travel);
+            return (
+              <tr data-text={normalizeText(`${deputy.nombre} ${deputy.lugar}`)} data-flagged={String(travel.flagged)}>
+                <td><a href={rel?.url ?? `/diputados/${deputy.id}/`}>{deputy.nombre}</a></td>
+                <td>{rel?.province ? <a href={rel.province.url}>{rel.province.nombre}</a> : deputy.lugar}</td>
+                <td>{rel ? <a href={rel.bloc.url}>{rel.bloc.titulo}</a> : deputy.bloque}</td>
+                <td class="num">
+                  {travel.homeKm === null ? '—' : `${formatNumber(travel.homeKm)} km`}
+                  {travel.homeSource && <span class="muted"> ({travel.homeSource === 'ruta' ? 'ruta' : 'capital'})</span>}
+                </td>
+                <td>{travel.band ?? '—'}</td>
+                <td class="num">{travel.legs}</td>
+                <td class="num">{travel.months}</td>
+                <td class="num">{formatNumber(travel.legsPerMonth)}</td>
+                <td class="num">{orDash(travel.bandMedian)}</td>
+                <td class="num">{orDash(travel.z)}</td>
+                <td>
+                  {status === 'viaja-mas' ? (
+                    <span class="tag flag">Viaja bastante más que sus pares</span>
+                  ) : status === 'en-linea' ? (
+                    <span class="muted">En línea</span>
+                  ) : (
+                    <span class="muted">{travelComparison(travel)}</span>
+                  )}
+                </td>
+                <td class="route">
+                  {travel.topRoute ? `${travel.topRoute.origen} ↔ ${travel.topRoute.destino} (${travel.topRoute.count})` : '—'}
+                </td>
+              </tr>
+            );
+          })
+        }
+      </tbody>
+    </DataTable>
   </div>
 
-  <div class="box quality">
-    <h3>Calidad del emparejamiento ({report.windowLabel})</h3>
+  <div slot="after" class="box quality">
+    <h3>Calidad del emparejamiento ({period})</h3>
     <p>
-      Los viajes vienen con el nombre completo (por ejemplo "CHICONI RICARDO ABEL") y la composición de la Cámara con el
-      nombre corto ("Chiconi, Abel"). Los emparejamos comparando palabra por palabra con una medida de parecido
-      (Jaro-Winkler) y un puntaje de confianza; los casos dudosos se informan y no se asignan.
+      Los viajes vienen con el nombre completo (por ejemplo «CHICONI RICARDO ABEL») y la composición de la Cámara con el nombre
+      corto («Chiconi, Abel»). Los emparejamos comparando palabra por palabra con una medida de parecido (Jaro-Winkler) y un
+      puntaje de confianza; los casos dudosos se informan y no se asignan.
     </p>
     <ul>
       <li>
@@ -139,9 +208,7 @@ const orDash = (value: number | null) => (value === null ? '—' : formatNumber(
         {formatNumber(quality.legs.total)}).
       </li>
     </ul>
-    <p class="note">
-      Los nombres sin emparejar son en su mayoría exdiputados: se compara contra la composición actual de la Cámara.
-    </p>
+    <p class="note">Los nombres sin emparejar son en su mayoría exdiputados: se compara contra la composición actual de la Cámara.</p>
     {
       quality.doubtful.length > 0 && (
         <details>
@@ -159,142 +226,116 @@ const orDash = (value: number | null) => (value === null ? '—' : formatNumber(
       )
     }
   </div>
-</div>
+</Section>
 
 <script>
   import { normalizeText } from '../lib/legislators.ts';
 
   for (const root of document.querySelectorAll<HTMLElement>('[data-travel]')) {
-    const search = root.querySelector<HTMLInputElement>('.search-box')!;
-    const onlyFlagged = root.querySelector<HTMLInputElement>('.only-flagged')!;
-    const count = root.querySelector('.result-count')!;
-    const rows = [...root.querySelectorAll<HTMLElement>('tbody tr[data-search]')];
+    const query = root.querySelector<HTMLInputElement>('[data-query]')!;
+    const onlyFlagged = root.querySelector<HTMLInputElement>('[data-only-flagged]')!;
+    const count = root.querySelector<HTMLElement>('[data-count]')!;
+    const rows = [...root.querySelectorAll<HTMLElement>('tbody tr[data-text]')];
 
     const update = () => {
-      const q = normalizeText(search.value).trim();
+      const q = normalizeText(query.value).trim();
       let visible = 0;
       for (const row of rows) {
-        row.hidden = (onlyFlagged.checked && row.dataset.flagged !== 'true') || (!!q && !row.dataset.search!.includes(q));
+        row.hidden = (onlyFlagged.checked && row.dataset.flagged !== 'true') || (!!q && !row.dataset.text!.includes(q));
         if (!row.hidden) visible++;
       }
       count.textContent = `${visible} de ${rows.length} diputados`;
     };
 
-    search.addEventListener('input', update);
+    query.addEventListener('input', update);
     onlyFlagged.addEventListener('change', update);
   }
 </script>
 
 <style>
-  .box {
-    border: 1px solid #d6e4fb;
-    background: #f3f8ff;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-    font-size: 14px;
+  .method p {
+    margin: 0 0 var(--space-2);
+    max-width: 860px;
   }
 
-  .box p {
-    margin: 0 0 8px;
+  /* the DotPlot's visually hidden table is as wide as its longest row; keep it from widening the page */
+  .dots {
+    position: relative;
+    overflow: hidden;
   }
 
-  h2 {
-    margin: 0 0 8px;
-    font-size: 18px;
+  .grid2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: 0 var(--space-5);
+    align-items: start;
   }
 
-  h3 {
-    font-size: 16px;
-    margin: 0 0 8px;
+  .flagged {
+    margin: 0 0 var(--space-2);
+    padding-left: var(--space-5);
+    font-size: var(--text-sm);
   }
 
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    font-size: 13px;
-    margin-bottom: 20px;
+  .flagged li {
+    margin-bottom: var(--space-1);
   }
 
-  .bands {
-    max-width: 680px;
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-5);
+    align-items: end;
+    margin-bottom: var(--space-2);
+    font-size: var(--text-sm);
   }
 
-  th,
-  td {
-    border-bottom: 1px solid #eee;
-    padding: 6px 8px;
-    text-align: left;
-    vertical-align: top;
+  .query span {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    margin-bottom: 6px;
   }
 
-  th {
-    background: #f7f7f7;
+  .query input {
+    width: min(100%, 360px);
+    padding: 7px 10px;
+    border: 1px solid var(--placeholder);
+    border-radius: var(--radius);
+    background: var(--surface);
+    font-size: var(--text-sm);
   }
 
-  .num {
-    text-align: right;
-    white-space: nowrap;
+  .query {
+    flex: 1 1 260px;
+    max-width: 100%;
   }
 
-  .route {
-    font-size: 12px;
-    color: #555;
-  }
-
-  .table-wrap {
-    overflow-x: auto;
+  .count {
+    font-size: var(--text-xs);
+    color: var(--muted);
+    margin: 0 0 var(--space-2);
   }
 
   tr[hidden] {
     display: none;
   }
 
-  .controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: center;
-    margin-bottom: 12px;
-    font-size: 14px;
+  .route {
+    font-size: var(--text-xs);
+    color: var(--muted);
+    min-width: 180px;
   }
 
-  .search-box {
-    flex: 1;
-    min-width: 220px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-
-  .result-count {
-    font-size: 13px;
-    color: #666;
-    margin-bottom: 12px;
-  }
-
-  .badge {
-    background: #fff3e0;
-    color: #a65b00;
-    border-radius: 4px;
-    padding: 2px 6px;
-    font-size: 12px;
-    white-space: nowrap;
-  }
-
-  .muted {
-    color: #888;
-    font-size: 12px;
-  }
-
-  .quality ul {
-    margin: 0 0 8px;
-    padding-left: 20px;
+  .quality h3 {
+    font-family: var(--sans);
+    font-size: var(--text-sm);
+    color: var(--quality);
+    margin: 0 0 var(--space-2);
   }
 
   details ul {
     margin-top: 6px;
-    font-size: 13px;
+    font-size: var(--text-xs);
   }
 </style>

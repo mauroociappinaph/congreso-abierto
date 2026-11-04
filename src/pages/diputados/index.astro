@@ -1,0 +1,78 @@
+---
+// Diputados: the pay every deputy receives and the filterable list of the deputies in office, each row linking
+// to the ficha, the province and the bloc.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageHead from '../../components/home/PageHead.astro';
+import Section from '../../components/ui/Section.astro';
+import Chamber from '../../components/Chamber.astro';
+import PayPanel from '../../components/PayPanel.astro';
+import SourceLine from '../../components/SourceLine.astro';
+import { loadDeputies, loadEntities, loadPay, loadTravel } from '../../lib/sources.ts';
+import { DATASETS, formatNumber } from '../../lib/view.ts';
+
+const deputies = await loadDeputies();
+const [entities, pay, travel] = await Promise.all([loadEntities(), loadPay(), loadTravel(deputies)]);
+const { relations, topics } = entities;
+const travelById = new Map(travel.analysis.deputies.map(t => [t.deputyId, t]));
+
+const rows = deputies.map(deputy => {
+  const rel = relations.get(deputy.id)!;
+  const own = travelById.get(deputy.id);
+  return {
+    id: deputy.id,
+    nombre: deputy.nombre,
+    url: rel.url,
+    provincia: rel.province && { slug: rel.province.slug, label: rel.province.nombre, url: rel.province.url },
+    distrito: deputy.lugar,
+    bloc: { slug: rel.bloc.slug, label: rel.bloc.titulo, url: rel.bloc.url },
+    cells: [
+      formatNumber(rel.committees.length),
+      formatNumber(rel.counts.bills),
+      own ? formatNumber(own.legsPerMonth) : '—',
+      formatNumber(rel.counts.missions ?? 0),
+    ],
+  };
+});
+const asOf = topics.numbers.diputados.provenance.label;
+---
+
+<SiteLayout title="Diputados - Gastos y trabajo legislativo">
+  <div class="page-wrap topic-page">
+    <PageHead
+      title="Diputados"
+      eyebrow="Cámara de Diputados de la Nación"
+      lede={`Los ${deputies.length} diputados y diputadas en funciones. Cada nombre lleva a su ficha, con su bloque, su provincia, sus comisiones, sus proyectos y sus viajes.`}
+    />
+
+    <PayPanel pay={pay} asOf={topics.pay.provenance.hasta} deputies={deputies.length} />
+
+    <Section title="Diputados en funciones" id="lista" tag={`${deputies.length} diputados`}>
+      <Chamber
+        id="diputados"
+        caption="Diputados y diputadas en funciones"
+        noun="diputados"
+        rows={rows}
+        columns={['Comisiones', 'Proyectos', 'Tramos por mes', 'Misiones']}
+      />
+      <p class="note">
+        Proyectos: como primer firmante. Tramos por mes: viajes nacionales dentro del período, por mes en el cargo. Más tramos
+        no implica irregularidad: depende de la distancia, la agenda y los traslados a la provincia.
+      </p>
+      <SourceLine links={[DATASETS.legisladores]} periodLabel={`composición ${asOf}`} />
+      <SourceLine links={[DATASETS.comisiones]} periodLabel={entities.topics.committees.provenance.label} />
+      <SourceLine links={[DATASETS.proyectos, DATASETS.movimientos]} periodLabel={topics.bills.provenance.label} />
+      <SourceLine links={[DATASETS.viajes]} periodLabel={travel.windowLabel} />
+      <SourceLine links={[DATASETS.misiones]} periodLabel={topics.numbers.misiones.provenance.label} />
+    </Section>
+  </div>
+</SiteLayout>
+
+<style>
+  .topic-page {
+    padding-top: var(--space-7);
+  }
+
+  .topic-page :global(.source) {
+    margin: var(--space-1) 0;
+  }
+</style>

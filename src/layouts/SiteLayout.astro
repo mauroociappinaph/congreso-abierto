@@ -1,7 +1,11 @@
 ---
-// Site frame: skip link, header with brand, global search slot and nav, main landmark and a footer with the sources.
+// Site frame: skip link, header with brand, global search and nav, main landmark and a footer with the sources.
+// The header search loads /search-index.json on first focus; a page can replace it through the "search" slot.
 import Layout from './Layout.astro';
+import SearchBox from '../components/ui/SearchBox.astro';
 import { DATASETS } from '../lib/view.ts';
+
+const SEARCH_INDEX_URL = '/search-index.json';
 
 export type NavKey = 'inicio' | 'diputados' | 'senado' | 'bloques' | 'provincias' | 'comisiones' | 'viajes' | 'proyectos';
 
@@ -43,7 +47,19 @@ const sources = Object.values(DATASETS);
         <small>Diputados y Senado de la Nación · datos oficiales</small>
       </a>
       <div class="site-search">
-        <slot name="search" />
+        {
+          Astro.slots.has('search') ? (
+            <slot name="search" />
+          ) : (
+            <SearchBox
+              label="Buscar legislador, bloque, provincia o comisión"
+              labelHidden
+              placeholder="Buscar persona, bloque, provincia o comisión"
+              indexUrl={SEARCH_INDEX_URL}
+              shortcut
+            />
+          )
+        }
       </div>
     </div>
     <nav class="site-nav" aria-label="Secciones">

@@ -1,7 +1,10 @@
 ---
-// Viajes tab: official missions abroad per deputy in office, with viáticos per currency and the linkage quality.
+// Official missions abroad per deputy in office, with viáticos per currency and the linkage quality. Rows link to
+// the ficha, the province and the bloc.
 import QualityBox from './QualityBox.astro';
-import SourceLine from './SourceLine.astro';
+import Section from './ui/Section.astro';
+import DataTable from './ui/DataTable.astro';
+import type { LegislatorRelations } from '../lib/entities.ts';
 import type { Deputy } from '../lib/legislators.ts';
 import type { MissionsData } from '../lib/sources.ts';
 import { DATASETS, formatDate, formatMoney, formatNumber } from '../lib/view.ts';
@@ -9,55 +12,64 @@ import { DATASETS, formatDate, formatMoney, formatNumber } from '../lib/view.ts'
 interface Props {
   missions: MissionsData;
   deputies: Deputy[];
+  relations: Map<string, LegislatorRelations>;
 }
 
-const { missions, deputies } = Astro.props;
+const { missions, deputies, relations } = Astro.props;
 const byId = new Map(deputies.map(d => [d.id, d]));
 const rows = missions.deputies
   .flatMap(own => {
     const deputy = byId.get(own.deputyId);
-    return deputy ? [{ deputy, own }] : [];
+    return deputy && own.count > 0 ? [{ deputy, own, rel: relations.get(deputy.id) }] : [];
   })
   .sort((a, b) => b.own.count - a.own.count || a.deputy.nombre.localeCompare(b.deputy.nombre, 'es'));
+const current = rows.reduce((t, r) => t + r.own.count, 0);
 const { names } = missions.quality;
 ---
 
-<div class="missions">
-  <h2>Misiones oficiales al exterior</h2>
+<Section
+  title="Misiones oficiales al exterior"
+  id="misiones"
+  tag={`${formatNumber(current)} misiones de ${rows.length} diputados en funciones`}
+  links={[DATASETS.misiones]}
+  period={missions.period}
+>
   <p>
     La Cámara publica las misiones oficiales con su motivo, la institución que invita y los viáticos. Entre el
-    {formatDate(missions.period.desde)} y el {formatDate(missions.period.hasta)} hay {formatNumber(missions.missions)} registros
-    de participación; {rows.length} diputados/as en funciones hoy tienen al menos una misión.
+    {formatDate(missions.period.desde)} y el {formatDate(missions.period.hasta)}, {rows.length} diputados/as en funciones hoy
+    registran {formatNumber(current)} misiones. El total publicado ({formatNumber(missions.missions)} registros de participación)
+    incluye a quienes ya no están en el cargo.
   </p>
-
-  <div class="table-wrap">
-    <table class="data-table">
-      <thead>
-        <tr><th>Nombre</th><th>Distrito</th><th class="num">Misiones</th><th>Lugares</th><th>Viáticos otorgados</th><th>Viáticos consumidos</th></tr>
-      </thead>
-      <tbody>
-        {
-          rows.map(({ deputy, own }) => (
-            <tr>
-              <td><a href={`/diputados/${deputy.id}/`}>{deputy.nombre}</a></td>
-              <td>{deputy.lugar}</td>
-              <td class="num">{own.count}</td>
-              <td>{own.lugares.join(', ') || '—'}</td>
-              <td>{formatMoney(own.viaticosOtorgados)}</td>
-              <td>{formatMoney(own.viaticosConsumidos)}</td>
-            </tr>
-          ))
-        }
-      </tbody>
-    </table>
-  </div>
+  <DataTable caption="Misiones oficiales por diputado/a en funciones" captionHidden dense>
+    <thead>
+      <tr>
+        <th scope="col">Nombre</th><th scope="col">Provincia</th><th scope="col">Bloque</th><th scope="col" class="num">Misiones</th>
+        <th scope="col">Lugares</th><th scope="col">Viáticos otorgados</th><th scope="col">Viáticos consumidos</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map(({ deputy, own, rel }) => (
+          <tr>
+            <td><a href={rel?.url ?? `/diputados/${deputy.id}/`}>{deputy.nombre}</a></td>
+            <td>{rel?.province ? <a href={rel.province.url}>{rel.province.nombre}</a> : deputy.lugar}</td>
+            <td>{rel ? <a href={rel.bloc.url}>{rel.bloc.titulo}</a> : deputy.bloque}</td>
+            <td class="num">{own.count}</td>
+            <td>{own.lugares.join(', ') || '—'}</td>
+            <td>{formatMoney(own.viaticosOtorgados)}</td>
+            <td>{formatMoney(own.viaticosConsumidos)}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </DataTable>
   <p class="note">
-    Los viáticos se suman por moneda, tal como los publica la Cámara; «Sin datos» indica que no se publicó el monto. Una
-    misión oficial es una actividad institucional; el número de misiones no implica irregularidad.
+    Los viáticos se suman por moneda, tal como los publica la Cámara; «Sin datos» indica que no se publicó el monto. Una misión
+    oficial es una actividad institucional; el número de misiones no implica irregularidad.
   </p>
-  <SourceLine links={[DATASETS.misiones]} period={missions.period} />
 
   <QualityBox
+    slot="after"
     title="Calidad del emparejamiento de las misiones"
     quality={missions.quality}
     period={missions.period}
@@ -69,17 +81,4 @@ const { names } = missions.quality;
       tabla, que muestra solo a quienes están en funciones hoy.
     </p>
   </QualityBox>
-</div>
-
-<style>
-  .missions {
-    margin-top: 24px;
-    padding-top: 16px;
-    border-top: 1px solid #eee;
-  }
-
-  h2 {
-    margin: 0 0 8px;
-    font-size: 18px;
-  }
-</style>
+</Section>

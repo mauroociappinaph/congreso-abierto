@@ -1,11 +1,18 @@
 ---
-// One page per senator in office: votes in the official actas and Senate-origin bills.
+// One page per senator in office (01, Pantalla 2): key facts, the relation strip (Senate bloc, province, bills,
+// votes) and one section per source: votes in the official actas, Senate-origin bills, office data, provincial peers.
 import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
 import LegislatorLayout from '../../layouts/LegislatorLayout.astro';
 import BillsSummary from '../../components/BillsSummary.astro';
 import SourceLine from '../../components/SourceLine.astro';
+import DataTable from '../../components/ui/DataTable.astro';
+import RelationStrip from '../../components/ui/RelationStrip.astro';
+import Section from '../../components/ui/Section.astro';
+import StatTile from '../../components/ui/StatTile.astro';
+import { surname } from '../../components/home/travel-dots.ts';
 import { buildSenatorProfiles } from '../../lib/legislator-profile.ts';
-import { loadBills, loadDeputies, loadSenateVotes, loadSenators } from '../../lib/sources.ts';
+import { normalizeText } from '../../lib/legislators.ts';
+import { loadBills, loadDeputies, loadEntities, loadSenateVotes, loadSenators } from '../../lib/sources.ts';
 import { DATASETS, formatDate, formatNumber, formatShare, STAGE_LABELS } from '../../lib/view.ts';
 
 export const getStaticPaths = (async () => {
@@ -20,37 +27,62 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { senator, profile } = Astro.props as Props;
 const deputies = await loadDeputies();
 const { senators, snapshotDate } = await loadSenators();
-const [votesData, billsData] = await Promise.all([loadSenateVotes(senators), loadBills(deputies, senators)]);
+const [entities, votesData, billsData] = await Promise.all([loadEntities(), loadSenateVotes(senators), loadBills(deputies, senators)]);
+const rel = entities.relations.get(senator.id)!;
 const { votes, bills } = profile;
-const blocs = votes ? votesData.summary.blocs.filter(b => votes.bloques.includes(b.bloque)) : [];
+const key = (value: string) => normalizeText(value).replace(/\s+/g, ' ').trim();
+const senateBlocs = new Map(entities.blocs.filter(b => b.camara === 'senado').map(b => [key(b.nombre), b]));
+const blocs = votes
+  ? votesData.summary.blocs.filter(b => votes.bloques.includes(b.bloque)).map(b => ({ ...b, page: senateBlocs.get(key(b.bloque)) ?? null }))
+  : [];
+const provincePage = rel.province ? entities.provinces.find(p => p.slug === rel.province!.slug) ?? null : null;
+const plural = (count: number, one: string, many: string) => `${formatNumber(count)} ${count === 1 ? one : many}`;
+const listPeriod = snapshotDate ? `copia del listado oficial al ${snapshotDate}` : `listado ${entities.topics.numbers.senadores.provenance.label}`;
+const name = surname(senator.nombre);
+const otherSenators = (provincePage?.senators ?? []).map(m => ({ ...m, rel: entities.relations.get(m.id) }));
+const provinceDeputies = (provincePage?.deputies ?? []).map(m => ({ ...m, rel: entities.relations.get(m.id) }));
 ---
 
 <LegislatorLayout
   title={`${senator.nombre} - Senado`}
   chamber="senadores"
   nombre={senator.nombre}
-  subtitle={`Senador/a nacional por ${senator.lugar || 'N/A'} · ${senator.bloque}`}
+  subtitle={`Por ${rel.province?.nombre ?? (senator.lugar || 'N/A')} · Bloque ${rel.bloc.titulo}${senator.mandato ? ` · Mandato ${senator.mandato}` : ''}`}
   foto={senator.foto}
+  province={rel.province}
 >
-  <section>
-    <h2>Datos del cargo</h2>
-    <dl class="facts">
-      <div><dt>Provincia</dt><dd>{senator.lugar || 'N/A'}</dd></div>
-      <div><dt>Bloque</dt><dd>{senator.bloque}</dd></div>
-      <div><dt>Partido o alianza</dt><dd>{senator.partido || 'N/A'}</dd></div>
-      <div><dt>Mandato</dt><dd>{senator.mandato || 'N/A'}</dd></div>
-      <div><dt>Email</dt><dd>{senator.email || 'N/A'}</dd></div>
-      <div><dt>Teléfono</dt><dd>{senator.telefono || 'N/A'}</dd></div>
-    </dl>
-    <p class="note">El Senado no publica dietas ni gastos en sus datos abiertos.</p>
-    <SourceLine
-      links={[DATASETS.senadores]}
-      periodLabel={snapshotDate ? `copia del listado oficial al ${snapshotDate}` : 'listado vigente al generar el sitio'}
-    />
-  </section>
+  <Fragment slot="facts">
+    <StatTile label="Actas en el cargo" value={votes ? formatNumber(votes.actas) : '—'} size="md" />
+    <StatTile label="Asistencia" value={votes ? formatShare(votes.asistencia) : '—'} size="md" />
+    <StatTile label="Lealtad al bloque" value={votes ? formatShare(votes.lealtadBloque) : '—'} size="md" />
+    <StatTile label="Proyectos" value={formatNumber(bills?.total ?? 0)} size="md" />
+  </Fragment>
 
-  <section>
-    <h2>Votaciones</h2>
+  <RelationStrip
+    label={`Relaciones de ${senator.nombre}`}
+    bloque={{ value: rel.bloc.titulo, detail: `${rel.bloc.seats} de ${rel.bloc.chamberSeats} senadores`, href: rel.bloc.url, cta: 'Ver el bloque' }}
+    provincia={rel.province ? {
+      value: rel.province.nombre,
+      detail: `${plural(rel.province.deputies, 'diputado', 'diputados')} · ${plural(rel.province.senators, 'senador', 'senadores')}`,
+      href: rel.province.url,
+      cta: 'Ver la provincia',
+    } : { value: senator.lugar || 'Sin dato' }}
+    proyectos={{ value: `${formatNumber(rel.counts.bills)} como primer firmante`, detail: plural(rel.counts.sancionados, 'sancionado', 'sancionados'), href: '#proyectos' }}
+    viajes={{ value: 'Sin datos', detail: 'El Senado no publica viajes en sus datos abiertos' }}
+    votaciones={{
+      value: plural(rel.counts.votes ?? 0, 'acta', 'actas'),
+      detail: votes ? `Asistencia ${formatShare(votes.asistencia)}` : 'Sin votos registrados',
+      href: '#votaciones',
+    }}
+    legend="Cada casilla lleva a otra página o sección. Los números de esta franja salen de las secciones de abajo, cada una con su fuente y su período."
+  />
+
+  <nav class="toc" aria-label="En esta ficha">
+    <a href="#votaciones">Votaciones</a><a href="#proyectos">Proyectos</a><a href="#cargo">Datos del cargo</a>
+    {provincePage && <a href="#pares">Sus pares de {provincePage.nombre}</a>}
+  </nav>
+
+  <Section title="Votaciones" id="votaciones" tag={votes ? plural(votes.actas, 'acta en el cargo', 'actas en el cargo') : 'Sin votos'} links={[DATASETS.actas]} period={votesData.period}>
     {votesData.stale && (
       <p class="note">
         El sitio del Senado no respondió al generar esta página; se usan las actas guardadas al {formatDate(votesData.cacheDate)}.
@@ -59,18 +91,14 @@ const blocs = votes ? votesData.summary.blocs.filter(b => votes.bloques.includes
     {
       votes ? (
         <>
-          <dl class="facts">
-            <div><dt>Actas en el cargo</dt><dd>{formatNumber(votes.actas)}</dd></div>
-            <div><dt>Afirmativo</dt><dd>{formatNumber(votes.afirmativo)}</dd></div>
-            <div><dt>Negativo</dt><dd>{formatNumber(votes.negativo)}</dd></div>
-            <div><dt>Abstención</dt><dd>{formatNumber(votes.abstencion)}</dd></div>
-            <div><dt>Ausente</dt><dd>{formatNumber(votes.ausente)}</dd></div>
-            {votes.otros > 0 && <div><dt>Otros registros</dt><dd>{formatNumber(votes.otros)}</dd></div>}
-            <div><dt>Asistencia</dt><dd>{formatShare(votes.asistencia)}</dd></div>
-            <div>
-              <dt>Lealtad al bloque</dt>
-              <dd>{formatShare(votes.lealtadBloque)}</dd>
-            </div>
+          <dl class="stat-grid">
+            <StatTile label="Afirmativo" value={formatNumber(votes.afirmativo)} size="md" />
+            <StatTile label="Negativo" value={formatNumber(votes.negativo)} size="md" />
+            <StatTile label="Abstención" value={formatNumber(votes.abstencion)} size="md" />
+            <StatTile label="Ausente" value={formatNumber(votes.ausente)} size="md" />
+            {votes.otros > 0 && <StatTile label="Otros registros" value={formatNumber(votes.otros)} size="md" />}
+            <StatTile label="Asistencia" value={formatShare(votes.asistencia)} size="md" />
+            <StatTile label="Lealtad al bloque" value={formatShare(votes.lealtadBloque)} size="md" />
           </dl>
           <p>
             <strong>Asistencia</strong> = actas en que no figura ausente, sobre {formatNumber(votes.actas)} actas en el cargo.
@@ -78,28 +106,30 @@ const blocs = votes ? votesData.summary.blocs.filter(b => votes.bloques.includes
             {formatNumber(votes.lealtadActas)} actas en las que votó y su bloque tuvo una mayoría clara.
           </p>
           <p class="note">
-            El acta registra «ausente» sin indicar el motivo (licencia, misión oficial u otro). Son estadísticas descriptivas:
-            no evalúan el desempeño.
+            El acta registra «ausente» sin indicar el motivo (licencia, misión oficial u otro). Son estadísticas descriptivas: no
+            evalúan el desempeño.
           </p>
           {blocs.length > 0 && (
             <>
-              <h3>Cohesión de su bloque</h3>
-              <table class="data-table">
-                <thead><tr><th>Bloque</th><th class="num">Senadores</th><th class="num">Actas</th><th class="num">Índice de Rice medio</th></tr></thead>
+              <h3 class="sub-title">Cohesión de su bloque</h3>
+              <DataTable caption={`Cohesión del bloque de ${senator.nombre}`} captionHidden dense>
+                <thead>
+                  <tr><th scope="col">Bloque</th><th scope="col" class="num">Senadores</th><th scope="col" class="num">Actas</th><th scope="col" class="num">Índice de Rice medio</th></tr>
+                </thead>
                 <tbody>
                   {blocs.map(b => (
                     <tr>
-                      <td>{b.bloque}</td>
+                      <td>{b.page ? <a href={b.page.url}>{b.page.titulo}</a> : b.bloque}</td>
                       <td class="num">{b.senators}</td>
                       <td class="num">{b.actas}</td>
                       <td class="num">{b.riceMedio === null ? '—' : formatNumber(b.riceMedio)}</td>
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </DataTable>
               <p class="note">
-                Índice de Rice = |afirmativos − negativos| / (afirmativos + negativos) del bloque en cada acta, promediado: 1 es
-                un bloque que vota todo junto, 0 uno dividido a la mitad. Con uno o dos senadores el índice dice poco.
+                Índice de Rice = |afirmativos − negativos| / (afirmativos + negativos) del bloque en cada acta, promediado: 1 es un
+                bloque que vota todo junto, 0 uno dividido a la mitad. Con uno o dos senadores el índice dice poco.
               </p>
             </>
           )}
@@ -108,19 +138,27 @@ const blocs = votes ? votesData.summary.blocs.filter(b => votes.bloques.includes
         <p>Sin votos registrados a su nombre en las actas del período.</p>
       )
     }
-    <SourceLine links={[DATASETS.actas]} period={votesData.period} />
-  </section>
+    <p class="note">
+      Asignación de votos a senadores: {formatNumber(votesData.quality.rows.linkedPercent)} %.
+      <a href="/senado/#votaciones">Ver la cohesión de todos los bloques y la calidad del emparejamiento</a>.
+    </p>
+  </Section>
 
-  {
-    bills && (
-      <section>
-        <h2>Proyectos iniciados en el Senado</h2>
-        <p>{formatNumber(bills.total)} proyectos como primer firmante, según el registro de la Cámara de Diputados.</p>
-        <BillsSummary bills={bills} />
-        <h3>Últimos proyectos</h3>
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead><tr><th>Fecha</th><th>Expediente</th><th>Tipo</th><th>Título</th><th>Etapa registrada</th></tr></thead>
+  <Section
+    title="Proyectos iniciados en el Senado"
+    id="proyectos"
+    tag={bills ? `${formatNumber(bills.total)} como primer firmante` : 'Sin proyectos'}
+    links={[DATASETS.proyectos, DATASETS.movimientos]}
+    period={billsData.period}
+  >
+    {
+      bills ? (
+        <>
+          <p>{formatNumber(bills.total)} proyectos como primer firmante, según el registro de la Cámara de Diputados.</p>
+          <BillsSummary bills={bills} of={`de ${name}`} />
+          <h3 class="sub-title">Últimos proyectos</h3>
+          <DataTable caption={`Últimos proyectos de ${senator.nombre}`} captionHidden dense>
+            <thead><tr><th scope="col">Fecha</th><th scope="col">Expediente</th><th scope="col">Tipo</th><th scope="col">Título</th><th scope="col">Etapa registrada</th></tr></thead>
             <tbody>
               {bills.recent.map(b => (
                 <tr>
@@ -132,17 +170,71 @@ const blocs = votes ? votesData.summary.blocs.filter(b => votes.bloques.includes
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
-        <SourceLine links={[DATASETS.proyectos, DATASETS.movimientos]} period={billsData.period} />
-      </section>
+          </DataTable>
+        </>
+      ) : (
+        <p>Sin proyectos registrados como primer firmante en el período.</p>
+      )
+    }
+    <p class="note">
+      La fuente indica un solo autor por proyecto (el primer firmante). Asignación de autores de proyectos del Senado:
+      {formatNumber(billsData.quality.senado.rows.linkedPercent)} %.
+    </p>
+  </Section>
+
+  <Section title="Datos del cargo" id="cargo" links={[DATASETS.senadores]} periodLabel={listPeriod}>
+    <dl class="facts">
+      <div><dt>Provincia</dt><dd>{rel.province ? <a href={rel.province.url}>{rel.province.nombre}</a> : senator.lugar || 'N/A'}</dd></div>
+      <div><dt>Bloque</dt><dd><a href={rel.bloc.url}>{rel.bloc.titulo}</a></dd></div>
+      <div><dt>Partido o alianza</dt><dd>{senator.partido || 'N/A'}</dd></div>
+      <div><dt>Mandato</dt><dd>{senator.mandato || 'N/A'}</dd></div>
+      <div><dt>Email</dt><dd>{senator.email || 'N/A'}</dd></div>
+      <div><dt>Teléfono</dt><dd>{senator.telefono || 'N/A'}</dd></div>
+    </dl>
+    <p class="note">El Senado no publica dietas ni gastos en sus datos abiertos.</p>
+  </Section>
+
+  {
+    provincePage && (
+      <Section title={`Sus pares de ${provincePage.nombre}`} id="pares" tag={`${plural(otherSenators.length, 'senador', 'senadores')} · ${plural(provinceDeputies.length, 'diputado', 'diputados')}`}>
+        <a slot="head" class="head-link" href={provincePage.url}>Página de {provincePage.nombre} →</a>
+        <DataTable caption={`Senadores de ${provincePage.nombre}`} captionHidden dense>
+          <thead><tr><th scope="col">Senador/a</th><th scope="col">Bloque</th><th scope="col" class="num">Asistencia</th></tr></thead>
+          <tbody>
+            {otherSenators.map(s => {
+              const own = votesData.summary.senators.get(s.id);
+              return (
+                <tr class:list={{ current: s.id === senator.id }}>
+                  <td>{s.id === senator.id ? <strong>{s.nombre}</strong> : <a href={s.url}>{s.nombre}</a>}</td>
+                  <td>{s.rel ? <a href={s.rel.bloc.url}>{s.rel.bloc.titulo}</a> : '—'}</td>
+                  <td class="num">{own ? formatShare(own.asistencia) : '—'}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </DataTable>
+        {provinceDeputies.length > 0 && (
+          <p class="note">
+            Diputados de {provincePage.nombre}:{' '}
+            {provinceDeputies.map((d, i) => (
+              <>
+                {i > 0 && ', '}
+                <a href={d.url}>{d.nombre}</a>
+                {d.rel && ` (${d.rel.bloc.titulo})`}
+                {i === provinceDeputies.length - 1 && '.'}
+              </>
+            ))}
+          </p>
+        )}
+        <SourceLine links={[DATASETS.senadores, DATASETS.actas]} periodLabel={`${listPeriod}; actas del ${formatDate(votesData.period.desde)} al ${formatDate(votesData.period.hasta)}`} />
+        <SourceLine links={[DATASETS.legisladores]} periodLabel={`composición ${entities.topics.numbers.diputados.provenance.label}`} />
+      </Section>
     )
   }
 </LegislatorLayout>
 
 <style>
-  h3 {
-    font-size: 15px;
-    margin: 12px 0 8px;
+  .head-link {
+    font-size: var(--text-sm);
   }
 </style>

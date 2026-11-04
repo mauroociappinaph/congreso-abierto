@@ -1,0 +1,72 @@
+---
+// Senado: the filterable list of the senators in office and the roll-call votes (bloc cohesion and attendance).
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageHead from '../../components/home/PageHead.astro';
+import Section from '../../components/ui/Section.astro';
+import Chamber from '../../components/Chamber.astro';
+import SenateVotesPanel from '../../components/SenateVotesPanel.astro';
+import SourceLine from '../../components/SourceLine.astro';
+import { loadEntities, loadSenateVotes, loadSenators } from '../../lib/sources.ts';
+import { DATASETS, formatNumber, formatShare } from '../../lib/view.ts';
+
+const { senators, snapshotDate } = await loadSenators();
+const [entities, votes] = await Promise.all([loadEntities(), loadSenateVotes(senators)]);
+const { relations, topics } = entities;
+
+const rows = senators.map(senator => {
+  const rel = relations.get(senator.id)!;
+  const own = votes.summary.senators.get(senator.id);
+  return {
+    id: senator.id,
+    nombre: senator.nombre,
+    url: rel.url,
+    provincia: rel.province && { slug: rel.province.slug, label: rel.province.nombre, url: rel.province.url },
+    distrito: senator.lugar,
+    bloc: { slug: rel.bloc.slug, label: rel.bloc.titulo, url: rel.bloc.url },
+    cells: [own ? formatNumber(own.actas) : '—', own ? formatShare(own.asistencia) : '—', formatNumber(rel.counts.bills)],
+  };
+});
+const listPeriod = snapshotDate ? `copia del listado oficial al ${snapshotDate}` : topics.numbers.senadores.provenance.label;
+---
+
+<SiteLayout title="Senado - Gastos y trabajo legislativo">
+  <div class="page-wrap topic-page">
+    <PageHead
+      title="Senado"
+      eyebrow="Senado de la Nación"
+      lede={`Los ${senators.length} senadores y senadoras en funciones y sus votaciones nominales: cuánto vota junto cada bloque y cuánta asistencia registra cada senador.`}
+    />
+
+    <Section title="Senadores en funciones" id="lista" tag={`${senators.length} senadores`}>
+      {snapshotDate && (
+        <p class="note">La API del Senado no respondió al generar el sitio; se muestra la copia del listado oficial al {snapshotDate}.</p>
+      )}
+      <Chamber
+        id="senadores"
+        caption="Senadores y senadoras en funciones"
+        noun="senadores"
+        rows={rows}
+        columns={['Actas en el cargo', 'Asistencia', 'Proyectos']}
+      />
+      <p class="note">
+        Proyectos: iniciados en el Senado como primer firmante, según el registro de la Cámara de Diputados. El Senado no publica
+        dietas ni gastos en sus datos abiertos.
+      </p>
+      <SourceLine links={[DATASETS.senadores]} periodLabel={`listado ${listPeriod}`} />
+      <SourceLine links={[DATASETS.actas]} period={votes.period} />
+      <SourceLine links={[DATASETS.proyectos, DATASETS.movimientos]} periodLabel={topics.bills.provenance.label} />
+    </Section>
+
+    <SenateVotesPanel votes={votes} senators={senators} blocs={entities.blocs} />
+  </div>
+</SiteLayout>
+
+<style>
+  .topic-page {
+    padding-top: var(--space-7);
+  }
+
+  .topic-page :global(.source) {
+    margin: var(--space-1) 0;
+  }
+</style>
